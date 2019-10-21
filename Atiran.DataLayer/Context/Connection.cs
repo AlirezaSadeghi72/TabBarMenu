@@ -30,7 +30,7 @@ namespace Atiran.DataLayer.Context
         {
             using (var ctx = new DBEntities())
             {
-                ResultAllMenu = ctx.Menus.Where(m => (((ProgramVersion == Connection.VersionName.ForshgahiNoskheKamelTakLine ? m.Form.v1 == true : ProgramVersion == Connection.VersionName.OmdeForoshSonatiTakLine ? m.Form.v2 == true : ProgramVersion == Connection.VersionName.MooyragiTakLine ? m.Form.v3 == true : ProgramVersion == Connection.VersionName.MooyragiChandLine ? m.Form.v4 == true : ProgramVersion == Connection.VersionName.ForshgahiNoskheKamelChandLine ? m.Form.v5 == true : ProgramVersion == Connection.VersionName.OmdeForoshSonatiChandLine ? m.Form.v6 == true : 1 == 1) && (m.SubSystemID != null)) || (m.FormID == null && m.SubSystemID != null))).ToList();
+                ResultAllMenu = ctx.Menus.Where(m => ((ProgramVersion == Connection.VersionName.ForshgahiNoskheKamelTakLine ? m.Form.v1 == true : ProgramVersion == Connection.VersionName.OmdeForoshSonatiTakLine ? m.Form.v2 == true : ProgramVersion == Connection.VersionName.MooyragiTakLine ? m.Form.v3 == true : ProgramVersion == Connection.VersionName.MooyragiChandLine ? m.Form.v4 == true : ProgramVersion == Connection.VersionName.ForshgahiNoskheKamelChandLine ? m.Form.v5 == true : ProgramVersion == Connection.VersionName.OmdeForoshSonatiChandLine ? m.Form.v6 == true : 1 == 1) || m.FormID == null ) && m.SubSystemID != null &&(ctx.Menus.Any(m1=>m1.ParentMenuID == m.MenuID) || m.FormID != null)).ToList();
                 ResultAllSubSystem = ctx.SubSystems.ToList();
             }
         }
