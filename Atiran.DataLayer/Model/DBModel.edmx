@@ -1,0 +1,656 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="DBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="act_zirsarfasls">
+          <Key>
+            <PropertyRef Name="rdf" />
+          </Key>
+          <Property Name="rdf" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="date" Type="char" MaxLength="10" Nullable="false" />
+          <Property Name="rdf_zirsarfasls" Type="int" Nullable="false" />
+          <Property Name="dis" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="bed" Type="money" Nullable="false" />
+          <Property Name="bes" Type="money" Nullable="false" />
+          <Property Name="user" Type="varchar" MaxLength="30" Nullable="false" />
+          <Property Name="bed_bes" Type="varchar" MaxLength="2" Nullable="false" />
+          <Property Name="manafter" Type="money" Nullable="false" />
+          <Property Name="kind" Type="int" />
+          <Property Name="sanadno" Type="int" />
+        </EntityType>
+        <EntityType Name="GroupSarfasl">
+          <Key>
+            <PropertyRef Name="GroupSarfaslID" />
+          </Key>
+          <Property Name="GroupSarfaslID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="GroupSarfaslName" Type="nvarchar" MaxLength="500" Nullable="false" />
+          <Property Name="Active" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="overal_setting">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="dis" Type="nvarchar" MaxLength="1000" Nullable="false" />
+          <Property Name="value" Type="bigint" Nullable="false" />
+          <Property Name="Address" Type="nvarchar" MaxLength="500" />
+          <Property Name="TabOrder" Type="int" />
+          <Property Name="ExternalExplain" Type="nvarchar" MaxLength="500" />
+        </EntityType>
+        <EntityType Name="sarfasls">
+          <Key>
+            <PropertyRef Name="rdf" />
+          </Key>
+          <Property Name="rdf" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="name" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="has_dar" Type="char" MaxLength="1" Nullable="false" />
+          <Property Name="who_def" Type="varchar" MaxLength="25" />
+          <Property Name="start_date" Type="char" MaxLength="10" />
+          <Property Name="Active" Type="bit" />
+          <Property Name="GroupSarfaslID" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="zirsarfasls">
+          <Key>
+            <PropertyRef Name="rdf" />
+          </Key>
+          <Property Name="rdf" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="radif" Type="int" />
+          <Property Name="rdf_sarfasl" Type="int" Nullable="false" />
+          <Property Name="name" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="has_dar" Type="char" MaxLength="1" Nullable="false" />
+          <Property Name="man" Type="money" Nullable="false" />
+          <Property Name="Active" Type="bit" />
+        </EntityType>
+        <EntityType Name="Form">
+          <Key>
+            <PropertyRef Name="FormId" />
+          </Key>
+          <Property Name="FormId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Title" Type="nvarchar" MaxLength="1000" />
+          <Property Name="NameSpace" Type="nvarchar" MaxLength="1000" />
+          <Property Name="Class" Type="nvarchar" MaxLength="1000" />
+          <Property Name="Description" Type="nvarchar" MaxLength="1000" />
+          <Property Name="v1" Type="bit" />
+          <Property Name="v2" Type="bit" />
+          <Property Name="v3" Type="bit" />
+          <Property Name="v4" Type="bit" />
+          <Property Name="v5" Type="bit" />
+          <Property Name="v6" Type="bit" />
+          <Property Name="v7" Type="bit" />
+          <Property Name="v8" Type="bit" />
+          <Property Name="v9" Type="bit" />
+          <Property Name="v10" Type="bit" />
+        </EntityType>
+        <EntityType Name="Menu">
+          <Key>
+            <PropertyRef Name="MenuID" />
+          </Key>
+          <Property Name="MenuID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="SubSystemID" Type="int" />
+          <Property Name="Text" Type="nvarchar" MaxLength="100" />
+          <Property Name="Description" Type="nvarchar" MaxLength="100" />
+          <Property Name="ParentMenuID" Type="int" />
+          <Property Name="FormID" Type="int" />
+          <Property Name="order" Type="int" />
+          <Property Name="Shortcut" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="SubSystem">
+          <Key>
+            <PropertyRef Name="SubSystemId" />
+          </Key>
+          <Property Name="SubSystemId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="1000" Nullable="false" />
+          <Property Name="Status" Type="int" />
+        </EntityType>
+        <EntityType Name="Version">
+          <Key>
+            <PropertyRef Name="RowID" />
+          </Key>
+          <Property Name="RowID" Type="int" Nullable="false" />
+          <Property Name="VersionName" Type="nvarchar" MaxLength="500" Nullable="false" />
+          <Property Name="Explain" Type="nvarchar(max)" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_act_zirsarfasls_zirsarfasls">
+          <End Role="zirsarfasls" Type="Self.zirsarfasls" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="act_zirsarfasls" Type="Self.act_zirsarfasls" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="zirsarfasls">
+              <PropertyRef Name="rdf" />
+            </Principal>
+            <Dependent Role="act_zirsarfasls">
+              <PropertyRef Name="rdf_zirsarfasls" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Menu_Form">
+          <End Role="Form" Type="Self.Form" Multiplicity="0..1" />
+          <End Role="Menu" Type="Self.Menu" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Form">
+              <PropertyRef Name="FormId" />
+            </Principal>
+            <Dependent Role="Menu">
+              <PropertyRef Name="FormID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_sarfasls_GroupSarfasl">
+          <End Role="GroupSarfasl" Type="Self.GroupSarfasl" Multiplicity="1" />
+          <End Role="sarfasls" Type="Self.sarfasls" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="GroupSarfasl">
+              <PropertyRef Name="GroupSarfaslID" />
+            </Principal>
+            <Dependent Role="sarfasls">
+              <PropertyRef Name="GroupSarfaslID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_zirsarfasls_sarfasls">
+          <End Role="sarfasls" Type="Self.sarfasls" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="zirsarfasls" Type="Self.zirsarfasls" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="sarfasls">
+              <PropertyRef Name="rdf" />
+            </Principal>
+            <Dependent Role="zirsarfasls">
+              <PropertyRef Name="rdf_sarfasl" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Function Name="USP_GetDataForSarfasl" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="FromDate" Type="char" Mode="In" />
+          <Parameter Name="ToDate" Type="char" Mode="In" />
+          <Parameter Name="listGroupSarfasl" Type="nvarchar(max)" Mode="In" />
+          <Parameter Name="listSarfasl" Type="nvarchar(max)" Mode="In" />
+          <Parameter Name="listZirSarfasl" Type="nvarchar(max)" Mode="In" />
+        </Function>
+        <Function Name="USP_GetDataStimulSoft_Sarfasl_ZirSarfasl" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Fromdate" Type="char" Mode="In" />
+          <Parameter Name="Todate" Type="char" Mode="In" />
+          <Parameter Name="SarfaslID" Type="int" Mode="In" />
+          <Parameter Name="ListZirSarfasl" Type="nvarchar(max)" Mode="In" />
+        </Function>
+        <EntityContainer Name="DBModelStoreContainer">
+          <EntitySet Name="act_zirsarfasls" EntityType="Self.act_zirsarfasls" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="GroupSarfasl" EntityType="Self.GroupSarfasl" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="overal_setting" EntityType="Self.overal_setting" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="sarfasls" EntityType="Self.sarfasls" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="zirsarfasls" EntityType="Self.zirsarfasls" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Form" EntityType="Self.Form" Schema="security" store:Type="Tables" />
+          <EntitySet Name="Menu" EntityType="Self.Menu" Schema="security" store:Type="Tables" />
+          <EntitySet Name="SubSystem" EntityType="Self.SubSystem" Schema="security" store:Type="Tables" />
+          <EntitySet Name="Version" EntityType="Self.Version" Schema="security" store:Type="Tables" />
+          <AssociationSet Name="FK_act_zirsarfasls_zirsarfasls" Association="Self.FK_act_zirsarfasls_zirsarfasls">
+            <End Role="zirsarfasls" EntitySet="zirsarfasls" />
+            <End Role="act_zirsarfasls" EntitySet="act_zirsarfasls" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Menu_Form" Association="Self.FK_Menu_Form">
+            <End Role="Form" EntitySet="Form" />
+            <End Role="Menu" EntitySet="Menu" />
+          </AssociationSet>
+          <AssociationSet Name="FK_sarfasls_GroupSarfasl" Association="Self.FK_sarfasls_GroupSarfasl">
+            <End Role="GroupSarfasl" EntitySet="GroupSarfasl" />
+            <End Role="sarfasls" EntitySet="sarfasls" />
+          </AssociationSet>
+          <AssociationSet Name="FK_zirsarfasls_sarfasls" Association="Self.FK_zirsarfasls_sarfasls">
+            <End Role="sarfasls" EntitySet="sarfasls" />
+            <End Role="zirsarfasls" EntitySet="zirsarfasls" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="DBModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="act_zirsarfasls">
+          <Key>
+            <PropertyRef Name="rdf" />
+          </Key>
+          <Property Name="rdf" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="date" Type="String" MaxLength="10" FixedLength="true" Unicode="false" Nullable="false" />
+          <Property Name="rdf_zirsarfasls" Type="Int32" Nullable="false" />
+          <Property Name="dis" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="bed" Type="Decimal" Precision="19" Scale="4" Nullable="false" />
+          <Property Name="bes" Type="Decimal" Precision="19" Scale="4" Nullable="false" />
+          <Property Name="user" Type="String" MaxLength="30" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="bed_bes" Type="String" MaxLength="2" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="manafter" Type="Decimal" Precision="19" Scale="4" Nullable="false" />
+          <Property Name="kind" Type="Int32" />
+          <Property Name="sanadno" Type="Int32" />
+          <NavigationProperty Name="zirsarfasl" Relationship="Self.FK_act_zirsarfasls_zirsarfasls" FromRole="act_zirsarfasls" ToRole="zirsarfasls" />
+        </EntityType>
+        <EntityType Name="overal_setting">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="dis" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="value" Type="Int64" Nullable="false" />
+          <Property Name="Address" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="TabOrder" Type="Int32" />
+          <Property Name="ExternalExplain" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="sarfasl">
+          <Key>
+            <PropertyRef Name="rdf" />
+          </Key>
+          <Property Name="rdf" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="has_dar" Type="String" MaxLength="1" FixedLength="true" Unicode="false" Nullable="false" />
+          <Property Name="who_def" Type="String" MaxLength="25" FixedLength="false" Unicode="false" />
+          <Property Name="start_date" Type="String" MaxLength="10" FixedLength="true" Unicode="false" />
+          <Property Name="Active" Type="Boolean" />
+          <Property Name="GroupSarfaslID" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="zirsarfasls" Relationship="Self.FK_zirsarfasls_sarfasls" FromRole="sarfasls" ToRole="zirsarfasls" />
+          <NavigationProperty Name="GroupSarfasl" Relationship="DBModel.FK_sarfasls_GroupSarfasl" FromRole="sarfasl" ToRole="GroupSarfasl" />
+        </EntityType>
+        <EntityType Name="zirsarfasl">
+          <Key>
+            <PropertyRef Name="rdf" />
+          </Key>
+          <Property Name="rdf" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="radif" Type="Int32" />
+          <Property Name="rdf_sarfasl" Type="Int32" Nullable="false" />
+          <Property Name="name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="has_dar" Type="String" MaxLength="1" FixedLength="true" Unicode="false" Nullable="false" />
+          <Property Name="man" Type="Decimal" Precision="19" Scale="4" Nullable="false" />
+          <Property Name="Active" Type="Boolean" />
+          <NavigationProperty Name="act_zirsarfasls" Relationship="Self.FK_act_zirsarfasls_zirsarfasls" FromRole="zirsarfasls" ToRole="act_zirsarfasls" />
+          <NavigationProperty Name="sarfasl" Relationship="Self.FK_zirsarfasls_sarfasls" FromRole="zirsarfasls" ToRole="sarfasls" />
+        </EntityType>
+        <EntityType Name="Form">
+          <Key>
+            <PropertyRef Name="FormId" />
+          </Key>
+          <Property Name="FormId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Title" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="NameSpace" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="Class" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="v1" Type="Boolean" />
+          <Property Name="v2" Type="Boolean" />
+          <Property Name="v3" Type="Boolean" />
+          <Property Name="v4" Type="Boolean" />
+          <Property Name="v5" Type="Boolean" />
+          <Property Name="v6" Type="Boolean" />
+          <Property Name="v7" Type="Boolean" />
+          <Property Name="v8" Type="Boolean" />
+          <Property Name="v9" Type="Boolean" />
+          <Property Name="v10" Type="Boolean" />
+          <NavigationProperty Name="Menus" Relationship="Self.FK_Menu_Form" FromRole="Form" ToRole="Menu" />
+        </EntityType>
+        <EntityType Name="Menu">
+          <Key>
+            <PropertyRef Name="MenuID" />
+          </Key>
+          <Property Name="MenuID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SubSystemID" Type="Int32" />
+          <Property Name="Text" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ParentMenuID" Type="Int32" />
+          <Property Name="FormID" Type="Int32" />
+          <Property Name="order" Type="Int32" />
+          <Property Name="Shortcut" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Form" Relationship="Self.FK_Menu_Form" FromRole="Menu" ToRole="Form" />
+        </EntityType>
+        <EntityType Name="SubSystem">
+          <Key>
+            <PropertyRef Name="SubSystemId" />
+          </Key>
+          <Property Name="SubSystemId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Status" Type="Int32" />
+        </EntityType>
+        <EntityType Name="Version">
+          <Key>
+            <PropertyRef Name="RowID" />
+          </Key>
+          <Property Name="RowID" Type="Int32" Nullable="false" />
+          <Property Name="VersionName" Type="String" MaxLength="500" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Explain" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_act_zirsarfasls_zirsarfasls">
+          <End Role="zirsarfasls" Type="Self.zirsarfasl" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="act_zirsarfasls" Type="Self.act_zirsarfasls" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="zirsarfasls">
+              <PropertyRef Name="rdf" />
+            </Principal>
+            <Dependent Role="act_zirsarfasls">
+              <PropertyRef Name="rdf_zirsarfasls" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_zirsarfasls_sarfasls">
+          <End Role="sarfasls" Type="Self.sarfasl" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="zirsarfasls" Type="Self.zirsarfasl" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="sarfasls">
+              <PropertyRef Name="rdf" />
+            </Principal>
+            <Dependent Role="zirsarfasls">
+              <PropertyRef Name="rdf_sarfasl" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Menu_Form">
+          <End Role="Form" Type="Self.Form" Multiplicity="0..1" />
+          <End Role="Menu" Type="Self.Menu" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Form">
+              <PropertyRef Name="FormId" />
+            </Principal>
+            <Dependent Role="Menu">
+              <PropertyRef Name="FormID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="DBEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="act_zirsarfasls" EntityType="Self.act_zirsarfasls" />
+          <EntitySet Name="overal_setting" EntityType="Self.overal_setting" />
+          <EntitySet Name="sarfasls" EntityType="Self.sarfasl" />
+          <EntitySet Name="zirsarfasls" EntityType="Self.zirsarfasl" />
+          <EntitySet Name="Forms" EntityType="Self.Form" />
+          <EntitySet Name="Menus" EntityType="Self.Menu" />
+          <EntitySet Name="SubSystems" EntityType="Self.SubSystem" />
+          <EntitySet Name="Versions" EntityType="Self.Version" />
+          <AssociationSet Name="FK_act_zirsarfasls_zirsarfasls" Association="Self.FK_act_zirsarfasls_zirsarfasls">
+            <End Role="zirsarfasls" EntitySet="zirsarfasls" />
+            <End Role="act_zirsarfasls" EntitySet="act_zirsarfasls" />
+          </AssociationSet>
+          <AssociationSet Name="FK_zirsarfasls_sarfasls" Association="Self.FK_zirsarfasls_sarfasls">
+            <End Role="sarfasls" EntitySet="sarfasls" />
+            <End Role="zirsarfasls" EntitySet="zirsarfasls" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Menu_Form" Association="Self.FK_Menu_Form">
+            <End Role="Form" EntitySet="Forms" />
+            <End Role="Menu" EntitySet="Menus" />
+          </AssociationSet>
+          <FunctionImport Name="USP_GetDataForSarfasl" ReturnType="Collection(DBModel.USP_GetDataForSarfasl_Result)">
+            <Parameter Name="FromDate" Mode="In" Type="String" />
+            <Parameter Name="ToDate" Mode="In" Type="String" />
+            <Parameter Name="listGroupSarfasl" Mode="In" Type="String" />
+            <Parameter Name="listSarfasl" Mode="In" Type="String" />
+            <Parameter Name="listZirSarfasl" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="USP_GetDataStimulSoft_Sarfasl_ZirSarfasl" ReturnType="Collection(DBModel.USP_GetDataStimulSoft_Sarfasl_ZirSarfasl_Result)">
+            <Parameter Name="Fromdate" Mode="In" Type="String" />
+            <Parameter Name="Todate" Mode="In" Type="String" />
+            <Parameter Name="SarfaslID" Mode="In" Type="Int32" />
+            <Parameter Name="ListZirSarfasl" Mode="In" Type="String" />
+          </FunctionImport>
+          <EntitySet Name="GroupSarfasls" EntityType="DBModel.GroupSarfasl" />
+          <AssociationSet Name="FK_sarfasls_GroupSarfasl" Association="DBModel.FK_sarfasls_GroupSarfasl">
+            <End Role="GroupSarfasl" EntitySet="GroupSarfasls" />
+            <End Role="sarfasl" EntitySet="sarfasls" />
+          </AssociationSet>
+        </EntityContainer>
+        <ComplexType Name="USP_GetDataForSarfasl_Result">
+          <Property Type="Int32" Name="ZID" Nullable="false" />
+          <Property Type="Int32" Name="ZSarfaslID" Nullable="false" />
+          <Property Type="String" Name="ZName" Nullable="true" />
+          <Property Type="String" Name="Zhas_dar" Nullable="true" MaxLength="1" />
+          <Property Type="Boolean" Name="ZActive" Nullable="true" />
+          <Property Type="Int32" Name="SID" Nullable="false" />
+          <Property Type="String" Name="SName" Nullable="true" />
+          <Property Type="String" Name="Shas_dar" Nullable="true" MaxLength="1" />
+          <Property Type="String" Name="Swho_def" Nullable="true" MaxLength="25" />
+          <Property Type="Boolean" Name="SActive" Nullable="true" />
+          <Property Type="Int32" Name="SGroupSarfaslID" Nullable="false" />
+          <Property Type="Decimal" Name="ZMan" Nullable="true" Precision="18" Scale="0" />
+          <Property Type="Decimal" Name="Zbed" Nullable="true" Precision="18" Scale="0" />
+          <Property Type="Decimal" Name="Zbes" Nullable="true" Precision="18" Scale="0" />
+          <Property Type="Int32" Name="zID1" Nullable="true" />
+          <Property Type="Decimal" Name="ZMan_All" Nullable="true" Precision="18" Scale="0" />
+          <Property Type="Int32" Name="sID2" Nullable="true" />
+          <Property Type="Decimal" Name="SMan_All" Nullable="true" Precision="18" Scale="0" />
+          <Property Type="Int32" Name="sID1" Nullable="true" />
+          <Property Type="Decimal" Name="SMan" Nullable="true" Precision="18" Scale="0" />
+          <Property Type="Decimal" Name="Sbed" Nullable="true" Precision="18" Scale="0" />
+          <Property Type="Decimal" Name="Sbes" Nullable="true" Precision="18" Scale="0" />
+        </ComplexType>
+        <ComplexType Name="USP_GetDataStimulSoft_Sarfasl_ZirSarfasl_Result">
+          <Property Type="Int32" Name="rdf" Nullable="false" />
+          <Property Type="Int32" Name="sanadno" Nullable="true" />
+          <Property Type="Int32" Name="kind" Nullable="true" />
+          <Property Type="String" Name="date" Nullable="false" MaxLength="10" />
+          <Property Type="Int32" Name="rdfsarfasl" Nullable="false" />
+          <Property Type="Int32" Name="rdfzirsarfasl" Nullable="false" />
+          <Property Type="String" Name="dis" Nullable="false" />
+          <Property Type="Decimal" Name="bed" Nullable="false" Precision="19" />
+          <Property Type="Decimal" Name="bes" Nullable="false" Precision="19" />
+          <Property Type="String" Name="bed_bes" Nullable="false" MaxLength="2" />
+          <Property Type="String" Name="NameSarfasl" Nullable="false" />
+          <Property Type="String" Name="NameZirsarfasl" Nullable="false" />
+          <Property Type="String" Name="user" Nullable="false" MaxLength="30" />
+          <Property Type="Decimal" Name="bed_gh" Nullable="false" Precision="19" />
+          <Property Type="Decimal" Name="bes_gh" Nullable="false" Precision="19" />
+        </ComplexType>
+        <EntityType Name="GroupSarfasl">
+          <Key>
+            <PropertyRef Name="GroupSarfaslID" />
+          </Key>
+          <Property Name="GroupSarfaslID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="GroupSarfaslName" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="Active" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="sarfasls" Relationship="DBModel.FK_sarfasls_GroupSarfasl" FromRole="GroupSarfasl" ToRole="sarfasl" />
+        </EntityType>
+        <Association Name="FK_sarfasls_GroupSarfasl">
+          <End Type="DBModel.GroupSarfasl" Role="GroupSarfasl" Multiplicity="1" />
+          <End Type="DBModel.sarfasl" Role="sarfasl" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="GroupSarfasl">
+              <PropertyRef Name="GroupSarfaslID" />
+            </Principal>
+            <Dependent Role="sarfasl">
+              <PropertyRef Name="GroupSarfaslID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="DBModelStoreContainer" CdmEntityContainer="DBEntities">
+          <EntitySetMapping Name="act_zirsarfasls">
+            <EntityTypeMapping TypeName="DBModel.act_zirsarfasls">
+              <MappingFragment StoreEntitySet="act_zirsarfasls">
+                <ScalarProperty Name="rdf" ColumnName="rdf" />
+                <ScalarProperty Name="date" ColumnName="date" />
+                <ScalarProperty Name="rdf_zirsarfasls" ColumnName="rdf_zirsarfasls" />
+                <ScalarProperty Name="dis" ColumnName="dis" />
+                <ScalarProperty Name="bed" ColumnName="bed" />
+                <ScalarProperty Name="bes" ColumnName="bes" />
+                <ScalarProperty Name="user" ColumnName="user" />
+                <ScalarProperty Name="bed_bes" ColumnName="bed_bes" />
+                <ScalarProperty Name="manafter" ColumnName="manafter" />
+                <ScalarProperty Name="kind" ColumnName="kind" />
+                <ScalarProperty Name="sanadno" ColumnName="sanadno" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="overal_setting">
+            <EntityTypeMapping TypeName="DBModel.overal_setting">
+              <MappingFragment StoreEntitySet="overal_setting">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="dis" ColumnName="dis" />
+                <ScalarProperty Name="value" ColumnName="value" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="TabOrder" ColumnName="TabOrder" />
+                <ScalarProperty Name="ExternalExplain" ColumnName="ExternalExplain" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="sarfasls">
+            <EntityTypeMapping TypeName="DBModel.sarfasl">
+              <MappingFragment StoreEntitySet="sarfasls">
+                <ScalarProperty Name="rdf" ColumnName="rdf" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="has_dar" ColumnName="has_dar" />
+                <ScalarProperty Name="who_def" ColumnName="who_def" />
+                <ScalarProperty Name="start_date" ColumnName="start_date" />
+                <ScalarProperty Name="Active" ColumnName="Active" />
+                <ScalarProperty Name="GroupSarfaslID" ColumnName="GroupSarfaslID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="zirsarfasls">
+            <EntityTypeMapping TypeName="DBModel.zirsarfasl">
+              <MappingFragment StoreEntitySet="zirsarfasls">
+                <ScalarProperty Name="rdf" ColumnName="rdf" />
+                <ScalarProperty Name="radif" ColumnName="radif" />
+                <ScalarProperty Name="rdf_sarfasl" ColumnName="rdf_sarfasl" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="has_dar" ColumnName="has_dar" />
+                <ScalarProperty Name="man" ColumnName="man" />
+                <ScalarProperty Name="Active" ColumnName="Active" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Forms">
+            <EntityTypeMapping TypeName="DBModel.Form">
+              <MappingFragment StoreEntitySet="Form">
+                <ScalarProperty Name="FormId" ColumnName="FormId" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="NameSpace" ColumnName="NameSpace" />
+                <ScalarProperty Name="Class" ColumnName="Class" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="v1" ColumnName="v1" />
+                <ScalarProperty Name="v2" ColumnName="v2" />
+                <ScalarProperty Name="v3" ColumnName="v3" />
+                <ScalarProperty Name="v4" ColumnName="v4" />
+                <ScalarProperty Name="v5" ColumnName="v5" />
+                <ScalarProperty Name="v6" ColumnName="v6" />
+                <ScalarProperty Name="v7" ColumnName="v7" />
+                <ScalarProperty Name="v8" ColumnName="v8" />
+                <ScalarProperty Name="v9" ColumnName="v9" />
+                <ScalarProperty Name="v10" ColumnName="v10" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Menus">
+            <EntityTypeMapping TypeName="DBModel.Menu">
+              <MappingFragment StoreEntitySet="Menu">
+                <ScalarProperty Name="MenuID" ColumnName="MenuID" />
+                <ScalarProperty Name="SubSystemID" ColumnName="SubSystemID" />
+                <ScalarProperty Name="Text" ColumnName="Text" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="ParentMenuID" ColumnName="ParentMenuID" />
+                <ScalarProperty Name="FormID" ColumnName="FormID" />
+                <ScalarProperty Name="order" ColumnName="order" />
+                <ScalarProperty Name="Shortcut" ColumnName="Shortcut" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SubSystems">
+            <EntityTypeMapping TypeName="DBModel.SubSystem">
+              <MappingFragment StoreEntitySet="SubSystem">
+                <ScalarProperty Name="SubSystemId" ColumnName="SubSystemId" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Versions">
+            <EntityTypeMapping TypeName="DBModel.Version">
+              <MappingFragment StoreEntitySet="Version">
+                <ScalarProperty Name="RowID" ColumnName="RowID" />
+                <ScalarProperty Name="VersionName" ColumnName="VersionName" />
+                <ScalarProperty Name="Explain" ColumnName="Explain" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="USP_GetDataForSarfasl" FunctionName="DBModel.Store.USP_GetDataForSarfasl">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="DBModel.USP_GetDataForSarfasl_Result">
+                <ScalarProperty Name="ZID" ColumnName="ZID" />
+                <ScalarProperty Name="ZSarfaslID" ColumnName="ZSarfaslID" />
+                <ScalarProperty Name="ZName" ColumnName="ZName" />
+                <ScalarProperty Name="Zhas_dar" ColumnName="Zhas_dar" />
+                <ScalarProperty Name="ZActive" ColumnName="ZActive" />
+                <ScalarProperty Name="SID" ColumnName="SID" />
+                <ScalarProperty Name="SName" ColumnName="SName" />
+                <ScalarProperty Name="Shas_dar" ColumnName="Shas_dar" />
+                <ScalarProperty Name="Swho_def" ColumnName="Swho_def" />
+                <ScalarProperty Name="SActive" ColumnName="SActive" />
+                <ScalarProperty Name="SGroupSarfaslID" ColumnName="SGroupSarfaslID" />
+                <ScalarProperty Name="ZMan" ColumnName="ZMan" />
+                <ScalarProperty Name="Zbed" ColumnName="Zbed" />
+                <ScalarProperty Name="Zbes" ColumnName="Zbes" />
+                <ScalarProperty Name="zID1" ColumnName="zID1" />
+                <ScalarProperty Name="ZMan_All" ColumnName="ZMan_All" />
+                <ScalarProperty Name="sID2" ColumnName="sID2" />
+                <ScalarProperty Name="SMan_All" ColumnName="SMan_All" />
+                <ScalarProperty Name="sID1" ColumnName="sID1" />
+                <ScalarProperty Name="SMan" ColumnName="SMan" />
+                <ScalarProperty Name="Sbed" ColumnName="Sbed" />
+                <ScalarProperty Name="Sbes" ColumnName="Sbes" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="USP_GetDataStimulSoft_Sarfasl_ZirSarfasl" FunctionName="DBModel.Store.USP_GetDataStimulSoft_Sarfasl_ZirSarfasl">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="DBModel.USP_GetDataStimulSoft_Sarfasl_ZirSarfasl_Result">
+                <ScalarProperty Name="rdf" ColumnName="rdf" />
+                <ScalarProperty Name="sanadno" ColumnName="sanadno" />
+                <ScalarProperty Name="kind" ColumnName="kind" />
+                <ScalarProperty Name="date" ColumnName="date" />
+                <ScalarProperty Name="rdfsarfasl" ColumnName="rdfsarfasl" />
+                <ScalarProperty Name="rdfzirsarfasl" ColumnName="rdfzirsarfasl" />
+                <ScalarProperty Name="dis" ColumnName="dis" />
+                <ScalarProperty Name="bed" ColumnName="bed" />
+                <ScalarProperty Name="bes" ColumnName="bes" />
+                <ScalarProperty Name="bed_bes" ColumnName="bed_bes" />
+                <ScalarProperty Name="NameSarfasl" ColumnName="NameSarfasl" />
+                <ScalarProperty Name="NameZirsarfasl" ColumnName="NameZirsarfasl" />
+                <ScalarProperty Name="user" ColumnName="user" />
+                <ScalarProperty Name="bed_gh" ColumnName="bed_gh" />
+                <ScalarProperty Name="bes_gh" ColumnName="bes_gh" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <EntitySetMapping Name="GroupSarfasls">
+            <EntityTypeMapping TypeName="DBModel.GroupSarfasl">
+              <MappingFragment StoreEntitySet="GroupSarfasl">
+                <ScalarProperty Name="Active" ColumnName="Active" />
+                <ScalarProperty Name="GroupSarfaslName" ColumnName="GroupSarfaslName" />
+                <ScalarProperty Name="GroupSarfaslID" ColumnName="GroupSarfaslID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

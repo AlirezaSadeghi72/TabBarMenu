@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.27428.2043
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Atiran.MenuBar", "Atiran.MenuBar\Atiran.MenuBar.csproj", "{BDAFDACD-9085-4E39-B0AC-A67C7FA6ACD4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Atiran.DataLayer", "Atiran.DataLayer\Atiran.DataLayer.csproj", "{53F8991E-065C-408C-886B-66133F5C8268}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{BDAFDACD-9085-4E39-B0AC-A67C7FA6ACD4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BDAFDACD-9085-4E39-B0AC-A67C7FA6ACD4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BDAFDACD-9085-4E39-B0AC-A67C7FA6ACD4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{53F8991E-065C-408C-886B-66133F5C8268}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{53F8991E-065C-408C-886B-66133F5C8268}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{53F8991E-065C-408C-886B-66133F5C8268}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{53F8991E-065C-408C-886B-66133F5C8268}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
