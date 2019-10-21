@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Atiran.MenuBar", "Atiran.Me
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Atiran.DataLayer", "Atiran.DataLayer\Atiran.DataLayer.csproj", "{53F8991E-065C-408C-886B-66133F5C8268}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Atiran.Utility", "Atiran.Utility\Atiran.Utility.csproj", "{B4367824-F71B-46AC-B939-3352A757582C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{53F8991E-065C-408C-886B-66133F5C8268}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{53F8991E-065C-408C-886B-66133F5C8268}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{53F8991E-065C-408C-886B-66133F5C8268}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B4367824-F71B-46AC-B939-3352A757582C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B4367824-F71B-46AC-B939-3352A757582C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B4367824-F71B-46AC-B939-3352A757582C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B4367824-F71B-46AC-B939-3352A757582C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

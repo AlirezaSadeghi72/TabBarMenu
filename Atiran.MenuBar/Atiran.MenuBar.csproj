@@ -77,6 +77,10 @@
       <Project>{53f8991e-065c-408c-886b-66133f5c8268}</Project>
       <Name>Atiran.DataLayer</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Atiran.Utility\Atiran.Utility.csproj">
+      <Project>{b4367824-f71b-46ac-b939-3352a757582c}</Project>
+      <Name>Atiran.Utility</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
