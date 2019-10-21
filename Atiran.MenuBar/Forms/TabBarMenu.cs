@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Windows.Forms;
 using Atiran.DataLayer.Context;
 using Atiran.DataLayer.Model;
@@ -20,7 +21,7 @@ namespace Atiran.MenuBar.Forms
         private Panel pnlFooter;
         private Panel pnlMain;
         private MenuStrip MyMnSt;
-        private System.Windows.Forms.CustomTabControl MainTab;
+        private CustomTabControl MainTab;
         private TabPage tabPage1;
         List<SubSystem> subSystems = new List<SubSystem>();
         //private Image CloseImage = Resources.close_button;
@@ -77,9 +78,9 @@ namespace Atiran.MenuBar.Forms
             this.pnlMainButtons = new System.Windows.Forms.Panel();
             this.pnlFooter = new System.Windows.Forms.Panel();
             this.pnlMain = new System.Windows.Forms.Panel();
+            this.MyMnSt = new System.Windows.Forms.MenuStrip();
             this.MainTab = new System.Windows.Forms.CustomTabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.MyMnSt = new System.Windows.Forms.MenuStrip();
             this.pnlMain.SuspendLayout();
             this.MainTab.SuspendLayout();
             this.SuspendLayout();
@@ -114,10 +115,21 @@ namespace Atiran.MenuBar.Forms
             this.pnlMain.Size = new System.Drawing.Size(1200, 502);
             this.pnlMain.TabIndex = 3;
             // 
+            // MyMnSt
+            // 
+            this.MyMnSt.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(130)))), ((int)(((byte)(150)))));
+            this.MyMnSt.Font = new System.Drawing.Font("IRANSans(FaNum)", 8.249999F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(178)));
+            this.MyMnSt.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.Flow;
+            this.MyMnSt.Location = new System.Drawing.Point(0, 38);
+            this.MyMnSt.Name = "MyMnSt";
+            this.MyMnSt.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.MyMnSt.Size = new System.Drawing.Size(1200, 4);
+            this.MyMnSt.TabIndex = 4;
+            // 
             // MainTab
             // 
             this.MainTab.Controls.Add(this.tabPage1);
-            this.MainTab.DisplayStyle = System.Windows.Forms.TabStyle.Alireza;
+            this.MainTab.DisplayStyle = System.Windows.Forms.TabStyle.Chrome;
             // 
             // 
             // 
@@ -138,12 +150,11 @@ namespace Atiran.MenuBar.Forms
             this.MainTab.DisplayStyleProvider.TextColorDisabled = System.Drawing.SystemColors.ControlDark;
             this.MainTab.DisplayStyleProvider.TextColorSelected = System.Drawing.SystemColors.ControlText;
             this.MainTab.HotTrack = true;
-            this.MainTab.Location = new System.Drawing.Point(130, 56);
+            this.MainTab.Location = new System.Drawing.Point(442, 98);
             this.MainTab.Name = "MainTab";
             this.MainTab.RightToLeftLayout = true;
             this.MainTab.SelectedIndex = 0;
-            this.MainTab.ShowToolTips = true;
-            this.MainTab.Size = new System.Drawing.Size(472, 299);
+            this.MainTab.Size = new System.Drawing.Size(452, 171);
             this.MainTab.TabIndex = 0;
             // 
             // tabPage1
@@ -151,21 +162,10 @@ namespace Atiran.MenuBar.Forms
             this.tabPage1.Location = new System.Drawing.Point(4, 33);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(464, 262);
+            this.tabPage1.Size = new System.Drawing.Size(444, 134);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "tabPage1";
             this.tabPage1.UseVisualStyleBackColor = true;
-            // 
-            // MyMnSt
-            // 
-            this.MyMnSt.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(130)))), ((int)(((byte)(150)))));
-            this.MyMnSt.Font = new System.Drawing.Font("IRANSans(FaNum)", 8.249999F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(178)));
-            this.MyMnSt.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.Flow;
-            this.MyMnSt.Location = new System.Drawing.Point(0, 38);
-            this.MyMnSt.Name = "MyMnSt";
-            this.MyMnSt.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.MyMnSt.Size = new System.Drawing.Size(1200, 4);
-            this.MyMnSt.TabIndex = 4;
             // 
             // TabBarMenu
             // 
@@ -372,19 +372,66 @@ namespace Atiran.MenuBar.Forms
         {
             string Namespace = "Atiran.Reporting.BankAndChek.ChekPardakhti";
             string Class = "ReportChekhayePardakhti";
-            Label lbl = new Label()
-            {
-                Text = name,
-                Dock = DockStyle.Bottom
-            };
+            string typeName = Namespace + "." + Class;
+            //var control = this.GetType().Assembly.CreateInstance(typeName);
+
+            var control = (Control) GetObjectFromString(typeName);
+            control.Dock = DockStyle.Fill;
+
+            //Label lbl = new Label()
+            //{
+            //    Text = name,
+            //    Dock = DockStyle.Bottom
+            //};
+
             MainTab.TabPages.Add(name, text);
             int intextTab = MainTab.TabPages.Count - 1;
             MainTab.SelectTab(intextTab);
 
             var tabpage = MainTab.TabPages[intextTab];
             tabpage.BackColor = Color.White;
-            tabpage.Controls.Add(lbl);
+            tabpage.Controls.Add(control);
         }
+
+
+        private object GetObjectFromString(string str)
+        {
+            var arrStr = str.Split('.');
+            Assembly assembly = Assembly.Load(arrStr[0]+"."+arrStr[1]);
+            return assembly.CreateInstance(str);
+        }
+
+        //public object GetInstance(string strFullyQualifiedName)
+        //{
+        //    Type type = Type.GetType(strFullyQualifiedName);
+        //    if (type != null)
+        //        return Activator.CreateInstance(type);
+        //    foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
+        //    {
+        //        type = asm.GetType(strFullyQualifiedName);
+        //        if (type != null)
+        //            return Activator.CreateInstance(type);
+        //    }
+        //    return null;
+        //}
+        //public Control GetControlFromString(string @NameSpase, string @Class)
+        //{
+        //    var theAssembly = (
+        //            from Assembly assembly in AppDomain.CurrentDomain.GetAssemblies()
+        //            where (assembly.FullName == @NameSpase)
+        //            select assembly
+        //        )
+        //        .FirstOrDefault();
+
+        //    if (theAssembly != null)
+        //    {
+        //        Type theType = theAssembly.GetType(@Class);
+        //        var theInstance = (Control)Activator.CreateInstance(theType);
+        //        theInstance.Dock = DockStyle.Fill;
+        //        return theInstance;
+        //    }
+        //    return null;
+        //}
 
 
         #endregion
