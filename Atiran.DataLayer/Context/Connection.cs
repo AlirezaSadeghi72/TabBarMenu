@@ -15,7 +15,9 @@ namespace Atiran.DataLayer.Context
         private static VersionName ProgramVersion;
         public static List<Menu> ResultAllMenu;
         public static List<SubSystem> ResultAllSubSystem;
-
+        //Alireza 30/07
+        private static List<int> HideMenu;
+        //-----
         public enum VersionName
         {
             ForshgahiNoskheKamelTakLine = 1,
@@ -26,15 +28,21 @@ namespace Atiran.DataLayer.Context
             OmdeForoshSonatiChandLine = 6,
         }
 
-        public static void SetMenu()
+        public static void SetMenu() // Alireza 30/07
         {
+            GetVersion();
+            GetHideMenu();
             using (var ctx = new DBEntities())
             {
-                ResultAllMenu = ctx.Menus.Where(m => ((ProgramVersion == Connection.VersionName.ForshgahiNoskheKamelTakLine ? m.Form.v1 == true : ProgramVersion == Connection.VersionName.OmdeForoshSonatiTakLine ? m.Form.v2 == true : ProgramVersion == Connection.VersionName.MooyragiTakLine ? m.Form.v3 == true : ProgramVersion == Connection.VersionName.MooyragiChandLine ? m.Form.v4 == true : ProgramVersion == Connection.VersionName.ForshgahiNoskheKamelChandLine ? m.Form.v5 == true : ProgramVersion == Connection.VersionName.OmdeForoshSonatiChandLine ? m.Form.v6 == true : 1 == 1) || m.FormID == null ) && m.SubSystemID != null &&(ctx.Menus.Any(m1=>m1.ParentMenuID == m.MenuID) || m.FormID != null)).ToList();
-                ResultAllSubSystem = ctx.SubSystems.ToList();
+                ResultAllMenu = ctx.Menus.Where(m => ((ProgramVersion == Connection.VersionName.ForshgahiNoskheKamelTakLine ? m.Form.v1 == true : ProgramVersion == Connection.VersionName.OmdeForoshSonatiTakLine ? m.Form.v2 == true : ProgramVersion == Connection.VersionName.MooyragiTakLine ? m.Form.v3 == true :
+                  ProgramVersion == Connection.VersionName.MooyragiChandLine ? m.Form.v4 == true :
+                  ProgramVersion == Connection.VersionName.ForshgahiNoskheKamelChandLine ? m.Form.v5 == true :
+                  ProgramVersion == Connection.VersionName.OmdeForoshSonatiChandLine ? m.Form.v6 == true :
+                  1 == 1) || m.FormID == null) && (m.SubSystemID != null && ctx.Menus.Any(m1 => m1.ParentMenuID == m.MenuID)) || m.FormID != null).ToList();
+                ResultAllSubSystem = ctx.SubSystems.Where(m => (!HideMenu.Contains(m.SubSystemId))).ToList();
             }
         }
-        public static void GetVersion()
+        private static void GetVersion()
         {
             using (var ctx = new DBEntities())
             {
@@ -42,6 +50,15 @@ namespace Atiran.DataLayer.Context
                 ProgramVersion = (VersionName)vCode;
             }
         }
+        //Alireza 30/07
+        private static void GetHideMenu()
+        {
+            using (var ctx = new DBEntities())
+            {
+                HideMenu = ctx.overal_setting.Where(o => new List<int> { 74, 75, 76, 88, 126 }.Contains(o.id) && o.value == 0).Select(o=>o.id==74?5: o.id == 75 ? 6 : o.id == 76 ? 10 : o.id == 88 ? 9 : 14).ToList();
+            }
+        }
+        //-----
 
         #endregion
 

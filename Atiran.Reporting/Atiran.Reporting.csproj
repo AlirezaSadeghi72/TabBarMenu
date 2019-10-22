@@ -52,5 +52,11 @@
       <DependentUpon>ReportChekhayePardakhti.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Atiran.Utility\Atiran.Utility.csproj">
+      <Project>{b4367824-f71b-46ac-b939-3352a757582c}</Project>
+      <Name>Atiran.Utility</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

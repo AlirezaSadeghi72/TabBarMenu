@@ -13,9 +13,6 @@ namespace Atiran.MenuBar.Forms
 {
     public class TabBarMenu : System.Windows.Forms.Form
     {
-        const int LEADING_SPACE = 12;
-        const int CLOSE_SPACE = 15;
-        const int CLOSE_AREA = 15;
         private Panel pnlMainButtons;
         List<Menu> menus = new List<Menu>();
         private Panel pnlFooter;
@@ -29,7 +26,7 @@ namespace Atiran.MenuBar.Forms
         public TabBarMenu()
         {
             InitializeComponent();
-            Connection.GetVersion();
+            //Connection.GetVersion();
             Connection.SetMenu();
             this.menus = Connection.ResultAllMenu;
             this.subSystems = Connection.ResultAllSubSystem;
@@ -37,9 +34,6 @@ namespace Atiran.MenuBar.Forms
 
             MainTab.Dock = DockStyle.Fill;
             MainTab.TabPages.Clear();
-            //MainTab.DisplayStyleProvider = new TabStyleAli(MainTab);
-            //this.MainTab.Padding = new Point(12, 4);
-            //this.MainTab.DrawMode = TabDrawMode.OwnerDrawFixed;
 
         }
 
@@ -273,9 +267,14 @@ namespace Atiran.MenuBar.Forms
             //MessageBox.Show("The Form whit Id " +
             //                ((MyTag)((ToolStripItem)sender).Tag).FormId +
             //                " has been hitted!");
-            AddTab(((ToolStripItem)sender).Text, "tab" + ((MyTag)((ToolStripItem)sender).Tag).FormId);
+
             //((MyTag)((ToolStripItem)sender).Tag).
             //string typeName = mb.self.Form.NameSpace + "." + mb.self.Form.Class;
+            string Namespace = "Atiran.Reporting.BankAndChek.ChekPardakhti";
+            string Class = "ReportChekhayePardakhti";
+            string typeName = Namespace + "." + Class;
+            AddTab(((ToolStripItem)sender).Text, "tab" + ((MyTag)((ToolStripItem)sender).Tag).FormId , typeName);
+
         }
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
@@ -368,14 +367,9 @@ namespace Atiran.MenuBar.Forms
 
         #region Method
 
-        private void AddTab(string text, string name)
+        private void AddTab(string text, string name , string typeName)
         {
-            string Namespace = "Atiran.Reporting.BankAndChek.ChekPardakhti";
-            string Class = "ReportChekhayePardakhti";
-            string typeName = Namespace + "." + Class;
-            //var control = this.GetType().Assembly.CreateInstance(typeName);
-
-            var control = (Control) GetObjectFromString(typeName);
+            var control = (Control)GetObjectFromString(typeName);
             control.Dock = DockStyle.Fill;
 
             //Label lbl = new Label()
@@ -396,44 +390,18 @@ namespace Atiran.MenuBar.Forms
 
         private object GetObjectFromString(string str)
         {
+            //Assembly assembly = AppDomain.CurrentDomain.GetAssemblies().Where(a => a.CreateInstance(str) != null)
+            //    .FirstOrDefault();
             var arrStr = str.Split('.');
-            Assembly assembly = Assembly.Load(arrStr[0]+"."+arrStr[1]);
-            return assembly.CreateInstance(str);
+            Assembly assembly = Assembly.Load(arrStr[0]+"."+ arrStr[1]);
+            if (assembly != null)
+            {
+                return assembly.CreateInstance(str);
+            }
+
+            return new Control();
         }
-
-        //public object GetInstance(string strFullyQualifiedName)
-        //{
-        //    Type type = Type.GetType(strFullyQualifiedName);
-        //    if (type != null)
-        //        return Activator.CreateInstance(type);
-        //    foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
-        //    {
-        //        type = asm.GetType(strFullyQualifiedName);
-        //        if (type != null)
-        //            return Activator.CreateInstance(type);
-        //    }
-        //    return null;
-        //}
-        //public Control GetControlFromString(string @NameSpase, string @Class)
-        //{
-        //    var theAssembly = (
-        //            from Assembly assembly in AppDomain.CurrentDomain.GetAssemblies()
-        //            where (assembly.FullName == @NameSpase)
-        //            select assembly
-        //        )
-        //        .FirstOrDefault();
-
-        //    if (theAssembly != null)
-        //    {
-        //        Type theType = theAssembly.GetType(@Class);
-        //        var theInstance = (Control)Activator.CreateInstance(theType);
-        //        theInstance.Dock = DockStyle.Fill;
-        //        return theInstance;
-        //    }
-        //    return null;
-        //}
-
-
+        
         #endregion
 
         #region handler Close Butten In Header TabPage

@@ -11,6 +11,7 @@ namespace Atiran.Reporting.BankAndChek.ChekPardakhti
     {
         private Button button1;
         private GroupBox groupBox1;
+        private Button btnCancel;
         private CheckBox checkBox1;
 
         public ReportChekhayePardakhti()
@@ -23,6 +24,7 @@ namespace Atiran.Reporting.BankAndChek.ChekPardakhti
             this.button1 = new System.Windows.Forms.Button();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.btnCancel = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -43,7 +45,7 @@ namespace Atiran.Reporting.BankAndChek.ChekPardakhti
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(131, 257);
+            this.checkBox1.Location = new System.Drawing.Point(146, 117);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(80, 17);
             this.checkBox1.TabIndex = 1;
@@ -52,6 +54,7 @@ namespace Atiran.Reporting.BankAndChek.ChekPardakhti
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.btnCancel);
             this.groupBox1.Controls.Add(this.button1);
             this.groupBox1.Controls.Add(this.checkBox1);
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -62,6 +65,16 @@ namespace Atiran.Reporting.BankAndChek.ChekPardakhti
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "groupBox1";
             // 
+            // btnCancel
+            // 
+            this.btnCancel.Location = new System.Drawing.Point(6, 19);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(75, 23);
+            this.btnCancel.TabIndex = 2;
+            this.btnCancel.Text = "انصراف";
+            this.btnCancel.UseVisualStyleBackColor = true;
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            // 
             // ReportChekhayePardakhti
             // 
             this.Controls.Add(this.groupBox1);
@@ -71,6 +84,12 @@ namespace Atiran.Reporting.BankAndChek.ChekPardakhti
             this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
 
+        }
+
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            CustomTabControl ali = ((Form) this.TopLevelControl).Controls.Find("MainTab",true).FirstOrDefault() as CustomTabControl;
+            ali.TabPages.Remove(ali.SelectedTab);
         }
     }
 }
