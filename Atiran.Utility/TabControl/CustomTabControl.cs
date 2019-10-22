@@ -92,6 +92,7 @@ namespace System.Windows.Forms
 
         #region Private variables
 
+        public int selecti = -2;
         private Bitmap _BackImage;
         private Bitmap _BackBuffer;
         private Graphics _BackBufferGraphics;
@@ -440,6 +441,13 @@ namespace System.Windows.Forms
 
         #region Drag 'n' Drop
 
+        protected override void OnMouseEnter(EventArgs e)
+        {
+            selecti = this.SelectedIndex;
+
+            base.OnMouseEnter(e);
+        }
+
         protected override void OnMouseDown(MouseEventArgs e)
         {
             base.OnMouseDown(e);
@@ -672,11 +680,27 @@ namespace System.Windows.Forms
 
         protected override void OnControlRemoved(ControlEventArgs e)
         {
+            //bool isAli = false;
+            //if (selecti == -2)
+            //{
+            //    selecti = this.SelectedIndex;
+            //    isAli = true;
+            //}
+
+            //int index = this.SelectedIndex;
+
             base.OnControlRemoved(e);
             if (this.Visible)
             {
                 this.Invalidate();
             }
+
+            //if (isAli)
+            //{
+            //    this.SelectedIndex = (index < selecti) ? selecti:(selecti > 0)? selecti - 1: selecti;
+            //    selecti = -2;
+            //}
+
         }
 
 
@@ -696,7 +720,7 @@ namespace System.Windows.Forms
 
         protected override void OnSelectedIndexChanged(EventArgs e)
         {
-            base.OnSelectedIndexChanged(e);
+            //base.OnSelectedIndexChanged(e);
         }
 
         [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
@@ -727,6 +751,7 @@ namespace System.Windows.Forms
 
         protected override void OnMouseClick(MouseEventArgs e)
         {
+            var i = selecti;
             int index = this.ActiveIndex;
 
             //	If we are clicking on an image then raise the ImageClicked event before raising the standard mouse click event
@@ -755,6 +780,9 @@ namespace System.Windows.Forms
                     this.TabPages.Remove(tab);
                     tab.Dispose();
                 }
+
+                this.SelectedIndex = (i >= index) ? (i > 0) ? i - 1 : i : i;
+
             }
             else
             {
@@ -1235,7 +1263,7 @@ namespace System.Windows.Forms
                                 //}
                                 //else
                                 //{
-                                    textRect.Width -= ((int)tabBounds.Right - closerRect.X + 4);
+                                textRect.Width -= ((int)tabBounds.Right - closerRect.X + 4);
                                 //}
                             }
                             else
@@ -1267,7 +1295,7 @@ namespace System.Windows.Forms
                                 //}
                                 //else
                                 //{
-                                    textRect.Width -= ((int)tabBounds.Right - closerRect.X + 4);
+                                textRect.Width -= ((int)tabBounds.Right - closerRect.X + 4);
                                 //}
                             }
                             else
@@ -1307,7 +1335,7 @@ namespace System.Windows.Forms
                                 //}
                                 //else
                                 //{
-                                    textRect.Width -= ((int)tabBounds.Right - closerRect.X + 4);
+                                textRect.Width -= ((int)tabBounds.Right - closerRect.X + 4);
                                 //}
                             }
                             else
@@ -1340,7 +1368,7 @@ namespace System.Windows.Forms
                             //}
                             //else
                             //{
-                                textRect.Width -= ((int)tabBounds.Right - closerRect.X + 4);
+                            textRect.Width -= ((int)tabBounds.Right - closerRect.X + 4);
                             //}
                         }
                         else
@@ -1664,12 +1692,12 @@ namespace System.Windows.Forms
                     //}
                     //else
                     //{
-                        closerRect = new Rectangle((int)rect.Right+3, (int)rect.Y + (int)Math.Floor((double)((int)rect.Height - 6) / 2)-3, 11, 11);
-                        while (!path.IsVisible(closerRect.Right, closerRect.Y) && closerRect.Right > -6)
-                        {
-                            closerRect.X -= 1;
-                        }
-                        closerRect.X -= 10;
+                    closerRect = new Rectangle((int)rect.Right + 3, (int)rect.Y + (int)Math.Floor((double)((int)rect.Height - 6) / 2) - 3, 11, 11);
+                    while (!path.IsVisible(closerRect.Right, closerRect.Y) && closerRect.Right > -6)
+                    {
+                        closerRect.X -= 1;
+                    }
+                    closerRect.X -= 10;
                     //}
                 }
                 else

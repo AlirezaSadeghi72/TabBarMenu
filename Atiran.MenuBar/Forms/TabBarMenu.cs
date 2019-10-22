@@ -122,6 +122,7 @@ namespace Atiran.MenuBar.Forms
             // 
             // MainTab
             // 
+            this.MainTab.AllowDrop = true;
             this.MainTab.Controls.Add(this.tabPage1);
             this.MainTab.DisplayStyle = System.Windows.Forms.TabStyle.Chrome;
             // 
