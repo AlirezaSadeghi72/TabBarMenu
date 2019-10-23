@@ -19,7 +19,7 @@ namespace System.Windows.Forms
 			this._Overlap = 7;
 			
 			//	Must set after the _Radius as this is used in the calculations of the actual padding
-			this.Padding = new Point(14, 1);
+			this.Padding = new Point(25, 1);
 		}
 		
 		public override void AddTabBorder(System.Drawing.Drawing2D.GraphicsPath path, System.Drawing.Rectangle tabBounds){

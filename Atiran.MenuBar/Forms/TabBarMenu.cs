@@ -283,8 +283,15 @@ namespace Atiran.MenuBar.Forms
                 case Keys.Escape:
                 case (Keys.Alt | Keys.F4):
                     {
-                        //CloseProgramm();
-                        this.Close();
+                        try
+                        {
+                            MainTab.TabPages.Remove(MainTab.TabPages[MainTab.SelectedIndex]);
+                        }
+                        catch (Exception e)
+                        {
+                            //CloseProgramm();
+                            this.Close();
+                        }
                     }
                     return true;
             }
