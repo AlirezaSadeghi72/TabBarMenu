@@ -20,6 +20,7 @@ namespace Atiran.MenuBar.Forms
         private MenuStrip MyMnSt;
         private CustomTabControl MainTab;
         private TabPage tabPage1;
+        private Utility.Panel.MainButton mainButton1;
         List<SubSystem> subSystems = new List<SubSystem>();
         //private Image CloseImage = Resources.close_button;
 
@@ -72,9 +73,11 @@ namespace Atiran.MenuBar.Forms
             this.pnlMainButtons = new System.Windows.Forms.Panel();
             this.pnlFooter = new System.Windows.Forms.Panel();
             this.pnlMain = new System.Windows.Forms.Panel();
+            this.MyMnSt = new System.Windows.Forms.MenuStrip();
             this.MainTab = new System.Windows.Forms.CustomTabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.MyMnSt = new System.Windows.Forms.MenuStrip();
+            this.mainButton1 = new Atiran.Utility.Panel.MainButton();
+            this.pnlMainButtons.SuspendLayout();
             this.pnlMain.SuspendLayout();
             this.MainTab.SuspendLayout();
             this.SuspendLayout();
@@ -82,6 +85,7 @@ namespace Atiran.MenuBar.Forms
             // pnlMainButtons
             // 
             this.pnlMainButtons.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(21)))), ((int)(((byte)(100)))), ((int)(((byte)(123)))));
+            this.pnlMainButtons.Controls.Add(this.mainButton1);
             this.pnlMainButtons.Dock = System.Windows.Forms.DockStyle.Top;
             this.pnlMainButtons.Font = new System.Drawing.Font("IRANSans(FaNum)", 8.249999F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(178)));
             this.pnlMainButtons.Location = new System.Drawing.Point(0, 0);
@@ -108,6 +112,17 @@ namespace Atiran.MenuBar.Forms
             this.pnlMain.Name = "pnlMain";
             this.pnlMain.Size = new System.Drawing.Size(1200, 502);
             this.pnlMain.TabIndex = 3;
+            // 
+            // MyMnSt
+            // 
+            this.MyMnSt.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(130)))), ((int)(((byte)(150)))));
+            this.MyMnSt.Font = new System.Drawing.Font("IRANSans(FaNum)", 8.249999F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(178)));
+            this.MyMnSt.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.Flow;
+            this.MyMnSt.Location = new System.Drawing.Point(0, 38);
+            this.MyMnSt.Name = "MyMnSt";
+            this.MyMnSt.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.MyMnSt.Size = new System.Drawing.Size(1200, 4);
+            this.MyMnSt.TabIndex = 4;
             // 
             // MainTab
             // 
@@ -149,16 +164,16 @@ namespace Atiran.MenuBar.Forms
             this.tabPage1.Text = "tabPage1";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
-            // MyMnSt
+            // mainButton1
             // 
-            this.MyMnSt.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(130)))), ((int)(((byte)(150)))));
-            this.MyMnSt.Font = new System.Drawing.Font("IRANSans(FaNum)", 8.249999F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(178)));
-            this.MyMnSt.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.Flow;
-            this.MyMnSt.Location = new System.Drawing.Point(0, 38);
-            this.MyMnSt.Name = "MyMnSt";
-            this.MyMnSt.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.MyMnSt.Size = new System.Drawing.Size(1200, 4);
-            this.MyMnSt.TabIndex = 4;
+            this.mainButton1.BackColor = System.Drawing.Color.Transparent;
+            this.mainButton1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.mainButton1.Font = new System.Drawing.Font("IRANSans(FaNum)", 8.249999F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(178)));
+            this.mainButton1.ForeColor = System.Drawing.Color.White;
+            this.mainButton1.Location = new System.Drawing.Point(0, 0);
+            this.mainButton1.Name = "mainButton1";
+            this.mainButton1.Size = new System.Drawing.Size(1200, 38);
+            this.mainButton1.TabIndex = 0;
             // 
             // TabBarMenu
             // 
@@ -173,6 +188,7 @@ namespace Atiran.MenuBar.Forms
             this.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Load += new System.EventHandler(this.MyMenuItem_Load);
+            this.pnlMainButtons.ResumeLayout(false);
             this.pnlMain.ResumeLayout(false);
             this.MainTab.ResumeLayout(false);
             this.ResumeLayout(false);
