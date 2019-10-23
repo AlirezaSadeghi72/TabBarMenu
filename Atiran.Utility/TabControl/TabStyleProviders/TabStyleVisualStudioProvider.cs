@@ -49,7 +49,54 @@ namespace System.Windows.Forms
 					path.AddLine(tabBounds.Right - 3, tabBounds.Bottom, tabBounds.X, tabBounds.Bottom);
 					break;
 			}
+
 		}
 
-	}
+        protected override void DrawTabCloser(int index, Graphics graphics)
+        {
+            if (this._ShowTabCloser)
+            {
+                Rectangle closerRect = this._TabControl.GetTabCloserRect(index);
+                graphics.SmoothingMode = SmoothingMode.AntiAlias;
+                if (closerRect.Contains(this._TabControl.MousePosition))
+                {
+                    using (GraphicsPath closerPath = GetCloserButtonPath(closerRect))
+                    {
+                        using (SolidBrush closerBrush = new SolidBrush(Color.FromArgb(193, 53, 53)))
+                        {
+                            graphics.FillPath(closerBrush, closerPath);
+                        }
+                    }
+                    using (GraphicsPath closerPath = GetCloserPath(closerRect))
+                    {
+                        using (Pen closerPen = new Pen(this._CloserColorActive))
+                        {
+                            graphics.DrawPath(closerPen, closerPath);
+                        }
+                    }
+                }
+                else
+                {
+                    using (GraphicsPath closerPath = GetCloserPath(closerRect))
+                    {
+                        using (Pen closerPen = new Pen(this._CloserColor))
+                        {
+                            graphics.DrawPath(closerPen, closerPath);
+                        }
+                    }
+                }
+
+
+            }
+        }
+
+        private static GraphicsPath GetCloserButtonPath(Rectangle closerRect)
+        {
+            GraphicsPath closerPath = new GraphicsPath();
+            closerPath.AddEllipse(new Rectangle(closerRect.X-4 , closerRect.Y-4 , closerRect.Width + 8, closerRect.Height + 8));
+            closerPath.CloseFigure();
+            return closerPath;
+        }
+
+    }
 }

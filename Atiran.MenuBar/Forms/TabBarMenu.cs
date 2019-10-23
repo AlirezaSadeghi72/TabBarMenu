@@ -72,9 +72,9 @@ namespace Atiran.MenuBar.Forms
             this.pnlMainButtons = new System.Windows.Forms.Panel();
             this.pnlFooter = new System.Windows.Forms.Panel();
             this.pnlMain = new System.Windows.Forms.Panel();
-            this.MyMnSt = new System.Windows.Forms.MenuStrip();
             this.MainTab = new System.Windows.Forms.CustomTabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.MyMnSt = new System.Windows.Forms.MenuStrip();
             this.pnlMain.SuspendLayout();
             this.MainTab.SuspendLayout();
             this.SuspendLayout();
@@ -109,22 +109,11 @@ namespace Atiran.MenuBar.Forms
             this.pnlMain.Size = new System.Drawing.Size(1200, 502);
             this.pnlMain.TabIndex = 3;
             // 
-            // MyMnSt
-            // 
-            this.MyMnSt.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(130)))), ((int)(((byte)(150)))));
-            this.MyMnSt.Font = new System.Drawing.Font("IRANSans(FaNum)", 8.249999F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(178)));
-            this.MyMnSt.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.Flow;
-            this.MyMnSt.Location = new System.Drawing.Point(0, 38);
-            this.MyMnSt.Name = "MyMnSt";
-            this.MyMnSt.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.MyMnSt.Size = new System.Drawing.Size(1200, 4);
-            this.MyMnSt.TabIndex = 4;
-            // 
             // MainTab
             // 
             this.MainTab.AllowDrop = true;
             this.MainTab.Controls.Add(this.tabPage1);
-            this.MainTab.DisplayStyle = System.Windows.Forms.TabStyle.Chrome;
+            this.MainTab.DisplayStyle = System.Windows.Forms.TabStyle.VisualStudio;
             // 
             // 
             // 
@@ -132,14 +121,12 @@ namespace Atiran.MenuBar.Forms
             this.MainTab.DisplayStyleProvider.BorderColorHot = System.Drawing.SystemColors.ControlDark;
             this.MainTab.DisplayStyleProvider.BorderColorSelected = System.Drawing.Color.FromArgb(((int)(((byte)(127)))), ((int)(((byte)(157)))), ((int)(((byte)(185)))));
             this.MainTab.DisplayStyleProvider.CloserColor = System.Drawing.Color.DarkGray;
-            this.MainTab.DisplayStyleProvider.CloserColorActive = System.Drawing.Color.White;
             this.MainTab.DisplayStyleProvider.FocusTrack = false;
             this.MainTab.DisplayStyleProvider.HotTrack = true;
-            this.MainTab.DisplayStyleProvider.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.MainTab.DisplayStyleProvider.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.MainTab.DisplayStyleProvider.Opacity = 1F;
-            this.MainTab.DisplayStyleProvider.Overlap = 16;
-            this.MainTab.DisplayStyleProvider.Padding = new System.Drawing.Point(15, 5);
-            this.MainTab.DisplayStyleProvider.Radius = 16;
+            this.MainTab.DisplayStyleProvider.Overlap = 7;
+            this.MainTab.DisplayStyleProvider.Padding = new System.Drawing.Point(25, 1);
             this.MainTab.DisplayStyleProvider.ShowTabCloser = true;
             this.MainTab.DisplayStyleProvider.TextColor = System.Drawing.SystemColors.ControlText;
             this.MainTab.DisplayStyleProvider.TextColorDisabled = System.Drawing.SystemColors.ControlDark;
@@ -154,13 +141,24 @@ namespace Atiran.MenuBar.Forms
             // 
             // tabPage1
             // 
-            this.tabPage1.Location = new System.Drawing.Point(4, 33);
+            this.tabPage1.Location = new System.Drawing.Point(4, 27);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(444, 134);
+            this.tabPage1.Size = new System.Drawing.Size(444, 140);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "tabPage1";
             this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // MyMnSt
+            // 
+            this.MyMnSt.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(130)))), ((int)(((byte)(150)))));
+            this.MyMnSt.Font = new System.Drawing.Font("IRANSans(FaNum)", 8.249999F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(178)));
+            this.MyMnSt.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.Flow;
+            this.MyMnSt.Location = new System.Drawing.Point(0, 38);
+            this.MyMnSt.Name = "MyMnSt";
+            this.MyMnSt.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.MyMnSt.Size = new System.Drawing.Size(1200, 4);
+            this.MyMnSt.TabIndex = 4;
             // 
             // TabBarMenu
             // 
