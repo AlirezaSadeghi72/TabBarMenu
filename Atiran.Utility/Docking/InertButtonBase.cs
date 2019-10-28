@@ -5,7 +5,7 @@ using System.Windows.Forms;
 using System.Drawing;
 using System.Drawing.Imaging;
 
-namespace WeifenLuo.WinFormsUI.Docking
+namespace Atiran.Utility.Docking
 {
     internal abstract class InertButtonBase : Control
     {

@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace WeifenLuo.WinFormsUI.Docking
+namespace Atiran.Utility.Docking
 {
 	public class FloatWindowCollection : ReadOnlyCollection<FloatWindow>
 	{

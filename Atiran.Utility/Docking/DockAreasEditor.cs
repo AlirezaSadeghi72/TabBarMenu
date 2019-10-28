@@ -5,7 +5,7 @@ using System.Drawing.Design;
 using System.Windows.Forms;
 using System.Windows.Forms.Design;
 
-namespace WeifenLuo.WinFormsUI.Docking
+namespace Atiran.Utility.Docking
 {	
 	internal class DockAreasEditor : UITypeEditor
 	{

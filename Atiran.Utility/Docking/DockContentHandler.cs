@@ -4,7 +4,7 @@ using System.Drawing;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 
-namespace WeifenLuo.WinFormsUI.Docking
+namespace Atiran.Utility.Docking
 {
 	public delegate string GetPersistStringCallback();
 

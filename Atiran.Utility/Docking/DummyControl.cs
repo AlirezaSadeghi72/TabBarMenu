@@ -1,7 +1,7 @@
 using System;
 using System.Windows.Forms;
 
-namespace WeifenLuo.WinFormsUI.Docking
+namespace Atiran.Utility.Docking
 {
 	internal class DummyControl : Control
 	{

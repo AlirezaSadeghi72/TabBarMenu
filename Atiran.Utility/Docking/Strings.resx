@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Category_Docking" xml:space="preserve">
     <value>Docking</value>
@@ -129,11 +129,53 @@
   <data name="DockAreaEditor_FloatCheckBoxText" xml:space="preserve">
     <value>(Float)</value>
   </data>
+  <data name="DockContentHandler_AutoHidePortion_OutOfRange" xml:space="preserve">
+    <value>The provided value is out of range.</value>
+  </data>
+  <data name="DockContentHandler_DockAreas_InvalidValue" xml:space="preserve">
+    <value>Invalid Value: The value of DockAreas conflicts with current DockState.</value>
+  </data>
+  <data name="DockContentHandler_DockPane_InvalidValue" xml:space="preserve">
+    <value>The pane is invalid. Check the IsFloat and DockPanel properties of this dock pane.</value>
+  </data>
+  <data name="DockContentHandler_FloatPane_InvalidValue" xml:space="preserve">
+    <value>The pane is invalid. Check the IsFloat and DockPanel properties of this dock pane.</value>
+  </data>
+  <data name="DockContentHandler_IsFloat_InvalidValue" xml:space="preserve">
+    <value>Invalid value, conflicts with DockableAreas  property.</value>
+  </data>
+  <data name="DockContentHandler_SetDockState_InvalidState" xml:space="preserve">
+    <value>The dock state is invalid.</value>
+  </data>
+  <data name="DockContentHandler_SetDockState_NullPanel" xml:space="preserve">
+    <value>The dock panel is null.</value>
+  </data>
+  <data name="DockContentHandler_ShowHint_InvalidValue" xml:space="preserve">
+    <value>Invalid value, check DockableAreas property.</value>
+  </data>
+  <data name="DockContentHandler_Show_InvalidBeforeContent" xml:space="preserve">
+    <value>Invalid beforeContent, it must be contained by the pane.</value>
+  </data>
+  <data name="DockContentHandler_Show_InvalidDockState" xml:space="preserve">
+    <value>Invalid DockState: Content can not be showed as "Unknown" or "Hidden".</value>
+  </data>
+  <data name="DockContentHandler_Show_InvalidPrevPane" xml:space="preserve">
+    <value>The previous pane is invalid. It can not be null, and its docking state must not be auto-hide.</value>
+  </data>
+  <data name="DockContentHandler_Show_NullDockPanel" xml:space="preserve">
+    <value>DockPanel can not be null.</value>
+  </data>
+  <data name="DockContentHandler_Show_NullPane" xml:space="preserve">
+    <value>The Pane can not be null.</value>
+  </data>
   <data name="DockContent_AllowEndUserDocking_Description" xml:space="preserve">
     <value>Determines if end user drag and drop docking is allowed.</value>
   </data>
   <data name="DockContent_AutoHidePortion_Description" xml:space="preserve">
     <value>The size to display the content in auto hide mode. Value &lt; 1 to specify the size in portion; value &gt;= 1 to specify the size in pixel.</value>
+  </data>
+  <data name="DockContent_CloseButtonVisible_Description" xml:space="preserve">
+    <value>Shows or hides the close button of the content. This property does not function with System MDI Document Style.</value>
   </data>
   <data name="DockContent_CloseButton_Description" xml:space="preserve">
     <value>Enable/Disable the close button of the content.</value>
@@ -162,86 +204,11 @@
   <data name="DockContent_ToolTipText_Description" xml:space="preserve">
     <value>The text displayed when mouse hovers over the tab.</value>
   </data>
-  <data name="DockContentHandler_AutoHidePortion_OutOfRange" xml:space="preserve">
-    <value>The provided value is out of range.</value>
-  </data>
-  <data name="DockContentHandler_DockAreas_InvalidValue" xml:space="preserve">
-    <value>Invalid Value: The value of DockAreas conflicts with current DockState.</value>
-  </data>
-  <data name="DockContentHandler_DockPane_InvalidValue" xml:space="preserve">
-    <value>The pane is invalid. Check the IsFloat and DockPanel properties of this dock pane.</value>
-  </data>
-  <data name="DockContentHandler_FloatPane_InvalidValue" xml:space="preserve">
-    <value>The pane is invalid. Check the IsFloat and DockPanel properties of this dock pane.</value>
-  </data>
-  <data name="DockContentHandler_IsFloat_InvalidValue" xml:space="preserve">
-    <value>Invalid value, conflicts with DockableAreas  property.</value>
-  </data>
-  <data name="DockContentHandler_SetDockState_InvalidState" xml:space="preserve">
-    <value>The dock state is invalid.</value>
-  </data>
-  <data name="DockContentHandler_SetDockState_NullPanel" xml:space="preserve">
-    <value>The dock panel is null.</value>
-  </data>
-  <data name="DockContentHandler_Show_InvalidBeforeContent" xml:space="preserve">
-    <value>Invalid beforeContent, it must be contained by the pane.</value>
-  </data>
-  <data name="DockContentHandler_Show_InvalidDockState" xml:space="preserve">
-    <value>Invalid DockState: Content can not be showed as "Unknown" or "Hidden".</value>
-  </data>
-  <data name="DockContentHandler_Show_InvalidPrevPane" xml:space="preserve">
-    <value>The previous pane is invalid. It can not be null, and its docking state must not be auto-hide.</value>
-  </data>
-  <data name="DockContentHandler_Show_NullDockPanel" xml:space="preserve">
-    <value>DockPanel can not be null.</value>
-  </data>
-  <data name="DockContentHandler_Show_NullPane" xml:space="preserve">
-    <value>The Pane can not be null.</value>
-  </data>
-  <data name="DockContentHandler_ShowHint_InvalidValue" xml:space="preserve">
-    <value>Invalid value, check DockableAreas property.</value>
-  </data>
   <data name="DockHandler_TabPageContextMenuStrip_Description" xml:space="preserve">
     <value>Context menu displayed for the dock pane tab strip.</value>
   </data>
   <data name="DockIndicator_ToolTipText" xml:space="preserve">
     <value>Press SHIFT for docking to full side.</value>
-  </data>
-  <data name="DockPane_ActiveContent_InvalidValue" xml:space="preserve">
-    <value>Invalid Content: ActiveContent must be one of the visible contents, or null if there is no visible content.</value>
-  </data>
-  <data name="DockPane_Constructor_NullContent" xml:space="preserve">
-    <value>Invalid argument: Content can not be "null".</value>
-  </data>
-  <data name="DockPane_Constructor_NullDockPanel" xml:space="preserve">
-    <value>Invalid argument: The content's DockPanel can not be "null".</value>
-  </data>
-  <data name="DockPane_DockTo_InvalidContainer" xml:space="preserve">
-    <value>The specified container conflicts with the IsFloat property.</value>
-  </data>
-  <data name="DockPane_DockTo_NoPrevPane" xml:space="preserve">
-    <value>The previous pane does not exist in the nested docking pane collection.</value>
-  </data>
-  <data name="DockPane_DockTo_NullContainer" xml:space="preserve">
-    <value>The container can not be null.</value>
-  </data>
-  <data name="DockPane_DockTo_NullPrevPane" xml:space="preserve">
-    <value>The previous pane can not be null when the nested docking pane collection is not empty.</value>
-  </data>
-  <data name="DockPane_DockTo_SelfPrevPane" xml:space="preserve">
-    <value>The previous pane can not be itself.</value>
-  </data>
-  <data name="DockPane_FloatWindow_InvalidValue" xml:space="preserve">
-    <value>FloatWindow property can not be set to "null" when DockState is DockState.Float.</value>
-  </data>
-  <data name="DockPane_SetContentIndex_InvalidContent" xml:space="preserve">
-    <value>Invalid Content: Content not within the collection.</value>
-  </data>
-  <data name="DockPane_SetContentIndex_InvalidIndex" xml:space="preserve">
-    <value>Invalid Index: The index is out of range.</value>
-  </data>
-  <data name="DockPane_SetDockState_InvalidState" xml:space="preserve">
-    <value>The state for the dock pane is invalid.</value>
   </data>
   <data name="DockPaneCaption_ToolTipAutoHide" xml:space="preserve">
     <value>Auto Hide</value>
@@ -288,6 +255,9 @@
   <data name="DockPanel_DockLeftPortion_Description" xml:space="preserve">
     <value>Size of the left docking window. Value &lt; 1 to specify the size in portion; value &gt; 1 to specify the size in pixels.</value>
   </data>
+  <data name="DockPanel_DockPanelSkin" xml:space="preserve">
+    <value>The visual skin to use when displaying the docked windows.</value>
+  </data>
   <data name="DockPanel_DockRightPortion_Description" xml:space="preserve">
     <value>Size of the right docking window. Value &lt; 1 to specify the size in portion; value &gt; 1 to specify the size in pixels.</value>
   </data>
@@ -296,6 +266,9 @@
   </data>
   <data name="DockPanel_DocumentStyle_Description" xml:space="preserve">
     <value>The style of the document window.</value>
+  </data>
+  <data name="DockPanel_DocumentTabStripLocation" xml:space="preserve">
+    <value>Determines where the tab strip for Document style content is drawn.</value>
   </data>
   <data name="DockPanel_LoadFromXml_AlreadyInitialized" xml:space="preserve">
     <value>The DockPanel has already been initialized.</value>
@@ -333,6 +306,42 @@
   <data name="DockPaneStrip_ToolTipWindowList" xml:space="preserve">
     <value>Window List</value>
   </data>
+  <data name="DockPane_ActiveContent_InvalidValue" xml:space="preserve">
+    <value>Invalid Content: ActiveContent must be one of the visible contents, or null if there is no visible content.</value>
+  </data>
+  <data name="DockPane_Constructor_NullContent" xml:space="preserve">
+    <value>Invalid argument: Content can not be "null".</value>
+  </data>
+  <data name="DockPane_Constructor_NullDockPanel" xml:space="preserve">
+    <value>Invalid argument: The content's DockPanel can not be "null".</value>
+  </data>
+  <data name="DockPane_DockTo_InvalidContainer" xml:space="preserve">
+    <value>The specified container conflicts with the IsFloat property.</value>
+  </data>
+  <data name="DockPane_DockTo_NoPrevPane" xml:space="preserve">
+    <value>The previous pane does not exist in the nested docking pane collection.</value>
+  </data>
+  <data name="DockPane_DockTo_NullContainer" xml:space="preserve">
+    <value>The container can not be null.</value>
+  </data>
+  <data name="DockPane_DockTo_NullPrevPane" xml:space="preserve">
+    <value>The previous pane can not be null when the nested docking pane collection is not empty.</value>
+  </data>
+  <data name="DockPane_DockTo_SelfPrevPane" xml:space="preserve">
+    <value>The previous pane can not be itself.</value>
+  </data>
+  <data name="DockPane_FloatWindow_InvalidValue" xml:space="preserve">
+    <value>FloatWindow property can not be set to "null" when DockState is DockState.Float.</value>
+  </data>
+  <data name="DockPane_SetContentIndex_InvalidContent" xml:space="preserve">
+    <value>Invalid Content: Content not within the collection.</value>
+  </data>
+  <data name="DockPane_SetContentIndex_InvalidIndex" xml:space="preserve">
+    <value>Invalid Index: The index is out of range.</value>
+  </data>
+  <data name="DockPane_SetDockState_InvalidState" xml:space="preserve">
+    <value>The state for the dock pane is invalid.</value>
+  </data>
   <data name="FloatWindow_Constructor_NullDockPanel" xml:space="preserve">
     <value>Invalid argument: DockPanel can not be "null".</value>
   </data>
@@ -344,14 +353,5 @@
   </data>
   <data name="IDockDragSource_DockTo_InvalidPanel" xml:space="preserve">
     <value>Invalid DockPanel.</value>
-  </data>
-  <data name="DockContent_CloseButtonVisible_Description" xml:space="preserve">
-    <value>Shows or hides the close button of the content. This property does not function with System MDI Document Style.</value>
-  </data>
-  <data name="DockPanel_DockPanelSkin" xml:space="preserve">
-    <value>The visual skin to use when displaying the docked windows.</value>
-  </data>
-  <data name="DockPanel_DocumentTabStripLocation" xml:space="preserve">
-    <value>Determines where the tab strip for Document style content is drawn.</value>
   </data>
 </root>

@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 using System.Security.Permissions;
 using System.Diagnostics.CodeAnalysis;
 
-namespace WeifenLuo.WinFormsUI.Docking
+namespace Atiran.Utility.Docking
 {
     [ToolboxItem(false)]
     public partial class DockPane : UserControl, IDockDragSource

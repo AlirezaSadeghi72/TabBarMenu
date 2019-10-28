@@ -4,7 +4,7 @@ using System.Reflection;
 using System.Resources;
 using System.Windows.Forms;
 
-namespace WeifenLuo.WinFormsUI.Docking
+namespace Atiran.Utility.Docking
 {
 	internal static class ResourceHelper
 	{
@@ -15,7 +15,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             get
             {
                 if (_resourceManager == null)
-                    _resourceManager = new ResourceManager("WeifenLuo.WinFormsUI.Docking.Strings", typeof(ResourceHelper).Assembly);
+                    _resourceManager = new ResourceManager("Atiran.Utility.Docking.Strings", typeof(ResourceHelper).Assembly);
                 return _resourceManager;
             }
 

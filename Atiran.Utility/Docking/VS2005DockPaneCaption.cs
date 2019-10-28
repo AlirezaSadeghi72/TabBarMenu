@@ -5,7 +5,7 @@ using System.Windows.Forms;
 using System.ComponentModel;
 using System.Windows.Forms.VisualStyles;
 
-namespace WeifenLuo.WinFormsUI.Docking
+namespace Atiran.Utility.Docking
 {
 	internal class VS2005DockPaneCaption : DockPaneCaptionBase
 	{
@@ -387,11 +387,11 @@ namespace WeifenLuo.WinFormsUI.Docking
 
 		protected override void OnRefreshChanges()
 		{
-			SetButtons();
-			Invalidate();
-		}
+            SetButtons();
+            Invalidate();
+        }
 
-		private bool CloseButtonEnabled
+        private bool CloseButtonEnabled
 		{
 			get	{	return (DockPane.ActiveContent != null)? DockPane.ActiveContent.DockHandler.CloseButton : false;	}
 		}

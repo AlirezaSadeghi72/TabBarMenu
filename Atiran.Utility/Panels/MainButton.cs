@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Atiran.Utility.Properties;
 
-namespace Atiran.Utility.Panel
+namespace Atiran.Utility.Panels
 {
     public class MainButton : UserControl
     {

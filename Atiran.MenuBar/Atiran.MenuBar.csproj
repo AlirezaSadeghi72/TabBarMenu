@@ -56,11 +56,23 @@
   <ItemGroup>
     <Compile Include="Class\MyTag.cs" />
     <Compile Include="Class\ToolStripProfessionalRendererAtiran.cs" />
+    <Compile Include="Forms\DeskTab.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\formtest.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\TabBarMenu.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Forms\DeskTab.resx">
+      <DependentUpon>DeskTab.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\formtest.resx">
+      <DependentUpon>formtest.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\TabBarMenu.resx">
       <DependentUpon>TabBarMenu.cs</DependentUpon>
     </EmbeddedResource>
