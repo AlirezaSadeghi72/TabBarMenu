@@ -98,7 +98,7 @@ namespace System.Windows.Forms
             }
         }
 
-        protected override void DrawTabCloser(int index, Graphics graphics)
+        protected  override void DrawTabCloser(int index, Graphics graphics)
         {
             if (this._ShowTabCloser)
             {

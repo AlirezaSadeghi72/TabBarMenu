@@ -90,12 +90,12 @@ namespace Atiran.Utility.Docking
                 DragSource.BeginDrag(rectSplitter);
             }
 
-            protected override void OnDragging()
+            protected  override void OnDragging()
             {
                 Outline.Show(GetSplitterOutlineBounds(Control.MousePosition));
             }
 
-            protected override void OnEndDrag(bool abort)
+            protected  override void OnEndDrag(bool abort)
             {
                 DockPanel.SuspendLayout(true);
 

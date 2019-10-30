@@ -44,7 +44,7 @@ namespace Atiran.Utility.Docking
 			get	{	return 0;	}
 		}
 
-		protected override void OnMouseDown(MouseEventArgs e)
+		protected  override void OnMouseDown(MouseEventArgs e)
 		{
 			base.OnMouseDown(e);
 
@@ -58,7 +58,7 @@ namespace Atiran.Utility.Docking
 		{
 		}
 
-		protected override void WndProc(ref Message m)
+		protected  override void WndProc(ref Message m)
 		{
             // eat the WM_MOUSEACTIVATE message
 			if (m.Msg == (int)Win32.Msgs.WM_MOUSEACTIVATE)

@@ -462,7 +462,7 @@ namespace Atiran.Utility.Docking
 			Region = new Region(DisplayingArea);
 		}
 
-		protected override void OnMouseDown(MouseEventArgs e)
+		protected  override void OnMouseDown(MouseEventArgs e)
 		{
 			base.OnMouseDown(e);
 
@@ -476,7 +476,7 @@ namespace Atiran.Utility.Docking
 			content.DockHandler.Activate();
 		}
 
-		protected override void OnMouseHover(EventArgs e)
+		protected  override void OnMouseHover(EventArgs e)
 		{
 			base.OnMouseHover(e);
 
@@ -488,7 +488,7 @@ namespace Atiran.Utility.Docking
             ResetMouseEventArgs();
 		}
 
-		protected override void OnLayout(LayoutEventArgs levent)
+		protected  override void OnLayout(LayoutEventArgs levent)
 		{
 			RefreshChanges();
 			base.OnLayout (levent);

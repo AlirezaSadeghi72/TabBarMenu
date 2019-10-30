@@ -10,12 +10,12 @@ namespace Atiran.Utility.Docking
     {
         private class SplitterControl : SplitterBase
         {
-            protected override int SplitterSize
+            protected  override int SplitterSize
             {
                 get { return Measures.SplitterSize; }
             }
 
-            protected override void StartDrag()
+            protected  override void StartDrag()
             {
                 DockWindow window = Parent as DockWindow;
                 if (window == null)

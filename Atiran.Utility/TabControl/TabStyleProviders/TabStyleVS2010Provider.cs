@@ -29,7 +29,7 @@ namespace System.Windows.Forms
 
 		}
 	
-		protected override Brush GetTabBackgroundBrush(int index){
+		protected  override Brush GetTabBackgroundBrush(int index){
 			LinearGradientBrush fillBrush = null;
 
 			//	Capture the colours dependant on selection state of the tab
@@ -102,7 +102,7 @@ namespace System.Windows.Forms
 			return new SolidBrush(light);
 		}
 		
-		protected override void DrawTabCloser(int index, Graphics graphics){
+		protected  override void DrawTabCloser(int index, Graphics graphics){
 			if (this._ShowTabCloser){
 				Rectangle closerRect = this._TabControl.GetTabCloserRect(index);
 				graphics.SmoothingMode = SmoothingMode.AntiAlias;

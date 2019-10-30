@@ -22,7 +22,7 @@ namespace Atiran.DataLayer.Model
         {
         }
     
-        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        protected  override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             throw new UnintentionalCodeFirstException();
         }

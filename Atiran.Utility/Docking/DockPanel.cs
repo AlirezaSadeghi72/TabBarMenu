@@ -138,7 +138,7 @@ namespace Atiran.Utility.Docking
 		}
 
 		private bool m_disposed = false;
-		protected override void Dispose(bool disposing)
+		protected  override void Dispose(bool disposing)
 		{
 			lock (this)
 			{
@@ -220,7 +220,7 @@ namespace Atiran.Utility.Docking
             }
         }
 
-        protected override void OnRightToLeftChanged(EventArgs e)
+        protected  override void OnRightToLeftChanged(EventArgs e)
         {
             base.OnRightToLeftChanged(e);
             foreach (FloatWindow floatWindow in FloatWindows)
@@ -630,7 +630,7 @@ namespace Atiran.Utility.Docking
                 return 0;
         }
 
-        protected override void OnLayout(LayoutEventArgs levent)
+        protected  override void OnLayout(LayoutEventArgs levent)
 		{
 			SuspendLayout(true);
 
@@ -666,7 +666,7 @@ namespace Atiran.Utility.Docking
 			return AutoHideStripControl.GetTabStripRectangle(dockState);
 		}
 
-		protected override void OnPaint(PaintEventArgs e)
+		protected  override void OnPaint(PaintEventArgs e)
 		{
 			base.OnPaint(e);
 
@@ -811,7 +811,7 @@ namespace Atiran.Utility.Docking
             return (MdiClientExists);
 		}
 
-		protected override void OnParentChanged(EventArgs e)
+		protected  override void OnParentChanged(EventArgs e)
 		{
             SetAutoHideWindowParent();
             GetMdiClientController().ParentForm = (this.Parent as Form);
@@ -833,7 +833,7 @@ namespace Atiran.Utility.Docking
             }
         }
 
-		protected override void OnVisibleChanged(EventArgs e)
+		protected  override void OnVisibleChanged(EventArgs e)
 		{
 			base.OnVisibleChanged (e);
 

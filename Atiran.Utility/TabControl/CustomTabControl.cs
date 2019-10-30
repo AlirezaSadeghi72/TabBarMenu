@@ -36,14 +36,14 @@ namespace System.Windows.Forms
 
         }
 
-        protected override void OnCreateControl()
+        protected  override void OnCreateControl()
         {
             base.OnCreateControl();
             this.OnFontChanged(EventArgs.Empty);
         }
 
 
-        protected override CreateParams CreateParams
+        protected  override CreateParams CreateParams
         {
             [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
             get
@@ -55,7 +55,7 @@ namespace System.Windows.Forms
             }
         }
 
-        protected override void Dispose(bool disposing)
+        protected  override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
             if (disposing)
@@ -441,14 +441,14 @@ namespace System.Windows.Forms
 
         #region Drag 'n' Drop
 
-        protected override void OnMouseEnter(EventArgs e)
+        protected  override void OnMouseEnter(EventArgs e)
         {
             selecti = this.SelectedIndex;
 
             base.OnMouseEnter(e);
         }
 
-        protected override void OnMouseDown(MouseEventArgs e)
+        protected  override void OnMouseDown(MouseEventArgs e)
         {
             base.OnMouseDown(e);
             if (this.AllowDrop)
@@ -457,7 +457,7 @@ namespace System.Windows.Forms
             }
         }
 
-        protected override void OnMouseUp(MouseEventArgs e)
+        protected  override void OnMouseUp(MouseEventArgs e)
         {
             base.OnMouseUp(e);
             if (this.AllowDrop)
@@ -466,7 +466,7 @@ namespace System.Windows.Forms
             }
         }
 
-        protected override void OnDragOver(DragEventArgs drgevent)
+        protected  override void OnDragOver(DragEventArgs drgevent)
         {
             base.OnDragOver(drgevent);
 
@@ -480,7 +480,7 @@ namespace System.Windows.Forms
             }
         }
 
-        protected override void OnDragDrop(DragEventArgs drgevent)
+        protected  override void OnDragDrop(DragEventArgs drgevent)
         {
             base.OnDragDrop(drgevent);
             if (drgevent.Data.GetDataPresent(typeof(TabPage)))
@@ -550,7 +550,7 @@ namespace System.Windows.Forms
 
         #region	Base class event processing
 
-        protected override void OnFontChanged(EventArgs e)
+        protected  override void OnFontChanged(EventArgs e)
         {
             IntPtr hFont = this.Font.ToHfont();
             NativeMethods.SendMessage(this.Handle, NativeMethods.WM_SETFONT, hFont, (IntPtr)(-1));
@@ -562,7 +562,7 @@ namespace System.Windows.Forms
             }
         }
 
-        protected override void OnResize(EventArgs e)
+        protected  override void OnResize(EventArgs e)
         {
             //	Recreate the buffer for manual double buffering
             if (this.Width > 0 && this.Height > 0)
@@ -606,7 +606,7 @@ namespace System.Windows.Forms
             base.OnResize(e);
         }
 
-        protected override void OnParentBackColorChanged(EventArgs e)
+        protected  override void OnParentBackColorChanged(EventArgs e)
         {
             if (this._BackImage != null)
             {
@@ -616,7 +616,7 @@ namespace System.Windows.Forms
             base.OnParentBackColorChanged(e);
         }
 
-        protected override void OnParentBackgroundImageChanged(EventArgs e)
+        protected  override void OnParentBackgroundImageChanged(EventArgs e)
         {
             if (this._BackImage != null)
             {
@@ -635,7 +635,7 @@ namespace System.Windows.Forms
         }
 
 
-        protected override void OnParentChanged(EventArgs e)
+        protected  override void OnParentChanged(EventArgs e)
         {
             base.OnParentChanged(e);
             if (this.Parent != null)
@@ -644,7 +644,7 @@ namespace System.Windows.Forms
             }
         }
 
-        protected override void OnSelecting(TabControlCancelEventArgs e)
+        protected  override void OnSelecting(TabControlCancelEventArgs e)
         {
             base.OnSelecting(e);
 
@@ -655,7 +655,7 @@ namespace System.Windows.Forms
             }
         }
 
-        protected override void OnMove(EventArgs e)
+        protected  override void OnMove(EventArgs e)
         {
             if (this.Width > 0 && this.Height > 0)
             {
@@ -669,7 +669,7 @@ namespace System.Windows.Forms
             this.Invalidate();
         }
 
-        protected override void OnControlAdded(ControlEventArgs e)
+        protected  override void OnControlAdded(ControlEventArgs e)
         {
             base.OnControlAdded(e);
             if (this.Visible)
@@ -678,7 +678,7 @@ namespace System.Windows.Forms
             }
         }
 
-        protected override void OnControlRemoved(ControlEventArgs e)
+        protected  override void OnControlRemoved(ControlEventArgs e)
         {
             //bool isAli = false;
             //if (selecti == -2)
@@ -705,7 +705,7 @@ namespace System.Windows.Forms
 
 
         [UIPermission(SecurityAction.LinkDemand, Window = UIPermissionWindow.AllWindows)]
-        protected override bool ProcessMnemonic(char charCode)
+        protected  override bool ProcessMnemonic(char charCode)
         {
             foreach (TabPage page in this.TabPages)
             {
@@ -718,14 +718,14 @@ namespace System.Windows.Forms
             return base.ProcessMnemonic(charCode);
         }
 
-        protected override void OnSelectedIndexChanged(EventArgs e)
+        protected  override void OnSelectedIndexChanged(EventArgs e)
         {
             //base.OnSelectedIndexChanged(e);
         }
 
         [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
         [System.Diagnostics.DebuggerStepThrough()]
-        protected override void WndProc(ref Message m)
+        protected  override void WndProc(ref Message m)
         {
 
             switch (m.Msg)
@@ -749,7 +749,7 @@ namespace System.Windows.Forms
             }
         }
 
-        protected override void OnMouseClick(MouseEventArgs e)
+        protected  override void OnMouseClick(MouseEventArgs e)
         {
             var i = selecti;
             int index = this.ActiveIndex;
@@ -824,7 +824,7 @@ namespace System.Windows.Forms
             }
         }
 
-        protected override void OnMouseMove(MouseEventArgs e)
+        protected  override void OnMouseMove(MouseEventArgs e)
         {
             base.OnMouseMove(e);
             if (this._StyleProvider.ShowTabCloser)
@@ -856,7 +856,7 @@ namespace System.Windows.Forms
         //			NativeMethods.EndPaint(m.HWnd, ref paintStruct);
         //		}
 
-        protected override void OnPaint(PaintEventArgs e)
+        protected  override void OnPaint(PaintEventArgs e)
         {
             //	We must always paint the entire area of the tab control
             if (e.ClipRectangle.Equals(this.ClientRectangle))

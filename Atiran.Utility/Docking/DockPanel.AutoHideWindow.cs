@@ -22,12 +22,12 @@ namespace Atiran.Utility.Docking
                     get { return m_autoHideWindow; }
                 }
 
-                protected override int SplitterSize
+                protected  override int SplitterSize
                 {
                     get { return Measures.SplitterSize; }
                 }
 
-                protected override void StartDrag()
+                protected  override void StartDrag()
                 {
         			AutoHideWindow.DockPanel.BeginDrag(AutoHideWindow, AutoHideWindow.RectangleToScreen(Bounds));
                 }
@@ -52,7 +52,7 @@ namespace Atiran.Utility.Docking
                 Controls.Add(m_splitter);
             }
 
-            protected override void Dispose(bool disposing)
+            protected  override void Dispose(bool disposing)
             {
                 if (disposing)
                 {
@@ -325,7 +325,7 @@ namespace Atiran.Utility.Docking
                 }
             }
 
-            protected override void OnLayout(LayoutEventArgs levent)
+            protected  override void OnLayout(LayoutEventArgs levent)
             {
                 DockPadding.All = 0;
                 if (DockState == DockState.DockLeftAutoHide)
@@ -367,7 +367,7 @@ namespace Atiran.Utility.Docking
                 base.OnLayout(levent);
             }
 
-            protected override void OnPaint(PaintEventArgs e)
+            protected  override void OnPaint(PaintEventArgs e)
             {
                 // Draw the border
                 Graphics g = e.Graphics;

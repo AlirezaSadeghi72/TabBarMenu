@@ -58,7 +58,7 @@ namespace Atiran.Utility.Docking
 			ResumeLayout();
 		}
 
-		protected override void Dispose(bool disposing)
+		protected  override void Dispose(bool disposing)
 		{
 			if (disposing)
 			{
@@ -112,7 +112,7 @@ namespace Atiran.Utility.Docking
 			return true;
 		}
 
-		protected override void OnActivated(EventArgs e)
+		protected  override void OnActivated(EventArgs e)
 		{
 			DockPanel.FloatWindows.BringWindowToFront(this);
 			base.OnActivated (e);
@@ -122,7 +122,7 @@ namespace Atiran.Utility.Docking
 					content.OnActivated(e);
 		}
 
-		protected override void OnDeactivate(EventArgs e)
+		protected  override void OnDeactivate(EventArgs e)
 		{
 			base.OnDeactivate(e);
 			// Propagate the Deactivate event to the visible panes content objects
@@ -131,7 +131,7 @@ namespace Atiran.Utility.Docking
 					content.OnDeactivate(e);
 		}
 
-		protected override void OnLayout(LayoutEventArgs levent)
+		protected  override void OnLayout(LayoutEventArgs levent)
 		{
 			VisibleNestedPanes.Refresh();
 			RefreshChanges();
@@ -155,7 +155,7 @@ namespace Atiran.Utility.Docking
 				Text = theOnlyPane.ActiveContent.DockHandler.TabText;
 		}
 
-		protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified)
+		protected  override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified)
 		{
 			Rectangle rectWorkArea = SystemInformation.VirtualScreen;
 
@@ -169,7 +169,7 @@ namespace Atiran.Utility.Docking
 		}
 
         [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
-		protected override void WndProc(ref Message m)
+		protected  override void WndProc(ref Message m)
 		{
 			if (m.Msg == (int)Win32.Msgs.WM_NCLBUTTONDOWN)
 			{

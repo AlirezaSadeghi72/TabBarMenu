@@ -38,7 +38,7 @@ namespace Atiran.Utility.Docking
 		{
 		}
 
-		protected override string GetLocalizedString(string key)
+		protected  override string GetLocalizedString(string key)
 		{
 			return ResourceHelper.GetString(key);
 		}

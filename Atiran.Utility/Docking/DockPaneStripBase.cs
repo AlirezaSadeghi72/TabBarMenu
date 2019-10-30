@@ -177,7 +177,7 @@ namespace Atiran.Utility.Docking
             return new Tab(content);
         }
 
-        protected override void OnMouseDown(MouseEventArgs e)
+        protected  override void OnMouseDown(MouseEventArgs e)
         {
             base.OnMouseDown(e);
 
@@ -206,7 +206,7 @@ namespace Atiran.Utility.Docking
             DockPane.ShowTabPageContextMenu(this, position);
         }
 
-        protected override void OnMouseUp(MouseEventArgs e)
+        protected  override void OnMouseUp(MouseEventArgs e)
         {
             base.OnMouseUp(e);
 
@@ -226,7 +226,7 @@ namespace Atiran.Utility.Docking
         }
 
         [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
-		protected override void WndProc(ref Message m)
+		protected  override void WndProc(ref Message m)
 		{
 			if (m.Msg == (int)Win32.Msgs.WM_LBUTTONDBLCLK)
 			{
@@ -247,7 +247,7 @@ namespace Atiran.Utility.Docking
 			return;
 		}
 
-        protected override void OnDragOver(DragEventArgs drgevent)
+        protected  override void OnDragOver(DragEventArgs drgevent)
         {
             base.OnDragOver(drgevent);
 

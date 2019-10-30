@@ -137,7 +137,7 @@ namespace Atiran.Utility.Docking
             }
 
             private bool m_disposed = false;
-            protected override void Dispose(bool disposing)
+            protected  override void Dispose(bool disposing)
             {
                 lock (this)
                 {

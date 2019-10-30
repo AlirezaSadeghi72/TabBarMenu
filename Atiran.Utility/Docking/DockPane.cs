@@ -125,7 +125,7 @@ namespace Atiran.Utility.Docking
             DockPanel.ResumeLayout(true, true);
         }
 
-        protected override void Dispose(bool disposing)
+        protected  override void Dispose(bool disposing)
         {
             if (disposing)
             {
@@ -548,7 +548,7 @@ namespace Atiran.Utility.Docking
                 ((Control)NestedPanesContainer).PerformLayout();
         }
 
-        protected override void OnLayout(LayoutEventArgs levent)
+        protected  override void OnLayout(LayoutEventArgs levent)
         {
             SetIsHidden(DisplayingContents.Count == 0);
             if (!IsHidden)
@@ -1181,7 +1181,7 @@ namespace Atiran.Utility.Docking
         }
 
         [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
-        protected override void WndProc(ref Message m)
+        protected  override void WndProc(ref Message m)
         {
             if (m.Msg == (int)Win32.Msgs.WM_MOUSEACTIVATE)
                 Activate();

@@ -34,12 +34,12 @@ namespace Atiran.Utility.Docking
             }
         }
 
-        protected override Size DefaultSize
+        protected  override Size DefaultSize
         {
             get { return Resources.DockPane_Close.Size; }
         }
 
-        protected override void OnMouseMove(MouseEventArgs e)
+        protected  override void OnMouseMove(MouseEventArgs e)
         {
             base.OnMouseMove(e);
             bool over = ClientRectangle.Contains(e.X, e.Y);
@@ -47,21 +47,21 @@ namespace Atiran.Utility.Docking
                 IsMouseOver = over;
         }
 
-        protected override void OnMouseEnter(EventArgs e)
+        protected  override void OnMouseEnter(EventArgs e)
         {
             base.OnMouseEnter(e);
             if (!IsMouseOver)
                 IsMouseOver = true;
         }
 
-        protected override void OnMouseLeave(EventArgs e)
+        protected  override void OnMouseLeave(EventArgs e)
         {
             base.OnMouseLeave(e);
             if (IsMouseOver)
                 IsMouseOver = false;
         }
 
-        protected override void OnPaint(PaintEventArgs e)
+        protected  override void OnPaint(PaintEventArgs e)
         {
             if (IsMouseOver && Enabled)
             {

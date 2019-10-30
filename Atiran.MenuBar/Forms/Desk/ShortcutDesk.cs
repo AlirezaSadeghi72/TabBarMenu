@@ -1,15 +1,15 @@
-﻿using System;
+﻿using Atiran.Utility.Docking2;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Atiran.Utility.Docking;
 
 namespace Atiran.MenuBar.Forms
 {
-    public class DeskTab: DockContent
+    public class ShortcutDesk : DockContent
     {
-        public DeskTab()
+        public ShortcutDesk()
         {
             InitializeComponent();
         }
@@ -17,11 +17,15 @@ namespace Atiran.MenuBar.Forms
         {
             this.SuspendLayout();
             // 
-            // DeskTab
+            // ShortcutDesk
             // 
-            this.ClientSize = new System.Drawing.Size(519, 280);
+            this.ClientSize = new System.Drawing.Size(626, 272);
+            this.DockAreas = ((DockAreas)((DockAreas.DockLeft | DockAreas.DockRight)));
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Name = "DeskTab";
+            this.HideOnClose = true;
+            this.Name = "ShortcutDesk";
+            this.ShowHint = DockState.DockRight;
+            this.ShowInTaskbar = false;
             this.ResumeLayout(false);
 
         }

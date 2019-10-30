@@ -224,7 +224,7 @@ namespace Atiran.Utility.Docking
                     Paint(this, e);
             }
 
-            protected override void WndProc(ref Message m)
+            protected  override void WndProc(ref Message m)
             {
                 switch (m.Msg)
                 {

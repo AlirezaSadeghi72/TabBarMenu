@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using Atiran.DataLayer.Context;
 using Atiran.DataLayer.Model;
 using Atiran.MenuBar.Class;
+using Atiran.Utility.Docking;
 using Menu = Atiran.DataLayer.Model.Menu;
 
 namespace Atiran.MenuBar.Forms
@@ -23,7 +24,7 @@ namespace Atiran.MenuBar.Forms
         private TabPage tabPage1;
         private Utility.Panels.MainButton mainButton1;
         private Button button1;
-        private Utility.Docking.DockPanel dockPanel2;
+        private DockPanel dockPanel2;
         List<SubSystem> subSystems = new List<SubSystem>();
         //private Image CloseImage = Resources.close_button;
 
@@ -75,9 +76,9 @@ namespace Atiran.MenuBar.Forms
 
         private void InitializeComponent()
         {
-            Atiran.Utility.Docking.DockPanelSkin dockPanelSkin1 = new Atiran.Utility.Docking.DockPanelSkin();
-            Atiran.Utility.Docking.AutoHideStripSkin autoHideStripSkin1 = new Atiran.Utility.Docking.AutoHideStripSkin();
-            Atiran.Utility.Docking.DockPanelGradient dockPanelGradient1 = new Atiran.Utility.Docking.DockPanelGradient();
+           DockPanelSkin dockPanelSkin1 = new DockPanelSkin();
+            AutoHideStripSkin autoHideStripSkin1 = new AutoHideStripSkin();
+            DockPanelGradient dockPanelGradient1 = new Atiran.Utility.Docking.DockPanelGradient();
             Atiran.Utility.Docking.TabGradient tabGradient1 = new Atiran.Utility.Docking.TabGradient();
             Atiran.Utility.Docking.DockPaneStripSkin dockPaneStripSkin1 = new Atiran.Utility.Docking.DockPaneStripSkin();
             Atiran.Utility.Docking.DockPaneStripGradient dockPaneStripGradient1 = new Atiran.Utility.Docking.DockPaneStripGradient();
@@ -95,7 +96,7 @@ namespace Atiran.MenuBar.Forms
             this.mainButton1 = new Atiran.Utility.Panels.MainButton();
             this.pnlFooter = new System.Windows.Forms.Panel();
             this.pnlMain = new System.Windows.Forms.Panel();
-            this.dockPanel2 = new Atiran.Utility.Docking.DockPanel();
+            this.dockPanel2 = new DockPanel();
             this.MainTab = new System.Windows.Forms.CustomTabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.MyMnSt = new System.Windows.Forms.MenuStrip();
@@ -210,7 +211,6 @@ namespace Atiran.MenuBar.Forms
             dockPaneStripToolWindowGradient1.InactiveTabGradient = tabGradient7;
             dockPaneStripSkin1.ToolWindowGradient = dockPaneStripToolWindowGradient1;
             dockPanelSkin1.DockPaneStripSkin = dockPaneStripSkin1;
-            this.dockPanel2.Skin = dockPanelSkin1;
             this.dockPanel2.TabIndex = 1;
             // 
             // MainTab
@@ -382,7 +382,7 @@ namespace Atiran.MenuBar.Forms
 
         }
 
-        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        protected  override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
             switch (keyData)
             {
@@ -558,9 +558,9 @@ namespace Atiran.MenuBar.Forms
 
         private void button1_Click(object sender, EventArgs e)
         {
-            DeskTab sh = new DeskTab();
-            sh.Text = "ميزكار";
-            sh.Show(dockPanel2,Utility.Docking.DockState.DockRight);
+            //DeskTab sh = new DeskTab();
+            //sh.Text = "ميزكار";
+            //sh.Show(dockPanel2,DockState.DockRight);
         }
     }
 }

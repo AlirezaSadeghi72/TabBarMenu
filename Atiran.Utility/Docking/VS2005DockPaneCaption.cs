@@ -38,7 +38,7 @@ namespace Atiran.Utility.Docking
                 get { return IsAutoHide ? m_imageAutoHide : m_image; }
             }
 
-            protected override void OnRefreshChanges()
+            protected  override void OnRefreshChanges()
             {
                 if (DockPaneCaption.DockPane.DockPanel != null)
                 {
@@ -179,7 +179,7 @@ namespace Atiran.Utility.Docking
 			ResumeLayout();
 		}
 
-        protected override void Dispose(bool disposing)
+        protected  override void Dispose(bool disposing)
         {
             if (disposing)
                 Components.Dispose();
@@ -324,7 +324,7 @@ namespace Atiran.Utility.Docking
 			return height;
 		}
 
-		protected override void OnPaint(PaintEventArgs e)
+		protected  override void OnPaint(PaintEventArgs e)
 		{
 			base.OnPaint (e);
 			DrawCaption(e.Graphics);
@@ -379,13 +379,13 @@ namespace Atiran.Utility.Docking
             TextRenderer.DrawText(g, DockPane.CaptionText, TextFont, DrawHelper.RtlTransform(this, rectCaptionText), colorText, TextFormat);
 		}
 
-		protected override void OnLayout(LayoutEventArgs levent)
+		protected  override void OnLayout(LayoutEventArgs levent)
 		{
 			SetButtonsPosition();
 			base.OnLayout (levent);
 		}
 
-		protected override void OnRefreshChanges()
+		protected  override void OnRefreshChanges()
 		{
             SetButtons();
             Invalidate();
@@ -471,7 +471,7 @@ namespace Atiran.Utility.Docking
             ShowTabPageContextMenu(PointToClient(Control.MousePosition));
         }
 
-        protected override void OnRightToLeftChanged(EventArgs e)
+        protected  override void OnRightToLeftChanged(EventArgs e)
         {
             base.OnRightToLeftChanged(e);
             PerformLayout();

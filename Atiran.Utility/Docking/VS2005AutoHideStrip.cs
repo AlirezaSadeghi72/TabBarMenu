@@ -215,7 +215,7 @@ namespace Atiran.Utility.Docking
             DrawTabStrip(g);
         }
 
-        protected override void OnLayout(LayoutEventArgs levent)
+        protected  override void OnLayout(LayoutEventArgs levent)
         {
             CalculateTabs();
             base.OnLayout(levent);
@@ -483,7 +483,7 @@ namespace Atiran.Utility.Docking
                 rect.Height, rect.Width);
         }
 
-        protected override IDockContent HitTest(Point ptMouse)
+        protected  override IDockContent HitTest(Point ptMouse)
         {
             foreach (DockState state in DockStates)
             {
@@ -512,13 +512,13 @@ namespace Atiran.Utility.Docking
                 TextFont.Height) + TabGapTop;
         }
 
-        protected override void OnRefreshChanges()
+        protected  override void OnRefreshChanges()
         {
             CalculateTabs();
             Invalidate();
         }
 
-        protected override AutoHideStripBase.Tab CreateTab(IDockContent content)
+        protected  override AutoHideStripBase.Tab CreateTab(IDockContent content)
         {
             return new TabVS2005(content);
         }

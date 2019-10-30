@@ -573,7 +573,7 @@ namespace Atiran.Utility.Docking
             ResumeLayout();
         }
 
-        protected override void Dispose(bool disposing)
+        protected  override void Dispose(bool disposing)
         {
             if (disposing)
             {
@@ -615,7 +615,7 @@ namespace Atiran.Utility.Docking
             return height;
         }
 
-        protected override void OnPaint(PaintEventArgs e)
+        protected  override void OnPaint(PaintEventArgs e)
         {
             Rectangle rect = TabsRectangle;
 
@@ -665,7 +665,7 @@ namespace Atiran.Utility.Docking
             DrawTabStrip(e.Graphics);
         }
 
-        protected override void OnRefreshChanges()
+        protected  override void OnRefreshChanges()
         {
             SetInertButtons();
             Invalidate();
@@ -1397,7 +1397,7 @@ namespace Atiran.Utility.Docking
             }
         }
 
-        protected override void OnLayout(LayoutEventArgs levent)
+        protected  override void OnLayout(LayoutEventArgs levent)
         {
             if (Appearance == DockPane.AppearanceStyle.Document)
             {
@@ -1456,7 +1456,7 @@ namespace Atiran.Utility.Docking
             return -1;
         }
 
-        protected override void OnMouseHover(EventArgs e)
+        protected  override void OnMouseHover(EventArgs e)
         {
             int index = HitTest(PointToClient(Control.MousePosition));
             string toolTip = string.Empty;
@@ -1483,7 +1483,7 @@ namespace Atiran.Utility.Docking
             ResetMouseEventArgs();
         }
 
-        protected override void OnRightToLeftChanged(EventArgs e)
+        protected  override void OnRightToLeftChanged(EventArgs e)
         {
             base.OnRightToLeftChanged(e);
             PerformLayout();

@@ -32,7 +32,7 @@ namespace Atiran.Utility.Docking
 			Enabled = false;
 		}
 
-		protected override CreateParams CreateParams
+		protected  override CreateParams CreateParams
 		{
 			get
 			{
@@ -42,7 +42,7 @@ namespace Atiran.Utility.Docking
 			}
 		}
 
-		protected override void WndProc(ref Message m)
+		protected  override void WndProc(ref Message m)
 		{
 			if (m.Msg == (int)Win32.Msgs.WM_NCHITTEST)
 			{

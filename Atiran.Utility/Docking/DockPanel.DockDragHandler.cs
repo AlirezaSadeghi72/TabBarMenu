@@ -537,12 +537,12 @@ namespace Atiran.Utility.Docking
                     get { return m_dragForm; }
                 }
 
-                protected override void OnShow()
+                protected  override void OnShow()
                 {
                     CalculateRegion();
                 }
 
-                protected override void OnClose()
+                protected  override void OnClose()
                 {
                     DragForm.Close();
                 }
@@ -709,12 +709,12 @@ namespace Atiran.Utility.Docking
                 FloatOutlineBounds = DragSource.BeginDrag(StartMousePosition);
             }
 
-            protected override void OnDragging()
+            protected  override void OnDragging()
             {
                 TestDrop();
             }
 
-            protected override void OnEndDrag(bool abort)
+            protected  override void OnEndDrag(bool abort)
             {
                 DockPanel.SuspendLayout(true);
 

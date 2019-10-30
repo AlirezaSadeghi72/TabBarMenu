@@ -42,7 +42,7 @@ namespace Atiran.Utility.Docking
                 }
             }
 
-            protected override void OnPaint(PaintEventArgs e)
+            protected  override void OnPaint(PaintEventArgs e)
             {
                 base.OnPaint(e);
 
@@ -57,7 +57,7 @@ namespace Atiran.Utility.Docking
                     g.DrawLine(SystemPens.ControlDarkDark, rect.Right - 1, rect.Top, rect.Right - 1, rect.Bottom);
             }
 
-            protected override void OnMouseDown(MouseEventArgs e)
+            protected  override void OnMouseDown(MouseEventArgs e)
             {
                 base.OnMouseDown(e);
 

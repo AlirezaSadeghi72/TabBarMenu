@@ -121,7 +121,7 @@ namespace Atiran.Utility.Docking
 			}
 		}
 
-		protected override void OnPaint(PaintEventArgs e)
+		protected  override void OnPaint(PaintEventArgs e)
 		{
 			// if DockWindow is document, draw the border
             if (DockState == DockState.Document)
@@ -130,7 +130,7 @@ namespace Atiran.Utility.Docking
 			base.OnPaint(e);
 		}
 
-		protected override void OnLayout(LayoutEventArgs levent)
+		protected  override void OnLayout(LayoutEventArgs levent)
 		{
 			VisibleNestedPanes.Refresh();
 			if (VisibleNestedPanes.Count == 0)
