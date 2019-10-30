@@ -28,6 +28,8 @@ namespace Atiran.MenuBar.Forms
             this.DockAreas = Atiran.Utility.Docking2.DockAreas.Document;
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Name = "DeskTab";
+            this.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.RightToLeftLayout = true;
             this.ResumeLayout(false);
 
         }

@@ -24,7 +24,6 @@ namespace Atiran.MenuBar.Forms
         private ShortcutDesk sh1 = new ShortcutDesk();
         private VS2017LightTheme vS2017LightTheme1;
         private List<SubSystem> subSystems = new List<SubSystem>();
-        private Button button2;
         private DockPanel dockPanel1;
         private MenuStrip MyMnSt;
         private CustomTabControl MainTab;
@@ -45,12 +44,7 @@ namespace Atiran.MenuBar.Forms
             MainTab.RightToLeft = RightToLeft;
             MainTab.RightToLeftLayout = true;
 
-            //dockPanel1.RightToLeft = RightToLeft.No;
-            //dockPanel1.RightToLeftLayout = false;
-            DeskTab sh = new DeskTab();
-            sh.Text = "Alireza";
-            sh.Controls.Add(MainTab);
-            sh.Show(dockPanel1);
+            
 
         }
 
@@ -91,7 +85,6 @@ namespace Atiran.MenuBar.Forms
             this.mainButton1 = new Atiran.Utility.Panels.MainButton();
             this.pnlFooter = new System.Windows.Forms.Panel();
             this.vS2017LightTheme1 = new Atiran.Utility.Docking2.Theme.ThemeVS2017.VS2017LightTheme();
-            this.button2 = new System.Windows.Forms.Button();
             this.dockPanel1 = new Atiran.Utility.Docking2.DockPanel();
             this.MyMnSt = new System.Windows.Forms.MenuStrip();
             this.pnlMainButtons.SuspendLayout();
@@ -101,7 +94,6 @@ namespace Atiran.MenuBar.Forms
             // pnlMainButtons
             // 
             this.pnlMainButtons.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(21)))), ((int)(((byte)(100)))), ((int)(((byte)(123)))));
-            this.pnlMainButtons.Controls.Add(this.button2);
             this.pnlMainButtons.Controls.Add(this.button1);
             this.pnlMainButtons.Controls.Add(this.mainButton1);
             this.pnlMainButtons.Dock = System.Windows.Forms.DockStyle.Top;
@@ -142,24 +134,18 @@ namespace Atiran.MenuBar.Forms
             this.pnlFooter.Size = new System.Drawing.Size(1200, 56);
             this.pnlFooter.TabIndex = 2;
             // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(97, 3);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(86, 32);
-            this.button2.TabIndex = 2;
-            this.button2.Text = "button2";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
-            // 
             // dockPanel1
             // 
             this.dockPanel1.AllowDrop = true;
+            this.dockPanel1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.dockPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dockPanel1.DockBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(238)))), ((int)(((byte)(238)))), ((int)(((byte)(242)))));
             this.dockPanel1.Location = new System.Drawing.Point(0, 42);
             this.dockPanel1.Name = "dockPanel1";
             this.dockPanel1.Padding = new System.Windows.Forms.Padding(6);
+            this.dockPanel1.RightToLeftLayout = true;
+            this.dockPanel1.ShowAutoHideContentOnHover = false;
+            this.dockPanel1.ShowDocumentIcon = true;
             this.dockPanel1.Size = new System.Drawing.Size(1200, 502);
             this.dockPanel1.TabIndex = 7;
             this.dockPanel1.Theme = this.vS2017LightTheme1;
@@ -184,6 +170,7 @@ namespace Atiran.MenuBar.Forms
             this.Controls.Add(this.pnlFooter);
             this.Controls.Add(this.pnlMainButtons);
             this.Font = new System.Drawing.Font("IRANSans", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(178)));
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.IsMdiContainer = true;
             this.Name = "TabBarMenu";
             this.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
@@ -400,13 +387,18 @@ namespace Atiran.MenuBar.Forms
             //    Dock = DockStyle.Bottom
             //};
 
-            MainTab.TabPages.Add(name, text);
-            int intextTab = MainTab.TabPages.Count - 1;
-            MainTab.SelectTab(intextTab);
+            DeskTab sh = new DeskTab();
+            sh.Text = text;
+            sh.Controls.Add(control);
+            sh.Show(dockPanel1);
 
-            var tabpage = MainTab.TabPages[intextTab];
-            tabpage.BackColor = Color.White;
-            tabpage.Controls.Add(control);
+            //MainTab.TabPages.Add(name, text);
+            //int intextTab = MainTab.TabPages.Count - 1;
+            //MainTab.SelectTab(intextTab);
+
+            //var tabpage = MainTab.TabPages[intextTab];
+            //tabpage.BackColor = Color.White;
+            //tabpage.Controls.Add(control);
         }
 
 
@@ -475,12 +467,5 @@ namespace Atiran.MenuBar.Forms
             //sh.Show(dockPanel2,DockState.DockRight);
         }
 
-        private void button2_Click(object sender, EventArgs e)
-        {
-            DeskTab sh = new DeskTab();
-            sh.Text = "Alireza";
-            //sh.Controls.Add(MainTab);
-            sh.Show(dockPanel1);
-        }
     }
 }

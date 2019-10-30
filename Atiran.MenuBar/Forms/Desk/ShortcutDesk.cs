@@ -24,6 +24,8 @@ namespace Atiran.MenuBar.Forms
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.HideOnClose = true;
             this.Name = "ShortcutDesk";
+            this.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.RightToLeftLayout = true;
             this.ShowHint = Atiran.Utility.Docking2.DockState.DockRight;
             this.ShowInTaskbar = false;
             this.ResumeLayout(false);

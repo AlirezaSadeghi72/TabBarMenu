@@ -1136,7 +1136,6 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2012
             rectBack.Width += DocumentIconGapLeft;
             rectBack.X -= DocumentIconGapLeft;
 
-            rectIcon = rectText;// DrawHelper.RtlTransform(this, rectIcon);
 
             Color activeColor = DockPane.DockPanel.Theme.ColorPalette.TabSelectedActive.Background;
             Color lostFocusColor = DockPane.DockPanel.Theme.ColorPalette.TabSelectedInactive.Background;
