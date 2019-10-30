@@ -28,9 +28,12 @@ namespace Atiran.MenuBar.Forms
         private ToolStripMenuItem menuItemSchema2;
         private DockPanel dockPanel1;
         private System.ComponentModel.IContainer components;
-        private VS2017DarkTheme vS2017DarkTheme1;
         private VS2017LightTheme vS2017LightTheme1;
         private VisualStudioToolStripExtender visualStudioToolStripExtender1;
+        private VS2017DarkTheme vS2017DarkTheme1;
+        private VS2012LightTheme vS2012LightTheme1;
+        private Utility.Docking2.Theme.ThemeVS2005.VS2005Theme vS2005Theme1;
+
         //private ToolStripMenuItem menuItemSchema3;
         //private ToolStripMenuItem menuItemSchema4;
         //private ToolStripMenuItem menuItemSchema5;
@@ -54,9 +57,11 @@ namespace Atiran.MenuBar.Forms
             this.menuItemSchema1 = new System.Windows.Forms.ToolStripMenuItem();
             this.menuItemSchema2 = new System.Windows.Forms.ToolStripMenuItem();
             this.dockPanel1 = new Atiran.Utility.Docking2.DockPanel();
+            this.vS2012LightTheme1 = new Atiran.Utility.Docking2.Theme.ThemeVS2012.VS2012LightTheme();
+            this.vS2005Theme1 = new Atiran.Utility.Docking2.Theme.ThemeVS2005.VS2005Theme();
             this.vS2017LightTheme1 = new Atiran.Utility.Docking2.Theme.ThemeVS2017.VS2017LightTheme();
-            this.vS2017DarkTheme1 = new Atiran.Utility.Docking2.Theme.ThemeVS2017.VS2017DarkTheme();
             this.visualStudioToolStripExtender1 = new Atiran.Utility.Docking2.VisualStudioToolStripExtender(this.components);
+            this.vS2017DarkTheme1 = new Atiran.Utility.Docking2.Theme.ThemeVS2017.VS2017DarkTheme();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dockPanel1)).BeginInit();
             this.SuspendLayout();
@@ -118,12 +123,15 @@ namespace Atiran.MenuBar.Forms
             // 
             // dockPanel1
             // 
+            this.dockPanel1.BackColor = System.Drawing.SystemColors.Control;
             this.dockPanel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.dockPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dockPanel1.DockBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(238)))), ((int)(((byte)(238)))), ((int)(((byte)(242)))));
             this.dockPanel1.Location = new System.Drawing.Point(0, 70);
             this.dockPanel1.Name = "dockPanel1";
             this.dockPanel1.Padding = new System.Windows.Forms.Padding(6);
+            this.dockPanel1.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.dockPanel1.RightToLeftLayout = true;
             this.dockPanel1.ShowAutoHideContentOnHover = false;
             this.dockPanel1.Size = new System.Drawing.Size(909, 364);
             this.dockPanel1.TabIndex = 8;

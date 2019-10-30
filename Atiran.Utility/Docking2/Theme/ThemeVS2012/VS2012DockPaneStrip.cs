@@ -518,7 +518,7 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2012
             ResumeLayout();
         }
 
-        protected  override void Dispose(bool disposing)
+        protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
@@ -561,7 +561,7 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2012
             return height;
         }
 
-        protected  override void OnPaint(PaintEventArgs e)
+        protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
             CalculateTabs();
@@ -574,7 +574,7 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2012
             DrawTabStrip(e.Graphics);
         }
 
-        protected  override void OnRefreshChanges()
+        protected override void OnRefreshChanges()
         {
             SetInertButtons();
             Invalidate();
@@ -1104,10 +1104,13 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2012
         private void DrawTab_Document(Graphics g, TabVS2012 tab)
         {
             var rect = tab.Rectangle.Value;
+            rect = DrawHelper.RtlTransform(this, rect);
+
             if (tab.TabWidth == 0)
                 return;
 
             var rectCloseButton = GetCloseButtonRect(rect);
+
             Rectangle rectIcon = new Rectangle(
                 rect.X + DocumentIconGapLeft,
                 rect.Y + rect.Height - DocumentIconGapBottom - DocumentIconHeight,
@@ -1128,13 +1131,12 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2012
             else
                 rectText.Width = rect.Width - DocumentIconGapLeft - DocumentTextGapRight - rectCloseButton.Width;
 
-            Rectangle rectTab = DrawHelper.RtlTransform(this, rect);
-            Rectangle rectBack = DrawHelper.RtlTransform(this, rect);
+            Rectangle rectTab = rect;// DrawHelper.RtlTransform(this, rect);
+            Rectangle rectBack = rect;// DrawHelper.RtlTransform(this, rect);
             rectBack.Width += DocumentIconGapLeft;
             rectBack.X -= DocumentIconGapLeft;
 
-            rectText = DrawHelper.RtlTransform(this, rectText);
-            rectIcon = DrawHelper.RtlTransform(this, rectIcon);
+            rectIcon = rectText;// DrawHelper.RtlTransform(this, rectIcon);
 
             Color activeColor = DockPane.DockPanel.Theme.ColorPalette.TabSelectedActive.Background;
             Color lostFocusColor = DockPane.DockPanel.Theme.ColorPalette.TabSelectedInactive.Background;
@@ -1150,6 +1152,7 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2012
             Image image = null;
             Color paint;
             var imageService = DockPane.DockPanel.Theme.ImageService;
+
             if (DockPane.ActiveContent == tab.Content)
             {
                 if (DockPane.IsActiveDocumentPane)
@@ -1215,14 +1218,14 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2012
             }
         }
 
-        protected  override void OnMouseUp(MouseEventArgs e)
+        protected override void OnMouseUp(MouseEventArgs e)
         {
             base.OnMouseUp(e);
             if (IsMouseDown)
                 IsMouseDown = false;
         }
 
-        protected  override void OnMouseDown(MouseEventArgs e)
+        protected override void OnMouseDown(MouseEventArgs e)
         {
             base.OnMouseDown(e);
             // suspend drag if mouse is down on active close button.
@@ -1231,7 +1234,7 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2012
                 IsMouseDown = true;
         }
 
-        protected  override void OnMouseMove(MouseEventArgs e)
+        protected override void OnMouseMove(MouseEventArgs e)
         {
             if (!this.m_suspendDrag)
                 base.OnMouseMove(e);
@@ -1255,7 +1258,7 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2012
                     toolTip = tab.Content.DockHandler.TabText;
 
                 var mousePos = PointToClient(MousePosition);
-                var tabRect = tab.Rectangle.Value;
+                var tabRect = DrawHelper.RtlTransform(this, tab.Rectangle.Value);
                 var closeButtonRect = GetCloseButtonRect(tabRect);
                 var mouseRect = new Rectangle(mousePos, new Size(1, 1));
                 buttonUpdate = SetActiveClose(closeButtonRect.IntersectsWith(mouseRect) ? closeButtonRect : Rectangle.Empty);
@@ -1277,7 +1280,7 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2012
             }
         }
 
-        protected  override void OnMouseClick(MouseEventArgs e)
+        protected override void OnMouseClick(MouseEventArgs e)
         {
             base.OnMouseClick(e);
             if (e.Button != MouseButtons.Left || Appearance != DockPane.AppearanceStyle.Document)
@@ -1375,7 +1378,7 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2012
             }
         }
 
-        protected  override void OnLayout(LayoutEventArgs levent)
+        protected override void OnLayout(LayoutEventArgs levent)
         {
             if (Appearance == DockPane.AppearanceStyle.Document)
             {
@@ -1423,8 +1426,8 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2012
 
         protected internal override int HitTest(Point point)
         {
-            if (!TabsRectangle.Contains(point))
-                return -1;
+            //if (!TabsRectangle.Contains(point))
+            //    return -1;
 
             foreach (Tab tab in Tabs)
             {
@@ -1436,7 +1439,7 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2012
             return -1;
         }
 
-        protected  override bool MouseDownActivateTest(MouseEventArgs e)
+        protected override bool MouseDownActivateTest(MouseEventArgs e)
         {
             bool result = base.MouseDownActivateTest(e);
             if (result && (e.Button == MouseButtons.Left) && (Appearance == DockPane.AppearanceStyle.Document))
@@ -1458,7 +1461,7 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2012
             return result;
         }
 
-        protected  override Rectangle GetTabBounds(Tab tab)
+        protected override Rectangle GetTabBounds(Tab tab)
         {
             GraphicsPath path = GetTabOutline(tab, true, false);
             RectangleF rectangle = path.GetBounds();
@@ -1488,7 +1491,7 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2012
             return true;
         }
 
-        protected  override void OnMouseLeave(EventArgs e)
+        protected override void OnMouseLeave(EventArgs e)
         {
             var tabUpdate = SetMouseOverTab(null);
             var buttonUpdate = SetActiveClose(Rectangle.Empty);
@@ -1498,7 +1501,7 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2012
             base.OnMouseLeave(e);
         }
 
-        protected  override void OnRightToLeftChanged(EventArgs e)
+        protected override void OnRightToLeftChanged(EventArgs e)
         {
             base.OnRightToLeftChanged(e);
             PerformLayout();
