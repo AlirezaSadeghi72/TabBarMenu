@@ -23,9 +23,9 @@ namespace Atiran.MenuBar.Forms
         private ShortcutDesk sh1 = new ShortcutDesk();
         private VS2017LightTheme vS2017LightTheme1;
         private List<SubSystem> subSystems = new List<SubSystem>();
-        private DockPanel dockPanel1;
+        private DockPanel MainTab;
         private MenuStrip MyMnSt;
-        private CustomTabControl MainTab;
+        //private CustomTabControl MainTab;
         //private Image CloseImage = Resources.close_button;
 
         public TabBarMenu()
@@ -53,12 +53,12 @@ namespace Atiran.MenuBar.Forms
             MyMnSt.Items.Add(tmp);
 
 
-            MainTab = new CustomTabControl();
-            MainTab.Dock = DockStyle.Fill;
-            MainTab.DisplayStyle = TabStyle.Chrome;
-            MainTab.AllowDrop = true;
-            MainTab.RightToLeft = RightToLeft;
-            MainTab.RightToLeftLayout = true;
+            //MainTab = new CustomTabControl();
+            //MainTab.Dock = DockStyle.Fill;
+            //MainTab.DisplayStyle = TabStyle.Chrome;
+            //MainTab.AllowDrop = true;
+            //MainTab.RightToLeft = RightToLeft;
+            //MainTab.RightToLeftLayout = true;
 
             
 
@@ -100,10 +100,10 @@ namespace Atiran.MenuBar.Forms
             this.mainButton1 = new Atiran.Utility.Panels.MainButton();
             this.pnlFooter = new System.Windows.Forms.Panel();
             this.vS2017LightTheme1 = new Atiran.Utility.Docking2.Theme.ThemeVS2017.VS2017LightTheme();
-            this.dockPanel1 = new Atiran.Utility.Docking2.DockPanel();
+            this.MainTab = new Atiran.Utility.Docking2.DockPanel();
             this.MyMnSt = new System.Windows.Forms.MenuStrip();
             this.pnlMainButtons.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dockPanel1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.MainTab)).BeginInit();
             this.SuspendLayout();
             // 
             // pnlMainButtons
@@ -138,21 +138,21 @@ namespace Atiran.MenuBar.Forms
             this.pnlFooter.Size = new System.Drawing.Size(1200, 56);
             this.pnlFooter.TabIndex = 2;
             // 
-            // dockPanel1
+            // MainTab
             // 
-            this.dockPanel1.AllowDrop = true;
-            this.dockPanel1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.dockPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dockPanel1.DockBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(238)))), ((int)(((byte)(238)))), ((int)(((byte)(242)))));
-            this.dockPanel1.Location = new System.Drawing.Point(0, 42);
-            this.dockPanel1.Name = "dockPanel1";
-            this.dockPanel1.Padding = new System.Windows.Forms.Padding(6);
-            this.dockPanel1.RightToLeftLayout = true;
-            this.dockPanel1.ShowAutoHideContentOnHover = false;
-            this.dockPanel1.ShowDocumentIcon = true;
-            this.dockPanel1.Size = new System.Drawing.Size(1200, 502);
-            this.dockPanel1.TabIndex = 7;
-            this.dockPanel1.Theme = this.vS2017LightTheme1;
+            this.MainTab.AllowDrop = true;
+            this.MainTab.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.MainTab.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.MainTab.DockBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(238)))), ((int)(((byte)(238)))), ((int)(((byte)(242)))));
+            this.MainTab.Location = new System.Drawing.Point(0, 42);
+            this.MainTab.Name = "MainTab";
+            this.MainTab.Padding = new System.Windows.Forms.Padding(6);
+            this.MainTab.RightToLeftLayout = true;
+            this.MainTab.ShowAutoHideContentOnHover = false;
+            this.MainTab.ShowDocumentIcon = true;
+            this.MainTab.Size = new System.Drawing.Size(1200, 502);
+            this.MainTab.TabIndex = 7;
+            this.MainTab.Theme = this.vS2017LightTheme1;
             // 
             // MyMnSt
             // 
@@ -169,7 +169,7 @@ namespace Atiran.MenuBar.Forms
             // TabBarMenu
             // 
             this.ClientSize = new System.Drawing.Size(1200, 600);
-            this.Controls.Add(this.dockPanel1);
+            this.Controls.Add(this.MainTab);
             this.Controls.Add(this.MyMnSt);
             this.Controls.Add(this.pnlFooter);
             this.Controls.Add(this.pnlMainButtons);
@@ -181,7 +181,7 @@ namespace Atiran.MenuBar.Forms
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Load += new System.EventHandler(this.MyMenuItem_Load);
             this.pnlMainButtons.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.dockPanel1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.MainTab)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -292,7 +292,8 @@ namespace Atiran.MenuBar.Forms
                     {
                         try
                         {
-                            MainTab.TabPages.Remove(MainTab.TabPages[MainTab.SelectedIndex]);
+                            //MainTab.TabPages.Remove(MainTab.TabPages[MainTab.SelectedIndex]);
+                            ActiveMdiChild.Close();
                         }
                         catch (Exception)
                         {
@@ -378,6 +379,8 @@ namespace Atiran.MenuBar.Forms
 
 
 
+        #region me
+
         #region Method
 
         private void AddTab(string text, string name, string typeName)
@@ -394,7 +397,7 @@ namespace Atiran.MenuBar.Forms
             DeskTab sh = new DeskTab();
             sh.Text = text;
             sh.Controls.Add(control);
-            sh.Show(dockPanel1);
+            sh.Show(MainTab);
 
             //MainTab.TabPages.Add(name, text);
             //int intextTab = MainTab.TabPages.Count - 1;
@@ -404,7 +407,6 @@ namespace Atiran.MenuBar.Forms
             //tabpage.BackColor = Color.White;
             //tabpage.Controls.Add(control);
         }
-
 
         private object GetObjectFromString(string str)
         {
@@ -422,54 +424,19 @@ namespace Atiran.MenuBar.Forms
 
         #endregion
 
-        #region handler Close Butten In Header TabPage
-
-        //private void tabControl1_MouseDown(object sender, MouseEventArgs e)
-        //{
-        //    for (var i = 0; i < this.MainTab.TabPages.Count; i++)
-        //    {
-        //        var tabRect = this.MainTab.GetTabRect(i);
-        //        tabRect.Inflate(-2, -2);
-        //        var CloseRect = new Rectangle(
-        //            tabRect.Left,
-        //            tabRect.Top + (tabRect.Height - 20) / 2,
-        //            16,
-        //            16);
-        //        if (CloseRect.Contains(e.Location))
-        //        {
-        //            this.MainTab.TabPages.RemoveAt(i);
-        //            break;
-        //        }
-        //    }
-        //}
-        //private void tabControl1_DrawItem(object sender, DrawItemEventArgs e)
-        //{
-        //    var tabPage = this.MainTab.TabPages[e.Index];
-        //    var tabRect = this.MainTab.GetTabRect(e.Index);
-        //    tabRect.Inflate(0, 0);
-        //    tabRect.Width += 20;
-        //    var RTL = new Rectangle(
-        //        MainTab.ClientRectangle.Width - tabRect.Width - tabRect.X,
-        //        tabRect.Y,
-        //        tabRect.Width,
-        //        tabRect.Height);
-        //    e.Graphics.DrawString("X", new Font(tabPage.Font.FontFamily,12), Brushes.Red, 
-        //       (RTL.Right - 28),
-        //        (RTL.Top + (RTL.Height - 30) / 2));
-        //    TextRenderer.DrawText(e.Graphics, tabPage.Text, tabPage.Font,
-        //        tabRect, tabPage.ForeColor, TextFormatFlags.Right);
-        //}
-
-        #endregion
-
+        #region Event
+        
         private void Shortcut_Click(object sender, EventArgs e)
         {
             sh1.Text = "ميزكار";
-            sh1.Show(dockPanel1);
+            sh1.Show(MainTab);
             //DeskTab sh = new DeskTab();
             //sh.Text = "ميزكار";
             //sh.Show(dockPanel2,DockState.DockRight);
         }
 
+        #endregion
+
+        #endregion
     }
 }

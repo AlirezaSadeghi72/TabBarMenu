@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Atiran.Utility.Docking2;
 
 namespace Atiran.Reporting.BankAndChek.ChekPardakhti
 {
@@ -88,8 +89,7 @@ namespace Atiran.Reporting.BankAndChek.ChekPardakhti
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            CustomTabControl ali = ((Form) this.TopLevelControl).Controls.Find("MainTab",true).FirstOrDefault() as CustomTabControl;
-            ali.TabPages.Remove(ali.SelectedTab);
+            ((Form) this.TopLevelControl).ActiveMdiChild.Close();
         }
     }
 }
