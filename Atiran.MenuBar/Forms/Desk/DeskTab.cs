@@ -25,7 +25,7 @@ namespace Atiran.MenuBar.Forms
             // 
             this.AutoScroll = true;
             this.ClientSize = new System.Drawing.Size(519, 280);
-            this.DockAreas = DockAreas.Document;
+            this.DockAreas = Atiran.Utility.Docking2.DockAreas.Document;
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Name = "DeskTab";
             this.ResumeLayout(false);

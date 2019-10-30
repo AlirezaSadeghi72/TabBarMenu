@@ -7,7 +7,8 @@ using System.Windows.Forms;
 using Atiran.DataLayer.Context;
 using Atiran.DataLayer.Model;
 using Atiran.MenuBar.Class;
-using Atiran.Utility.Docking;
+using Atiran.Utility.Docking2;
+using Atiran.Utility.Docking2.Theme.ThemeVS2017;
 using Menu = Atiran.DataLayer.Model.Menu;
 
 namespace Atiran.MenuBar.Forms
@@ -18,14 +19,15 @@ namespace Atiran.MenuBar.Forms
         private Panel pnlMainButtons;
         List<Menu> menus = new List<Menu>();
         private Panel pnlFooter;
-        private Panel pnlMain;
-        private MenuStrip MyMnSt;
-        private CustomTabControl MainTab;
-        private TabPage tabPage1;
         private Utility.Panels.MainButton mainButton1;
         private Button button1;
-        private DockPanel dockPanel2;
-        List<SubSystem> subSystems = new List<SubSystem>();
+        private ShortcutDesk sh1 = new ShortcutDesk();
+        private VS2017LightTheme vS2017LightTheme1;
+        private List<SubSystem> subSystems = new List<SubSystem>();
+        private Button button2;
+        private DockPanel dockPanel1;
+        private MenuStrip MyMnSt;
+        private CustomTabControl MainTab;
         //private Image CloseImage = Resources.close_button;
 
         public TabBarMenu()
@@ -36,11 +38,19 @@ namespace Atiran.MenuBar.Forms
             this.menus = Connection.ResultAllMenu;
             this.subSystems = Connection.ResultAllSubSystem;
             FirstTurn();
-
+            MainTab = new CustomTabControl();
             MainTab.Dock = DockStyle.Fill;
-            MainTab.TabPages.Clear();
+            MainTab.DisplayStyle = TabStyle.Chrome;
+            MainTab.AllowDrop = true;
+            MainTab.RightToLeft = RightToLeft;
+            MainTab.RightToLeftLayout = true;
 
-
+            //dockPanel1.RightToLeft = RightToLeft.No;
+            //dockPanel1.RightToLeftLayout = false;
+            DeskTab sh = new DeskTab();
+            sh.Text = "Alireza";
+            sh.Controls.Add(MainTab);
+            sh.Show(dockPanel1);
 
         }
 
@@ -76,38 +86,22 @@ namespace Atiran.MenuBar.Forms
 
         private void InitializeComponent()
         {
-           DockPanelSkin dockPanelSkin1 = new DockPanelSkin();
-            AutoHideStripSkin autoHideStripSkin1 = new AutoHideStripSkin();
-            DockPanelGradient dockPanelGradient1 = new Atiran.Utility.Docking.DockPanelGradient();
-            Atiran.Utility.Docking.TabGradient tabGradient1 = new Atiran.Utility.Docking.TabGradient();
-            Atiran.Utility.Docking.DockPaneStripSkin dockPaneStripSkin1 = new Atiran.Utility.Docking.DockPaneStripSkin();
-            Atiran.Utility.Docking.DockPaneStripGradient dockPaneStripGradient1 = new Atiran.Utility.Docking.DockPaneStripGradient();
-            Atiran.Utility.Docking.TabGradient tabGradient2 = new Atiran.Utility.Docking.TabGradient();
-            Atiran.Utility.Docking.DockPanelGradient dockPanelGradient2 = new Atiran.Utility.Docking.DockPanelGradient();
-            Atiran.Utility.Docking.TabGradient tabGradient3 = new Atiran.Utility.Docking.TabGradient();
-            Atiran.Utility.Docking.DockPaneStripToolWindowGradient dockPaneStripToolWindowGradient1 = new Atiran.Utility.Docking.DockPaneStripToolWindowGradient();
-            Atiran.Utility.Docking.TabGradient tabGradient4 = new Atiran.Utility.Docking.TabGradient();
-            Atiran.Utility.Docking.TabGradient tabGradient5 = new Atiran.Utility.Docking.TabGradient();
-            Atiran.Utility.Docking.DockPanelGradient dockPanelGradient3 = new Atiran.Utility.Docking.DockPanelGradient();
-            Atiran.Utility.Docking.TabGradient tabGradient6 = new Atiran.Utility.Docking.TabGradient();
-            Atiran.Utility.Docking.TabGradient tabGradient7 = new Atiran.Utility.Docking.TabGradient();
             this.pnlMainButtons = new System.Windows.Forms.Panel();
             this.button1 = new System.Windows.Forms.Button();
             this.mainButton1 = new Atiran.Utility.Panels.MainButton();
             this.pnlFooter = new System.Windows.Forms.Panel();
-            this.pnlMain = new System.Windows.Forms.Panel();
-            this.dockPanel2 = new DockPanel();
-            this.MainTab = new System.Windows.Forms.CustomTabControl();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.vS2017LightTheme1 = new Atiran.Utility.Docking2.Theme.ThemeVS2017.VS2017LightTheme();
+            this.button2 = new System.Windows.Forms.Button();
+            this.dockPanel1 = new Atiran.Utility.Docking2.DockPanel();
             this.MyMnSt = new System.Windows.Forms.MenuStrip();
             this.pnlMainButtons.SuspendLayout();
-            this.pnlMain.SuspendLayout();
-            this.MainTab.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dockPanel1)).BeginInit();
             this.SuspendLayout();
             // 
             // pnlMainButtons
             // 
             this.pnlMainButtons.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(21)))), ((int)(((byte)(100)))), ((int)(((byte)(123)))));
+            this.pnlMainButtons.Controls.Add(this.button2);
             this.pnlMainButtons.Controls.Add(this.button1);
             this.pnlMainButtons.Controls.Add(this.mainButton1);
             this.pnlMainButtons.Dock = System.Windows.Forms.DockStyle.Top;
@@ -148,139 +142,55 @@ namespace Atiran.MenuBar.Forms
             this.pnlFooter.Size = new System.Drawing.Size(1200, 56);
             this.pnlFooter.TabIndex = 2;
             // 
-            // pnlMain
+            // button2
             // 
-            this.pnlMain.Controls.Add(this.dockPanel2);
-            this.pnlMain.Controls.Add(this.MainTab);
-            this.pnlMain.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlMain.Font = new System.Drawing.Font("IRANSans(FaNum)", 8.249999F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(178)));
-            this.pnlMain.Location = new System.Drawing.Point(0, 42);
-            this.pnlMain.Name = "pnlMain";
-            this.pnlMain.Size = new System.Drawing.Size(1200, 502);
-            this.pnlMain.TabIndex = 3;
+            this.button2.Location = new System.Drawing.Point(97, 3);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(86, 32);
+            this.button2.TabIndex = 2;
+            this.button2.Text = "button2";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
-            // dockPanel2
+            // dockPanel1
             // 
-            this.dockPanel2.ActiveAutoHideContent = null;
-            this.dockPanel2.DockBackColor = System.Drawing.SystemColors.Control;
-            this.dockPanel2.Location = new System.Drawing.Point(52, 32);
-            this.dockPanel2.Name = "dockPanel2";
-            this.dockPanel2.Size = new System.Drawing.Size(454, 331);
-            dockPanelGradient1.EndColor = System.Drawing.SystemColors.ControlLight;
-            dockPanelGradient1.StartColor = System.Drawing.SystemColors.ControlLight;
-            autoHideStripSkin1.DockStripGradient = dockPanelGradient1;
-            tabGradient1.EndColor = System.Drawing.SystemColors.Control;
-            tabGradient1.StartColor = System.Drawing.SystemColors.Control;
-            tabGradient1.TextColor = System.Drawing.SystemColors.ControlDarkDark;
-            autoHideStripSkin1.TabGradient = tabGradient1;
-            autoHideStripSkin1.TextFont = new System.Drawing.Font("Segoe UI", 9F);
-            dockPanelSkin1.AutoHideStripSkin = autoHideStripSkin1;
-            tabGradient2.EndColor = System.Drawing.SystemColors.ControlLightLight;
-            tabGradient2.StartColor = System.Drawing.SystemColors.ControlLightLight;
-            tabGradient2.TextColor = System.Drawing.SystemColors.ControlText;
-            dockPaneStripGradient1.ActiveTabGradient = tabGradient2;
-            dockPanelGradient2.EndColor = System.Drawing.SystemColors.Control;
-            dockPanelGradient2.StartColor = System.Drawing.SystemColors.Control;
-            dockPaneStripGradient1.DockStripGradient = dockPanelGradient2;
-            tabGradient3.EndColor = System.Drawing.SystemColors.ControlLight;
-            tabGradient3.StartColor = System.Drawing.SystemColors.ControlLight;
-            tabGradient3.TextColor = System.Drawing.SystemColors.ControlText;
-            dockPaneStripGradient1.InactiveTabGradient = tabGradient3;
-            dockPaneStripSkin1.DocumentGradient = dockPaneStripGradient1;
-            dockPaneStripSkin1.TextFont = new System.Drawing.Font("Segoe UI", 9F);
-            tabGradient4.EndColor = System.Drawing.SystemColors.ActiveCaption;
-            tabGradient4.LinearGradientMode = System.Drawing.Drawing2D.LinearGradientMode.Vertical;
-            tabGradient4.StartColor = System.Drawing.SystemColors.GradientActiveCaption;
-            tabGradient4.TextColor = System.Drawing.SystemColors.ActiveCaptionText;
-            dockPaneStripToolWindowGradient1.ActiveCaptionGradient = tabGradient4;
-            tabGradient5.EndColor = System.Drawing.SystemColors.Control;
-            tabGradient5.StartColor = System.Drawing.SystemColors.Control;
-            tabGradient5.TextColor = System.Drawing.SystemColors.ControlText;
-            dockPaneStripToolWindowGradient1.ActiveTabGradient = tabGradient5;
-            dockPanelGradient3.EndColor = System.Drawing.SystemColors.ControlLight;
-            dockPanelGradient3.StartColor = System.Drawing.SystemColors.ControlLight;
-            dockPaneStripToolWindowGradient1.DockStripGradient = dockPanelGradient3;
-            tabGradient6.EndColor = System.Drawing.SystemColors.InactiveCaption;
-            tabGradient6.LinearGradientMode = System.Drawing.Drawing2D.LinearGradientMode.Vertical;
-            tabGradient6.StartColor = System.Drawing.SystemColors.GradientInactiveCaption;
-            tabGradient6.TextColor = System.Drawing.SystemColors.InactiveCaptionText;
-            dockPaneStripToolWindowGradient1.InactiveCaptionGradient = tabGradient6;
-            tabGradient7.EndColor = System.Drawing.Color.Transparent;
-            tabGradient7.StartColor = System.Drawing.Color.Transparent;
-            tabGradient7.TextColor = System.Drawing.SystemColors.ControlDarkDark;
-            dockPaneStripToolWindowGradient1.InactiveTabGradient = tabGradient7;
-            dockPaneStripSkin1.ToolWindowGradient = dockPaneStripToolWindowGradient1;
-            dockPanelSkin1.DockPaneStripSkin = dockPaneStripSkin1;
-            this.dockPanel2.TabIndex = 1;
-            // 
-            // MainTab
-            // 
-            this.MainTab.AllowDrop = true;
-            this.MainTab.Controls.Add(this.tabPage1);
-            this.MainTab.DisplayStyle = System.Windows.Forms.TabStyle.VisualStudio;
-            // 
-            // 
-            // 
-            this.MainTab.DisplayStyleProvider.BorderColor = System.Drawing.SystemColors.ControlDark;
-            this.MainTab.DisplayStyleProvider.BorderColorHot = System.Drawing.SystemColors.ControlDark;
-            this.MainTab.DisplayStyleProvider.BorderColorSelected = System.Drawing.Color.FromArgb(((int)(((byte)(127)))), ((int)(((byte)(157)))), ((int)(((byte)(185)))));
-            this.MainTab.DisplayStyleProvider.CloserColor = System.Drawing.Color.DarkGray;
-            this.MainTab.DisplayStyleProvider.FocusTrack = false;
-            this.MainTab.DisplayStyleProvider.HotTrack = true;
-            this.MainTab.DisplayStyleProvider.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.MainTab.DisplayStyleProvider.Opacity = 1F;
-            this.MainTab.DisplayStyleProvider.Overlap = 7;
-            this.MainTab.DisplayStyleProvider.Padding = new System.Drawing.Point(25, 1);
-            this.MainTab.DisplayStyleProvider.ShowTabCloser = true;
-            this.MainTab.DisplayStyleProvider.TextColor = System.Drawing.SystemColors.ControlText;
-            this.MainTab.DisplayStyleProvider.TextColorDisabled = System.Drawing.SystemColors.ControlDark;
-            this.MainTab.DisplayStyleProvider.TextColorSelected = System.Drawing.SystemColors.ControlText;
-            this.MainTab.HotTrack = true;
-            this.MainTab.Location = new System.Drawing.Point(700, 42);
-            this.MainTab.Name = "MainTab";
-            this.MainTab.RightToLeftLayout = true;
-            this.MainTab.SelectedIndex = 0;
-            this.MainTab.Size = new System.Drawing.Size(452, 171);
-            this.MainTab.TabIndex = 0;
-            // 
-            // tabPage1
-            // 
-            this.tabPage1.Location = new System.Drawing.Point(4, 27);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(444, 140);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "tabPage1";
-            this.tabPage1.UseVisualStyleBackColor = true;
+            this.dockPanel1.AllowDrop = true;
+            this.dockPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dockPanel1.DockBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(238)))), ((int)(((byte)(238)))), ((int)(((byte)(242)))));
+            this.dockPanel1.Location = new System.Drawing.Point(0, 42);
+            this.dockPanel1.Name = "dockPanel1";
+            this.dockPanel1.Padding = new System.Windows.Forms.Padding(6);
+            this.dockPanel1.Size = new System.Drawing.Size(1200, 502);
+            this.dockPanel1.TabIndex = 7;
+            this.dockPanel1.Theme = this.vS2017LightTheme1;
             // 
             // MyMnSt
             // 
             this.MyMnSt.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(130)))), ((int)(((byte)(150)))));
             this.MyMnSt.Font = new System.Drawing.Font("IRANSans(FaNum)", 8.249999F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(178)));
+            this.MyMnSt.GripStyle = System.Windows.Forms.ToolStripGripStyle.Visible;
             this.MyMnSt.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.Flow;
             this.MyMnSt.Location = new System.Drawing.Point(0, 38);
             this.MyMnSt.Name = "MyMnSt";
             this.MyMnSt.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.MyMnSt.Size = new System.Drawing.Size(1200, 4);
-            this.MyMnSt.TabIndex = 4;
+            this.MyMnSt.TabIndex = 8;
             // 
             // TabBarMenu
             // 
             this.ClientSize = new System.Drawing.Size(1200, 600);
-            this.Controls.Add(this.pnlMain);
+            this.Controls.Add(this.dockPanel1);
             this.Controls.Add(this.MyMnSt);
             this.Controls.Add(this.pnlFooter);
             this.Controls.Add(this.pnlMainButtons);
             this.Font = new System.Drawing.Font("IRANSans", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(178)));
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.IsMdiContainer = true;
             this.Name = "TabBarMenu";
             this.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Load += new System.EventHandler(this.MyMenuItem_Load);
             this.pnlMainButtons.ResumeLayout(false);
-            this.pnlMain.ResumeLayout(false);
-            this.MainTab.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dockPanel1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -382,7 +292,7 @@ namespace Atiran.MenuBar.Forms
 
         }
 
-        protected  override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
             switch (keyData)
             {
@@ -558,9 +468,19 @@ namespace Atiran.MenuBar.Forms
 
         private void button1_Click(object sender, EventArgs e)
         {
+            sh1.Text = "ميزكار";
+            sh1.Show(dockPanel1);
             //DeskTab sh = new DeskTab();
             //sh.Text = "ميزكار";
             //sh.Show(dockPanel2,DockState.DockRight);
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            DeskTab sh = new DeskTab();
+            sh.Text = "Alireza";
+            //sh.Controls.Add(MainTab);
+            sh.Show(dockPanel1);
         }
     }
 }
