@@ -54,6 +54,7 @@ namespace Atiran.DataLayer.Context
             {
                 HideMenu = ctx.overal_setting.Where(o => new List<int> { 74, 75, 76, 88, 126 }.Contains(o.id) && o.value == 0).Select(o=>o.id==74?5: o.id == 75 ? 6 : o.id == 76 ? 10 : o.id == 88 ? 9 : 14).ToList();
             }
+            HideMenu.Add(13);// حذف ميانبر از منو
         }
         //-----
 

@@ -20,7 +20,6 @@ namespace Atiran.MenuBar.Forms
         List<Menu> menus = new List<Menu>();
         private Panel pnlFooter;
         private Utility.Panels.MainButton mainButton1;
-        private Button button1;
         private ShortcutDesk sh1 = new ShortcutDesk();
         private VS2017LightTheme vS2017LightTheme1;
         private List<SubSystem> subSystems = new List<SubSystem>();
@@ -37,6 +36,23 @@ namespace Atiran.MenuBar.Forms
             this.menus = Connection.ResultAllMenu;
             this.subSystems = Connection.ResultAllSubSystem;
             FirstTurn();
+
+            ToolStripMenuItem tmp = new ToolStripMenuItem();
+            {
+                tmp.Text = "ميزكار";
+                tmp.Tag = new MyTag()
+                    { MenuId = -2, FormId = 0, ParentId = -1 };
+                tmp.RightToLeft = RightToLeft.Yes;
+                tmp.ForeColor = System.Drawing.SystemColors.ButtonFace;
+                tmp.BackColor = System.Drawing.Color.FromArgb(20, 130, 150);
+                tmp.AutoSize = false;
+                tmp.Size = new System.Drawing.Size(97, tmp.Height + 20);
+                tmp.Font = new Font("IRANSans(FaNum)", 11);
+                tmp.Click += Shortcut_Click;
+            }
+            MyMnSt.Items.Add(tmp);
+
+
             MainTab = new CustomTabControl();
             MainTab.Dock = DockStyle.Fill;
             MainTab.DisplayStyle = TabStyle.Chrome;
@@ -81,7 +97,6 @@ namespace Atiran.MenuBar.Forms
         private void InitializeComponent()
         {
             this.pnlMainButtons = new System.Windows.Forms.Panel();
-            this.button1 = new System.Windows.Forms.Button();
             this.mainButton1 = new Atiran.Utility.Panels.MainButton();
             this.pnlFooter = new System.Windows.Forms.Panel();
             this.vS2017LightTheme1 = new Atiran.Utility.Docking2.Theme.ThemeVS2017.VS2017LightTheme();
@@ -94,7 +109,6 @@ namespace Atiran.MenuBar.Forms
             // pnlMainButtons
             // 
             this.pnlMainButtons.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(21)))), ((int)(((byte)(100)))), ((int)(((byte)(123)))));
-            this.pnlMainButtons.Controls.Add(this.button1);
             this.pnlMainButtons.Controls.Add(this.mainButton1);
             this.pnlMainButtons.Dock = System.Windows.Forms.DockStyle.Top;
             this.pnlMainButtons.Font = new System.Drawing.Font("IRANSans(FaNum)", 8.249999F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(178)));
@@ -103,16 +117,6 @@ namespace Atiran.MenuBar.Forms
             this.pnlMainButtons.Size = new System.Drawing.Size(1200, 38);
             this.pnlMainButtons.TabIndex = 0;
             this.pnlMainButtons.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.pnlMainButtons_MouseDoubleClick);
-            // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(12, 3);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(79, 32);
-            this.button1.TabIndex = 1;
-            this.button1.Text = "ميزكار";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // mainButton1
             // 
@@ -458,7 +462,7 @@ namespace Atiran.MenuBar.Forms
 
         #endregion
 
-        private void button1_Click(object sender, EventArgs e)
+        private void Shortcut_Click(object sender, EventArgs e)
         {
             sh1.Text = "ميزكار";
             sh1.Show(dockPanel1);
