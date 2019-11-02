@@ -15,34 +15,37 @@ namespace Atiran.MenuBar.Forms
 {
     public class ShortcutDesk : DockContent
     {
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox txtSearch;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private List<UserShortcut> shortcuts;
+        private List<ToolStripItem> AllItem;
         private DockPanel MainTab1;
         private int _userID;
 
-        public ShortcutDesk(ref DockPanel ali , int UserID = 1)
+        public ShortcutDesk(ref DockPanel ali, int UserID = 1)
         {
             InitializeComponent();
-            MainTab1 =ali;
+            MainTab1 = ali;
             _userID = UserID;
             shortcuts = Connection.GetUserShortcuts(UserID);
             CreateMenus();
 
         }
+
         private void InitializeComponent()
         {
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.txtSearch = new System.Windows.Forms.TextBox();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.SuspendLayout();
             // 
-            // textBox1
+            // txtSearch
             // 
-            this.textBox1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.textBox1.Location = new System.Drawing.Point(0, 0);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(603, 20);
-            this.textBox1.TabIndex = 0;
+            this.txtSearch.Dock = System.Windows.Forms.DockStyle.Top;
+            this.txtSearch.Location = new System.Drawing.Point(0, 0);
+            this.txtSearch.Name = "txtSearch";
+            this.txtSearch.Size = new System.Drawing.Size(603, 20);
+            this.txtSearch.TabIndex = 0;
+            this.txtSearch.TextChanged += new System.EventHandler(this.txtSearch_TextChanged);
             // 
             // menuStrip1
             // 
@@ -59,7 +62,7 @@ namespace Atiran.MenuBar.Forms
             // 
             this.ClientSize = new System.Drawing.Size(603, 272);
             this.Controls.Add(this.menuStrip1);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.txtSearch);
             this.DockAreas = ((Atiran.Utility.Docking2.DockAreas)((Atiran.Utility.Docking2.DockAreas.DockLeft | Atiran.Utility.Docking2.DockAreas.DockRight)));
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.HideOnClose = true;
@@ -95,6 +98,7 @@ namespace Atiran.MenuBar.Forms
                 }
                 menuStrip1.Items.Add(tmp);
             }
+            AllItem = menuStrip1.Items.Cast<ToolStripItem>().ToList();
         }
 
         private void Form_Click(object sender, EventArgs e)
@@ -103,14 +107,14 @@ namespace Atiran.MenuBar.Forms
             string Namespace = "Atiran.Reporting.BankAndChek.ChekPardakhti";
             string Class = "ReportChekhayePardakhti";
             string typeName = Namespace + "." + Class;
-            AddTab(((ToolStripItem)sender).Text,  typeName);
+            AddTab(((ToolStripItem) sender).Text, typeName);
         }
 
         #region Method
 
-        private void AddTab(string text,  string typeName)
+        private void AddTab(string text, string typeName)
         {
-            var control = (Control)GetObjectFromString(typeName);
+            var control = (Control) GetObjectFromString(typeName);
             control.Dock = DockStyle.Fill;
 
 
@@ -142,5 +146,10 @@ namespace Atiran.MenuBar.Forms
 
         #endregion
 
+        private void txtSearch_TextChanged(object sender, EventArgs e)
+        {
+            menuStrip1.Items.Clear();
+            menuStrip1.Items.AddRange(AllItem.Where(a=>a.Text.Contains(txtSearch.Text)).ToArray());
+        }
     }
 }
