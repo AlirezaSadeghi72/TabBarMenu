@@ -79,9 +79,6 @@ namespace Atiran.MenuBar.Panels
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.lblMinimis = new System.Windows.Forms.Label();
-            this.lblMaximis = new System.Windows.Forms.Label();
-            this.lblClose = new System.Windows.Forms.Label();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.lblDateTime = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -93,60 +90,15 @@ namespace Atiran.MenuBar.Panels
             this.btnShortcutDesk = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
             this.msUserActivs = new System.Windows.Forms.MenuStrip();
+            this.lblMinimis = new System.Windows.Forms.Label();
+            this.lblMaximis = new System.Windows.Forms.Label();
+            this.lblClose = new System.Windows.Forms.Label();
             this.miUserActivs = new System.Windows.Forms.ToolStripMenuItem();
             this.sadfsfToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.asfdasToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.asdfasdfToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.msUserActivs.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // lblMinimis
-            // 
-            this.lblMinimis.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblMinimis.BackColor = System.Drawing.Color.Transparent;
-            this.lblMinimis.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(178)));
-            this.lblMinimis.ForeColor = System.Drawing.Color.Transparent;
-            this.lblMinimis.Image = global::Atiran.MenuBar.Properties.Resources.Minimis_1;
-            this.lblMinimis.Location = new System.Drawing.Point(1006, 7);
-            this.lblMinimis.Name = "lblMinimis";
-            this.lblMinimis.Size = new System.Drawing.Size(24, 24);
-            this.lblMinimis.TabIndex = 4;
-            this.lblMinimis.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.lblMinimis.Click += new System.EventHandler(this.lblMinimis_Click);
-            this.lblMinimis.MouseDown += new System.Windows.Forms.MouseEventHandler(this.label_MouseDown);
-            this.lblMinimis.MouseLeave += new System.EventHandler(this.label_MouseLeave);
-            // 
-            // lblMaximis
-            // 
-            this.lblMaximis.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblMaximis.BackColor = System.Drawing.Color.Transparent;
-            this.lblMaximis.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(178)));
-            this.lblMaximis.ForeColor = System.Drawing.Color.Transparent;
-            this.lblMaximis.Image = global::Atiran.MenuBar.Properties.Resources.Maximis_1;
-            this.lblMaximis.Location = new System.Drawing.Point(1033, 7);
-            this.lblMaximis.Name = "lblMaximis";
-            this.lblMaximis.Size = new System.Drawing.Size(24, 24);
-            this.lblMaximis.TabIndex = 3;
-            this.lblMaximis.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.lblMaximis.Click += new System.EventHandler(this.lblMaximis_Click);
-            this.lblMaximis.MouseDown += new System.Windows.Forms.MouseEventHandler(this.label_MouseDown);
-            this.lblMaximis.MouseLeave += new System.EventHandler(this.label_MouseLeave);
-            // 
-            // lblClose
-            // 
-            this.lblClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblClose.BackColor = System.Drawing.Color.Transparent;
-            this.lblClose.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(178)));
-            this.lblClose.ForeColor = System.Drawing.Color.Transparent;
-            this.lblClose.Image = global::Atiran.MenuBar.Properties.Resources.Exit_1;
-            this.lblClose.Location = new System.Drawing.Point(1060, 7);
-            this.lblClose.Name = "lblClose";
-            this.lblClose.Size = new System.Drawing.Size(24, 24);
-            this.lblClose.TabIndex = 2;
-            this.lblClose.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.lblClose.Click += new System.EventHandler(this.lblClose_Click);
-            this.lblClose.MouseDown += new System.Windows.Forms.MouseEventHandler(this.lblClose_MouseDown);
-            this.lblClose.MouseLeave += new System.EventHandler(this.label_MouseLeave);
             // 
             // timer1
             // 
@@ -219,7 +171,7 @@ namespace Atiran.MenuBar.Panels
             // label8
             // 
             this.label8.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(17)))), ((int)(((byte)(81)))), ((int)(((byte)(100)))));
-            this.label8.Location = new System.Drawing.Point(624, 0);
+            this.label8.Location = new System.Drawing.Point(621, 0);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(3, 38);
             this.label8.TabIndex = 8;
@@ -229,7 +181,7 @@ namespace Atiran.MenuBar.Panels
             this.btnShortcutDesk.BackColor = System.Drawing.Color.Transparent;
             this.btnShortcutDesk.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnShortcutDesk.Font = new System.Drawing.Font("IRANSans(FaNum)", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(178)));
-            this.btnShortcutDesk.Location = new System.Drawing.Point(628, 1);
+            this.btnShortcutDesk.Location = new System.Drawing.Point(625, 1);
             this.btnShortcutDesk.Name = "btnShortcutDesk";
             this.btnShortcutDesk.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.btnShortcutDesk.Size = new System.Drawing.Size(150, 36);
@@ -243,7 +195,7 @@ namespace Atiran.MenuBar.Panels
             // label10
             // 
             this.label10.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(17)))), ((int)(((byte)(81)))), ((int)(((byte)(100)))));
-            this.label10.Location = new System.Drawing.Point(779, 0);
+            this.label10.Location = new System.Drawing.Point(776, 0);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(3, 38);
             this.label10.TabIndex = 8;
@@ -256,11 +208,59 @@ namespace Atiran.MenuBar.Panels
             this.msUserActivs.Font = new System.Drawing.Font("IRANSans(FaNum)", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.msUserActivs.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.miUserActivs});
-            this.msUserActivs.Location = new System.Drawing.Point(481, 2);
+            this.msUserActivs.Location = new System.Drawing.Point(478, 2);
             this.msUserActivs.Name = "msUserActivs";
             this.msUserActivs.Size = new System.Drawing.Size(142, 36);
             this.msUserActivs.TabIndex = 9;
             this.msUserActivs.Text = "menuStrip1";
+            // 
+            // lblMinimis
+            // 
+            this.lblMinimis.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblMinimis.BackColor = System.Drawing.Color.Transparent;
+            this.lblMinimis.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(178)));
+            this.lblMinimis.ForeColor = System.Drawing.Color.Transparent;
+            this.lblMinimis.Image = global::Atiran.MenuBar.Properties.Resources.Minimis_1;
+            this.lblMinimis.Location = new System.Drawing.Point(1006, 7);
+            this.lblMinimis.Name = "lblMinimis";
+            this.lblMinimis.Size = new System.Drawing.Size(24, 24);
+            this.lblMinimis.TabIndex = 4;
+            this.lblMinimis.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblMinimis.Click += new System.EventHandler(this.lblMinimis_Click);
+            this.lblMinimis.MouseDown += new System.Windows.Forms.MouseEventHandler(this.label_MouseDown);
+            this.lblMinimis.MouseLeave += new System.EventHandler(this.label_MouseLeave);
+            // 
+            // lblMaximis
+            // 
+            this.lblMaximis.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblMaximis.BackColor = System.Drawing.Color.Transparent;
+            this.lblMaximis.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(178)));
+            this.lblMaximis.ForeColor = System.Drawing.Color.Transparent;
+            this.lblMaximis.Image = global::Atiran.MenuBar.Properties.Resources.Maximis_1;
+            this.lblMaximis.Location = new System.Drawing.Point(1033, 7);
+            this.lblMaximis.Name = "lblMaximis";
+            this.lblMaximis.Size = new System.Drawing.Size(24, 24);
+            this.lblMaximis.TabIndex = 3;
+            this.lblMaximis.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblMaximis.Click += new System.EventHandler(this.lblMaximis_Click);
+            this.lblMaximis.MouseDown += new System.Windows.Forms.MouseEventHandler(this.label_MouseDown);
+            this.lblMaximis.MouseLeave += new System.EventHandler(this.label_MouseLeave);
+            // 
+            // lblClose
+            // 
+            this.lblClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblClose.BackColor = System.Drawing.Color.Transparent;
+            this.lblClose.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(178)));
+            this.lblClose.ForeColor = System.Drawing.Color.Transparent;
+            this.lblClose.Image = global::Atiran.MenuBar.Properties.Resources.Exit_1;
+            this.lblClose.Location = new System.Drawing.Point(1060, 7);
+            this.lblClose.Name = "lblClose";
+            this.lblClose.Size = new System.Drawing.Size(24, 24);
+            this.lblClose.TabIndex = 2;
+            this.lblClose.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblClose.Click += new System.EventHandler(this.lblClose_Click);
+            this.lblClose.MouseDown += new System.Windows.Forms.MouseEventHandler(this.lblClose_MouseDown);
+            this.lblClose.MouseLeave += new System.EventHandler(this.label_MouseLeave);
             // 
             // miUserActivs
             // 
@@ -271,9 +271,9 @@ namespace Atiran.MenuBar.Panels
             this.asdfasdfToolStripMenuItem});
             this.miUserActivs.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.miUserActivs.ForeColor = System.Drawing.Color.White;
-            this.miUserActivs.Image = global::Atiran.MenuBar.Properties.Resources.Exit_1;
-            this.miUserActivs.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.miUserActivs.Image = global::Atiran.MenuBar.Properties.Resources.icoUser;
             this.miUserActivs.Name = "miUserActivs";
+            this.miUserActivs.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.miUserActivs.Size = new System.Drawing.Size(122, 35);
             this.miUserActivs.Text = "كاربر";
             this.miUserActivs.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
