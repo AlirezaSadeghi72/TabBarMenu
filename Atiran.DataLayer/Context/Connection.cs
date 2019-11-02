@@ -34,8 +34,8 @@ namespace Atiran.DataLayer.Context
             GetHideMenu();
             using (var ctx = new DBEntities())
             {
-                ResultAllMenu = ctx.Menus.Where(m => (ProgramVersion == Connection.VersionName.ForshgahiNoskheKamelTakLine ? m.Form.v1 == true : ProgramVersion == Connection.VersionName.OmdeForoshSonatiTakLine ? m.Form.v2 == true : ProgramVersion == Connection.VersionName.MooyragiTakLine ? m.Form.v3 == true : ProgramVersion == Connection.VersionName.MooyragiChandLine ? m.Form.v4 == true : ProgramVersion == Connection.VersionName.ForshgahiNoskheKamelChandLine ? m.Form.v5 == true : ProgramVersion == Connection.VersionName.OmdeForoshSonatiChandLine ? m.Form.v6 == true : 1 == 1) && m.SubSystemID != null  || m.FormID == null && ctx.Menus.Any(m1 => m1.ParentMenuID == m.MenuID)).ToList();
-                
+                ResultAllMenu = ctx.Menus.Where(m => (ProgramVersion == Connection.VersionName.ForshgahiNoskheKamelTakLine ? m.Form.v1 == true : ProgramVersion == Connection.VersionName.OmdeForoshSonatiTakLine ? m.Form.v2 == true : ProgramVersion == Connection.VersionName.MooyragiTakLine ? m.Form.v3 == true : ProgramVersion == Connection.VersionName.MooyragiChandLine ? m.Form.v4 == true : ProgramVersion == Connection.VersionName.ForshgahiNoskheKamelChandLine ? m.Form.v5 == true : ProgramVersion == Connection.VersionName.OmdeForoshSonatiChandLine ? m.Form.v6 == true : 1 == 1) && m.SubSystemID != null || m.FormID == null && ctx.Menus.Any(m1 => m1.ParentMenuID == m.MenuID)).ToList();
+
                 ResultAllSubSystem = ctx.SubSystems.Where(m => (!HideMenu.Contains(m.SubSystemId))).ToList();
             }
         }
@@ -52,11 +52,43 @@ namespace Atiran.DataLayer.Context
         {
             using (var ctx = new DBEntities())
             {
-                HideMenu = ctx.overal_setting.Where(o => new List<int> { 74, 75, 76, 88, 126 }.Contains(o.id) && o.value == 0).Select(o=>o.id==74?5: o.id == 75 ? 6 : o.id == 76 ? 10 : o.id == 88 ? 9 : 14).ToList();
+                HideMenu = ctx.overal_setting.Where(o => new List<int> { 74, 75, 76, 88, 126 }.Contains(o.id) && o.value == 0).Select(o => o.id == 74 ? 5 : o.id == 75 ? 6 : o.id == 76 ? 10 : o.id == 88 ? 9 : 14).ToList();
             }
             HideMenu.Add(13);// حذف ميانبر از منو
         }
         //-----
+
+        public static List<UserShortcut> UserShortcuts(int UserID)
+        {
+            List<UserShortcut> Shortcats = new List<UserShortcut>();
+            using (var ctx = new DBEntities())
+            {
+                return ctx.UserFavorites.AsNoTracking().Where(u => u.UserID == UserID).Select(r => new UserShortcut()
+                {
+                    UserID = r.UserID,
+                    FormID = r.Menu.Form.FormId,
+                    Shortcut = r.Menu.Shortcut,
+                    Class = r.Menu.Form.Class,
+                    Description = r.Menu.Form.Description,
+                    MenuID = r.MenuID,
+                    NameSpace = r.Menu.Form.NameSpace,
+                    RowID = r.RowID,
+                    Text = r.Menu.Text,
+                    Title = r.Menu.Form.Title,
+                    v1 = r.Menu.Form.v1,
+                    v2 = r.Menu.Form.v2,
+                    v3 = r.Menu.Form.v3,
+                    v4 = r.Menu.Form.v4,
+                    v5 = r.Menu.Form.v5,
+                    v6 = r.Menu.Form.v6,
+                    v7 = r.Menu.Form.v7,
+                    v8 = r.Menu.Form.v8,
+                    v9 = r.Menu.Form.v9,
+                    v10 = r.Menu.Form.v10
+                }).ToList();
+
+            }
+        }
 
         #endregion
 

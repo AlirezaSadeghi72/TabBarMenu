@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using Atiran.DataLayer.Context;
 using Atiran.DataLayer.Model;
 using Atiran.MenuBar.Class;
+using Atiran.MenuBar.Panels;
 using Atiran.Utility.Docking2;
 using Atiran.Utility.Docking2.Theme.ThemeVS2017;
 using Menu = Atiran.DataLayer.Model.Menu;
@@ -19,11 +20,11 @@ namespace Atiran.MenuBar.Forms
         private Panel pnlMainButtons;
         List<Menu> menus = new List<Menu>();
         private Panel pnlFooter;
-        private Utility.Panels.MainButton mainButton1;
-        private ShortcutDesk sh1 = new ShortcutDesk();
+        private MainButton mainButton1;
+        private  ShortcutDesk sh1;
         private VS2017LightTheme vS2017LightTheme1;
         private List<SubSystem> subSystems = new List<SubSystem>();
-        private DockPanel MainTab;
+        private  DockPanel MainTab;
         private MenuStrip MyMnSt;
         //private CustomTabControl MainTab;
         //private Image CloseImage = Resources.close_button;
@@ -31,6 +32,7 @@ namespace Atiran.MenuBar.Forms
         public TabBarMenu()
         {
             InitializeComponent();
+            sh1 = new ShortcutDesk(ref MainTab);
             //Connection.GetVersion();
             Connection.SetMenu();
             this.menus = Connection.ResultAllMenu;
@@ -97,11 +99,11 @@ namespace Atiran.MenuBar.Forms
         private void InitializeComponent()
         {
             this.pnlMainButtons = new System.Windows.Forms.Panel();
+            this.mainButton1 = new Atiran.MenuBar.Panels.MainButton();
             this.pnlFooter = new System.Windows.Forms.Panel();
             this.MyMnSt = new System.Windows.Forms.MenuStrip();
             this.MainTab = new Atiran.Utility.Docking2.DockPanel();
             this.vS2017LightTheme1 = new Atiran.Utility.Docking2.Theme.ThemeVS2017.VS2017LightTheme();
-            this.mainButton1 = new Atiran.Utility.Panels.MainButton();
             this.pnlMainButtons.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MainTab)).BeginInit();
             this.SuspendLayout();
@@ -117,6 +119,18 @@ namespace Atiran.MenuBar.Forms
             this.pnlMainButtons.Size = new System.Drawing.Size(1200, 38);
             this.pnlMainButtons.TabIndex = 0;
             this.pnlMainButtons.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.pnlMainButtons_MouseDoubleClick);
+            // 
+            // mainButton1
+            // 
+            this.mainButton1.BackColor = System.Drawing.Color.Transparent;
+            this.mainButton1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.mainButton1.Font = new System.Drawing.Font("IRANSans(FaNum)", 8.249999F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(178)));
+            this.mainButton1.ForeColor = System.Drawing.Color.White;
+            this.mainButton1.Location = new System.Drawing.Point(0, 0);
+            this.mainButton1.Name = "mainButton1";
+            this.mainButton1.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.mainButton1.Size = new System.Drawing.Size(1200, 38);
+            this.mainButton1.TabIndex = 0;
             // 
             // pnlFooter
             // 
@@ -153,17 +167,6 @@ namespace Atiran.MenuBar.Forms
             this.MainTab.Size = new System.Drawing.Size(1200, 502);
             this.MainTab.TabIndex = 7;
             this.MainTab.Theme = this.vS2017LightTheme1;
-            // 
-            // mainButton1
-            // 
-            this.mainButton1.BackColor = System.Drawing.Color.Transparent;
-            this.mainButton1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.mainButton1.Font = new System.Drawing.Font("IRANSans(FaNum)", 8.249999F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(178)));
-            this.mainButton1.ForeColor = System.Drawing.Color.White;
-            this.mainButton1.Location = new System.Drawing.Point(0, 0);
-            this.mainButton1.Name = "mainButton1";
-            this.mainButton1.Size = new System.Drawing.Size(1200, 38);
-            this.mainButton1.TabIndex = 0;
             // 
             // TabBarMenu
             // 
@@ -474,5 +477,7 @@ namespace Atiran.MenuBar.Forms
                 
             }
         }
+
+        
     }
 }

@@ -22,10 +22,6 @@ namespace Atiran.DataLayer.Model
         {
         }
     
-        protected internal override void OnModelCreating(DbModelBuilder modelBuilder)
-        {
-            throw new UnintentionalCodeFirstException();
-        }
     
         public virtual DbSet<act_zirsarfasls> act_zirsarfasls { get; set; }
         public virtual DbSet<overal_setting> overal_setting { get; set; }

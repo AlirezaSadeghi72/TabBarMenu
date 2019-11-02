@@ -21,7 +21,7 @@ namespace Atiran.MenuBar.Forms
 
         private Button button1;
         private Button button2;
-        private ShortcutDesk sh1 = new ShortcutDesk();
+        private ShortcutDesk sh1 ;
         private MenuStrip menuStrip1;
         private ToolStripMenuItem تمنمايشToolStripMenuItem;
         private ToolStripMenuItem menuItemSchema1;
@@ -44,6 +44,7 @@ namespace Atiran.MenuBar.Forms
         public formtest()
         {
             InitializeComponent();
+            sh1 = new ShortcutDesk(ref dockPanel1);
             m_deserializeDockContent = new DeserializeDockContent(GetContentFromPersistString);
         }
 

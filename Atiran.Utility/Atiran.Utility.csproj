@@ -412,9 +412,6 @@
     </Compile>
     <Compile Include="Docking\Win32\Enums.cs" />
     <Compile Include="Docking\Win32\NativeMethods.cs" />
-    <Compile Include="Panels\MainButton.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -502,9 +499,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Panels\MainButton.resx">
-      <DependentUpon>MainButton.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -523,85 +517,6 @@
     <None Include="Docking2\Theme\ThemeVS2015\Resources\vs2015light.vstheme.gz" />
     <None Include="Docking2\Theme\ThemeVS2017\Resources\vs2017Dark.vstheme.gz" />
     <None Include="Docking2\Theme\ThemeVS2017\Resources\vs2017Light.vstheme.gz" />
-    <None Include="Resources\Exit_1.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Maximis_1.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Maximis_2.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Minimis_1.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\DockIndicator_PaneDiamond.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\DockIndicator_PaneDiamond_Bottom.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\DockIndicator_PaneDiamond_Fill.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\DockIndicator_PaneDiamond_HotSpot.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\DockIndicator_PaneDiamond_HotSpotIndex.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\DockIndicator_PaneDiamond_Left.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\DockIndicator_PaneDiamond_Right.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\DockIndicator_PaneDiamond_Top.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\DockIndicator_PanelBottom.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\DockIndicator_PanelBottom_Active.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\DockIndicator_PanelFill.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\DockIndicator_PanelFill_Active.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\DockIndicator_PanelLeft.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\DockIndicator_PanelLeft_Active.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\DockIndicator_PanelRight.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\DockIndicator_PanelRight_Active.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\DockIndicator_PanelTop.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\DockIndicator_PanelTop_Active.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\DockPane_AutoHide.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\DockPane_Close.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\DockPane_Dock.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\DockPane_Option.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\DockPane_OptionOverflow.bmp" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
@@ -654,6 +569,29 @@
     <Content Include="Docking2\Theme\ThemeVS2012\Resources\MaskWindowLeft.png" />
     <Content Include="Docking2\Theme\ThemeVS2012\Resources\MaskWindowRight.png" />
     <Content Include="Docking2\Theme\ThemeVS2012\Resources\MaskWindowTop.png" />
+    <Content Include="Resources\DockIndicator_PaneDiamond.bmp" />
+    <Content Include="Resources\DockIndicator_PaneDiamond_Bottom.bmp" />
+    <Content Include="Resources\DockIndicator_PaneDiamond_Fill.bmp" />
+    <Content Include="Resources\DockIndicator_PaneDiamond_HotSpot.bmp" />
+    <Content Include="Resources\DockIndicator_PaneDiamond_HotSpotIndex.bmp" />
+    <Content Include="Resources\DockIndicator_PaneDiamond_Left.bmp" />
+    <Content Include="Resources\DockIndicator_PaneDiamond_Right.bmp" />
+    <Content Include="Resources\DockIndicator_PaneDiamond_Top.bmp" />
+    <Content Include="Resources\DockIndicator_PanelBottom.bmp" />
+    <Content Include="Resources\DockIndicator_PanelBottom_Active.bmp" />
+    <Content Include="Resources\DockIndicator_PanelFill.bmp" />
+    <Content Include="Resources\DockIndicator_PanelFill_Active.bmp" />
+    <Content Include="Resources\DockIndicator_PanelLeft.bmp" />
+    <Content Include="Resources\DockIndicator_PanelLeft_Active.bmp" />
+    <Content Include="Resources\DockIndicator_PanelRight.bmp" />
+    <Content Include="Resources\DockIndicator_PanelRight_Active.bmp" />
+    <Content Include="Resources\DockIndicator_PanelTop.bmp" />
+    <Content Include="Resources\DockIndicator_PanelTop_Active.bmp" />
+    <Content Include="Resources\DockPane_AutoHide.bmp" />
+    <Content Include="Resources\DockPane_Close.bmp" />
+    <Content Include="Resources\DockPane_Dock.bmp" />
+    <Content Include="Resources\DockPane_Option.bmp" />
+    <Content Include="Resources\DockPane_OptionOverflow.bmp" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

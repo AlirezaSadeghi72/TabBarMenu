@@ -112,6 +112,7 @@
     <Compile Include="Services\GroupSarfaslServes.cs" />
     <Compile Include="Services\SarfaslService.cs" />
     <Compile Include="Services\SZAservice.cs" />
+    <Compile Include="Services\UserShortcut.cs" />
     <Compile Include="Services\ZirSarfaslService.cs" />
   </ItemGroup>
   <ItemGroup />
