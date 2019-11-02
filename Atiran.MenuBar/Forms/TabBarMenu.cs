@@ -41,7 +41,7 @@ namespace Atiran.MenuBar.Forms
             {
                 tmp.Text = "ميزكار";
                 tmp.Tag = new MyTag()
-                    { MenuId = -2, FormId = 0, ParentId = -1 };
+                { MenuId = -2, FormId = 0, ParentId = -1 };
                 tmp.RightToLeft = RightToLeft.Yes;
                 tmp.ForeColor = System.Drawing.SystemColors.ButtonFace;
                 tmp.BackColor = System.Drawing.Color.FromArgb(20, 130, 150);
@@ -60,7 +60,7 @@ namespace Atiran.MenuBar.Forms
             //MainTab.RightToLeft = RightToLeft;
             //MainTab.RightToLeftLayout = true;
 
-            
+
 
         }
 
@@ -97,11 +97,11 @@ namespace Atiran.MenuBar.Forms
         private void InitializeComponent()
         {
             this.pnlMainButtons = new System.Windows.Forms.Panel();
-            this.mainButton1 = new Atiran.Utility.Panels.MainButton();
             this.pnlFooter = new System.Windows.Forms.Panel();
-            this.vS2017LightTheme1 = new Atiran.Utility.Docking2.Theme.ThemeVS2017.VS2017LightTheme();
-            this.MainTab = new Atiran.Utility.Docking2.DockPanel();
             this.MyMnSt = new System.Windows.Forms.MenuStrip();
+            this.MainTab = new Atiran.Utility.Docking2.DockPanel();
+            this.vS2017LightTheme1 = new Atiran.Utility.Docking2.Theme.ThemeVS2017.VS2017LightTheme();
+            this.mainButton1 = new Atiran.Utility.Panels.MainButton();
             this.pnlMainButtons.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MainTab)).BeginInit();
             this.SuspendLayout();
@@ -118,17 +118,6 @@ namespace Atiran.MenuBar.Forms
             this.pnlMainButtons.TabIndex = 0;
             this.pnlMainButtons.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.pnlMainButtons_MouseDoubleClick);
             // 
-            // mainButton1
-            // 
-            this.mainButton1.BackColor = System.Drawing.Color.Transparent;
-            this.mainButton1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.mainButton1.Font = new System.Drawing.Font("IRANSans(FaNum)", 8.249999F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(178)));
-            this.mainButton1.ForeColor = System.Drawing.Color.White;
-            this.mainButton1.Location = new System.Drawing.Point(0, 0);
-            this.mainButton1.Name = "mainButton1";
-            this.mainButton1.Size = new System.Drawing.Size(1200, 38);
-            this.mainButton1.TabIndex = 0;
-            // 
             // pnlFooter
             // 
             this.pnlFooter.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -138,10 +127,21 @@ namespace Atiran.MenuBar.Forms
             this.pnlFooter.Size = new System.Drawing.Size(1200, 56);
             this.pnlFooter.TabIndex = 2;
             // 
+            // MyMnSt
+            // 
+            this.MyMnSt.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(130)))), ((int)(((byte)(150)))));
+            this.MyMnSt.Font = new System.Drawing.Font("IRANSans(FaNum)", 8.249999F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(178)));
+            this.MyMnSt.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.Flow;
+            this.MyMnSt.Location = new System.Drawing.Point(0, 38);
+            this.MyMnSt.Name = "MyMnSt";
+            this.MyMnSt.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.MyMnSt.Size = new System.Drawing.Size(1200, 4);
+            this.MyMnSt.TabIndex = 8;
+            this.MyMnSt.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MyMnSt_KeyDown);
+            // 
             // MainTab
             // 
             this.MainTab.AllowDrop = true;
-            this.MainTab.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.MainTab.Dock = System.Windows.Forms.DockStyle.Fill;
             this.MainTab.DockBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(238)))), ((int)(((byte)(238)))), ((int)(((byte)(242)))));
             this.MainTab.Location = new System.Drawing.Point(0, 42);
@@ -154,17 +154,16 @@ namespace Atiran.MenuBar.Forms
             this.MainTab.TabIndex = 7;
             this.MainTab.Theme = this.vS2017LightTheme1;
             // 
-            // MyMnSt
+            // mainButton1
             // 
-            this.MyMnSt.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(130)))), ((int)(((byte)(150)))));
-            this.MyMnSt.Font = new System.Drawing.Font("IRANSans(FaNum)", 8.249999F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(178)));
-            this.MyMnSt.GripStyle = System.Windows.Forms.ToolStripGripStyle.Visible;
-            this.MyMnSt.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.Flow;
-            this.MyMnSt.Location = new System.Drawing.Point(0, 38);
-            this.MyMnSt.Name = "MyMnSt";
-            this.MyMnSt.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.MyMnSt.Size = new System.Drawing.Size(1200, 4);
-            this.MyMnSt.TabIndex = 8;
+            this.mainButton1.BackColor = System.Drawing.Color.Transparent;
+            this.mainButton1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.mainButton1.Font = new System.Drawing.Font("IRANSans(FaNum)", 8.249999F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(178)));
+            this.mainButton1.ForeColor = System.Drawing.Color.White;
+            this.mainButton1.Location = new System.Drawing.Point(0, 0);
+            this.mainButton1.Name = "mainButton1";
+            this.mainButton1.Size = new System.Drawing.Size(1200, 38);
+            this.mainButton1.TabIndex = 0;
             // 
             // TabBarMenu
             // 
@@ -300,8 +299,18 @@ namespace Atiran.MenuBar.Forms
                             //CloseProgramm();
                             this.Close();
                         }
+                        return true;
                     }
+                case Keys.Home:
+                {
+                        MyMnSt.Focus();
                     return true;
+                }
+                case Keys.Scroll:
+                {
+
+                    return true;
+                }
             }
 
             return base.ProcessCmdKey(ref msg, keyData);
@@ -425,7 +434,7 @@ namespace Atiran.MenuBar.Forms
         #endregion
 
         #region Event
-        
+
         private void Shortcut_Click(object sender, EventArgs e)
         {
             sh1.Text = "ميزكار";
@@ -438,5 +447,32 @@ namespace Atiran.MenuBar.Forms
         #endregion
 
         #endregion
+
+        private void MyMnSt_KeyDown(object sender, KeyEventArgs e)
+        {
+            switch (e.KeyCode)
+            {
+                case Keys.Left:
+                {
+                    break;
+                }
+                case Keys.Up:
+                {
+                    break;
+                }
+                case Keys.Right:
+                {
+                    break;
+                }
+                case Keys.Down:
+                {
+                    break;
+                }
+            }
+            if(((ToolStripMenuItem)sender).DropDown.Items.Count > 0)
+            {
+                
+            }
+        }
     }
 }

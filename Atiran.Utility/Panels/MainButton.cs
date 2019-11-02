@@ -26,8 +26,8 @@ namespace Atiran.Utility.Panels
             if (!this.DesignMode)
             {
                 lblMaximis.Image = (((Form)this.TopLevelControl).WindowState == FormWindowState.Normal)
-                    ? Resources.Maximis_2
-                    : Resources.Maximis_1;
+                    ? Resources.Maximis_1
+                    : Resources.Maximis_2;
             }
         }
         private void InitializeComponent()
@@ -139,12 +139,12 @@ namespace Atiran.Utility.Panels
             if (((Form) this.TopLevelControl).WindowState == FormWindowState.Normal)
             {
                 ((Form) this.TopLevelControl).WindowState = FormWindowState.Maximized;
-                lblMaximis.Image = Resources.Maximis_1;
+                lblMaximis.Image = Resources.Maximis_2;
             }
             else
             {
                 ((Form)this.TopLevelControl).WindowState = FormWindowState.Normal;
-                lblMaximis.Image = Resources.Maximis_2;
+                lblMaximis.Image = Resources.Maximis_1;
             }
         }
 
