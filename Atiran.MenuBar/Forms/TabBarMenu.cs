@@ -26,6 +26,8 @@ namespace Atiran.MenuBar.Forms
         private List<SubSystem> subSystems = new List<SubSystem>();
         private  DockPanel MainTab;
         private MenuStrip MyMnSt;
+        private int _userID = 1005;
+        private int _salMaliID = 1;
         //private CustomTabControl MainTab;
         //private Image CloseImage = Resources.close_button;
 
@@ -39,20 +41,23 @@ namespace Atiran.MenuBar.Forms
             this.subSystems = Connection.ResultAllSubSystem;
             FirstTurn();
 
-            ToolStripMenuItem tmp = new ToolStripMenuItem();
-            {
-                tmp.Text = "ميزكار";
-                tmp.Tag = new MyTag()
-                { MenuId = -2, FormId = 0, ParentId = -1 };
-                tmp.RightToLeft = RightToLeft.Yes;
-                tmp.ForeColor = System.Drawing.SystemColors.ButtonFace;
-                tmp.BackColor = System.Drawing.Color.FromArgb(20, 130, 150);
-                tmp.AutoSize = false;
-                tmp.Size = new System.Drawing.Size(97, tmp.Height + 20);
-                tmp.Font = new Font("IRANSans(FaNum)", 11);
-                tmp.Click += Shortcut_Click;
-            }
-            MyMnSt.Items.Add(tmp);
+            mainButton1.UserID = _userID;
+            mainButton1.SalMaliID = _salMaliID;
+
+            //ToolStripMenuItem tmp = new ToolStripMenuItem();
+            //{
+            //    tmp.Text = "ميزكار";
+            //    tmp.Tag = new MyTag()
+            //    { MenuId = -2, FormId = 0, ParentId = -1 };
+            //    tmp.RightToLeft = RightToLeft.Yes;
+            //    tmp.ForeColor = System.Drawing.SystemColors.ButtonFace;
+            //    tmp.BackColor = System.Drawing.Color.FromArgb(20, 130, 150);
+            //    tmp.AutoSize = false;
+            //    tmp.Size = new System.Drawing.Size(97, tmp.Height + 20);
+            //    tmp.Font = new Font("IRANSans(FaNum)", 11);
+            //    tmp.Click += Shortcut_Click;
+            //}
+            //MyMnSt.Items.Add(tmp);
 
 
             //MainTab = new CustomTabControl();
@@ -436,18 +441,18 @@ namespace Atiran.MenuBar.Forms
 
         #endregion
 
-        #region Event
+        //#region Event
 
-        private void Shortcut_Click(object sender, EventArgs e)
-        {
-            sh1.Text = "ميزكار";
-            sh1.Show(MainTab);
-            //DeskTab sh = new DeskTab();
-            //sh.Text = "ميزكار";
-            //sh.Show(dockPanel2,DockState.DockRight);
-        }
+        //private void Shortcut_Click(object sender, EventArgs e)
+        //{
+        //    sh1.Text = "ميزكار";
+        //    sh1.Show(MainTab);
+        //    //DeskTab sh = new DeskTab();
+        //    //sh.Text = "ميزكار";
+        //    //sh.Show(dockPanel2,DockState.DockRight);
+        //}
 
-        #endregion
+        //#endregion
 
         #endregion
 
@@ -477,7 +482,6 @@ namespace Atiran.MenuBar.Forms
                 
             }
         }
-
         
     }
 }

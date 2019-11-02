@@ -26,7 +26,7 @@ namespace Atiran.MenuBar.Forms
             InitializeComponent();
             MainTab1 =ali;
             _userID = UserID;
-            shortcuts = Connection.UserShortcuts(UserID);
+            shortcuts = Connection.GetUserShortcuts(UserID);
             CreateMenus();
 
         }
@@ -136,7 +136,7 @@ namespace Atiran.MenuBar.Forms
         public void RelodeForm()
         {
             menuStrip1.Items.Clear();
-            shortcuts = Connection.UserShortcuts(_userID);
+            shortcuts = Connection.GetUserShortcuts(_userID);
             CreateMenus();
         }
 

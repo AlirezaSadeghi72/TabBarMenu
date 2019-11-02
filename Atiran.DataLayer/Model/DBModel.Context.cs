@@ -22,7 +22,6 @@ namespace Atiran.DataLayer.Model
         {
         }
     
-    
         public virtual DbSet<act_zirsarfasls> act_zirsarfasls { get; set; }
         public virtual DbSet<overal_setting> overal_setting { get; set; }
         public virtual DbSet<sarfasl> sarfasls { get; set; }
@@ -34,6 +33,7 @@ namespace Atiran.DataLayer.Model
         public virtual DbSet<GroupSarfasl> GroupSarfasls { get; set; }
         public virtual DbSet<sys_users> sys_users { get; set; }
         public virtual DbSet<UserFavorite> UserFavorites { get; set; }
+        public virtual DbSet<sal_mali> sal_mali { get; set; }
     
         public virtual ObjectResult<USP_GetDataForSarfasl_Result> USP_GetDataForSarfasl(string fromDate, string toDate, string listGroupSarfasl, string listSarfasl, string listZirSarfasl)
         {

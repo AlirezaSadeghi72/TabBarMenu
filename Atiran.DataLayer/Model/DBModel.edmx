@@ -40,6 +40,18 @@
           <Property Name="TabOrder" Type="int" />
           <Property Name="ExternalExplain" Type="nvarchar" MaxLength="500" />
         </EntityType>
+        <EntityType Name="sal_mali">
+          <Key>
+            <PropertyRef Name="sal_maliID" />
+          </Key>
+          <Property Name="sal_maliID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="rdf" Type="int" Nullable="false" />
+          <Property Name="name" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="nam_db" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="StartDate" Type="datetime" />
+          <Property Name="EndDate" Type="datetime" />
+          <Property Name="Current" Type="bit" />
+        </EntityType>
         <EntityType Name="sarfasls">
           <Key>
             <PropertyRef Name="rdf" />
@@ -224,6 +236,7 @@
           <EntitySet Name="act_zirsarfasls" EntityType="Self.act_zirsarfasls" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="GroupSarfasl" EntityType="Self.GroupSarfasl" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="overal_setting" EntityType="Self.overal_setting" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="sal_mali" EntityType="Self.sal_mali" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="sarfasls" EntityType="Self.sarfasls" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="sys_users" EntityType="Self.sys_users" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="zirsarfasls" EntityType="Self.zirsarfasls" Schema="dbo" store:Type="Tables" />
@@ -458,6 +471,7 @@
             <End Role="Menu" EntitySet="Menus" />
             <End Role="UserFavorite" EntitySet="UserFavorites" />
           </AssociationSet>
+          <EntitySet Name="sal_mali" EntityType="DBModel.sal_mali" />
         </EntityContainer>
         <ComplexType Name="USP_GetDataForSarfasl_Result">
           <Property Type="Int32" Name="ZID" Nullable="false" />
@@ -579,6 +593,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="sal_mali">
+          <Key>
+            <PropertyRef Name="sal_maliID" />
+          </Key>
+          <Property Name="sal_maliID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="rdf" Type="Int32" Nullable="false" />
+          <Property Name="name" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="nam_db" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="StartDate" Type="DateTime" Precision="3" />
+          <Property Name="EndDate" Type="DateTime" Precision="3" />
+          <Property Name="Current" Type="Boolean" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -732,6 +758,19 @@
                 <ScalarProperty Name="MenuID" ColumnName="MenuID" />
                 <ScalarProperty Name="UserID" ColumnName="UserID" />
                 <ScalarProperty Name="RowID" ColumnName="RowID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="sal_mali">
+            <EntityTypeMapping TypeName="DBModel.sal_mali">
+              <MappingFragment StoreEntitySet="sal_mali">
+                <ScalarProperty Name="Current" ColumnName="Current" />
+                <ScalarProperty Name="EndDate" ColumnName="EndDate" />
+                <ScalarProperty Name="StartDate" ColumnName="StartDate" />
+                <ScalarProperty Name="nam_db" ColumnName="nam_db" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="rdf" ColumnName="rdf" />
+                <ScalarProperty Name="sal_maliID" ColumnName="sal_maliID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

@@ -83,6 +83,9 @@
     <Compile Include="Model\overal_setting.cs">
       <DependentUpon>DBModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Model\sal_mali.cs">
+      <DependentUpon>DBModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Model\sarfasl.cs">
       <DependentUpon>DBModel.tt</DependentUpon>
     </Compile>
@@ -108,6 +111,7 @@
       <DependentUpon>DBModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\ActiveUsers.cs" />
     <Compile Include="Services\ActZirSarfaslService.cs" />
     <Compile Include="Services\GroupSarfaslServes.cs" />
     <Compile Include="Services\SarfaslService.cs" />

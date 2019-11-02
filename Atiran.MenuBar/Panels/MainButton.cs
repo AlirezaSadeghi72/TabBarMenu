@@ -6,6 +6,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Atiran.DataLayer.Context;
+using Atiran.DataLayer.Services;
 using Atiran.MenuBar.Class;
 using Atiran.MenuBar.Forms;
 using Atiran.MenuBar.Properties;
@@ -24,8 +26,8 @@ namespace Atiran.MenuBar.Panels
         private Label lblDateTime;
         private Label label2;
         private Label label3;
-        private Label label4;
-        private Label label5;
+        private Label lblSalMali;
+        private Label btnLine;
         private Label label6;
         private Label label8;
         private Label btnShortcutDesk;
@@ -37,6 +39,7 @@ namespace Atiran.MenuBar.Panels
         private ToolStripMenuItem asdfasdfToolStripMenuItem;
         private ShortcutDesk sh1;
         private PersianCalendar pc =new PersianCalendar();
+        public int UserID , SalMaliID;
 
         public MainButton()
         {
@@ -54,6 +57,21 @@ namespace Atiran.MenuBar.Panels
                 lblMaximis.Image = (((Form)this.TopLevelControl).WindowState == FormWindowState.Normal)
                     ? Resources.Maximis_1
                     : Resources.Maximis_2;
+                List<ActiveUser> users = Connection.GetActiveUsers();
+
+                miUserActivs.DropDownItems.Clear();
+                miUserActivs.DropDownItems.AddRange(users.Select(u=>new ToolStripMenuItem()
+                {
+                    Text =  u.user_name,
+                    RightToLeft = RightToLeft.Yes,
+                    ForeColor = SystemColors.ButtonFace,
+                    BackColor = Color.FromArgb(40, 130, 150),
+                    Font = new Font("IRANSans(FaNum)", 11)
+            }).ToArray());
+
+                miUserActivs.Text = users.FirstOrDefault(u => u.user_id == UserID).user_name;
+                lblSalMali.Text = Connection.GetNameSalMali(SalMaliID);
+
             }
             msUserActivs.Renderer = new ToolStripProfessionalRendererAtiran();
             msUserActivs.BackColor = Color.FromArgb(21, 100, 123);
@@ -68,8 +86,8 @@ namespace Atiran.MenuBar.Panels
             this.lblDateTime = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
+            this.lblSalMali = new System.Windows.Forms.Label();
+            this.btnLine = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.btnShortcutDesk = new System.Windows.Forms.Label();
@@ -162,32 +180,33 @@ namespace Atiran.MenuBar.Panels
             this.label3.Size = new System.Drawing.Size(3, 38);
             this.label3.TabIndex = 8;
             // 
-            // label4
+            // lblSalMali
             // 
-            this.label4.BackColor = System.Drawing.Color.Transparent;
-            this.label4.Font = new System.Drawing.Font("IRANSans(FaNum)", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(178)));
-            this.label4.Location = new System.Drawing.Point(167, 5);
-            this.label4.Name = "label4";
-            this.label4.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.label4.Size = new System.Drawing.Size(120, 31);
-            this.label4.TabIndex = 7;
-            this.label4.Text = "سال جاري";
-            this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblSalMali.BackColor = System.Drawing.Color.Transparent;
+            this.lblSalMali.Font = new System.Drawing.Font("IRANSans(FaNum)", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(178)));
+            this.lblSalMali.Location = new System.Drawing.Point(167, 5);
+            this.lblSalMali.Name = "lblSalMali";
+            this.lblSalMali.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.lblSalMali.Size = new System.Drawing.Size(120, 31);
+            this.lblSalMali.TabIndex = 7;
+            this.lblSalMali.Text = "سال جاري";
+            this.lblSalMali.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // label5
+            // btnLine
             // 
-            this.label5.BackColor = System.Drawing.Color.Transparent;
-            this.label5.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.label5.Font = new System.Drawing.Font("IRANSans(FaNum)", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(178)));
-            this.label5.Location = new System.Drawing.Point(292, 1);
-            this.label5.Name = "label5";
-            this.label5.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.label5.Size = new System.Drawing.Size(200, 36);
-            this.label5.TabIndex = 7;
-            this.label5.Text = "لاين فروش انتخاب نشده";
-            this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.label5.MouseEnter += new System.EventHandler(this.miUserActivs_MouseEnter);
-            this.label5.MouseLeave += new System.EventHandler(this.label9_MouseLeave);
+            this.btnLine.BackColor = System.Drawing.Color.Transparent;
+            this.btnLine.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnLine.Font = new System.Drawing.Font("IRANSans(FaNum)", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(178)));
+            this.btnLine.Location = new System.Drawing.Point(292, 1);
+            this.btnLine.Name = "btnLine";
+            this.btnLine.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.btnLine.Size = new System.Drawing.Size(200, 36);
+            this.btnLine.TabIndex = 7;
+            this.btnLine.Text = "لاين فروش انتخاب نشده";
+            this.btnLine.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnLine.Click += new System.EventHandler(this.btnLine_Click);
+            this.btnLine.MouseEnter += new System.EventHandler(this.label_MouseEnter);
+            this.btnLine.MouseLeave += new System.EventHandler(this.label_MouseLeave);
             // 
             // label6
             // 
@@ -218,8 +237,8 @@ namespace Atiran.MenuBar.Panels
             this.btnShortcutDesk.Text = "ميزكار";
             this.btnShortcutDesk.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.btnShortcutDesk.Click += new System.EventHandler(this.lblShortcutDesk_Click);
-            this.btnShortcutDesk.MouseEnter += new System.EventHandler(this.miUserActivs_MouseEnter);
-            this.btnShortcutDesk.MouseLeave += new System.EventHandler(this.label9_MouseLeave);
+            this.btnShortcutDesk.MouseEnter += new System.EventHandler(this.label_MouseEnter);
+            this.btnShortcutDesk.MouseLeave += new System.EventHandler(this.label_MouseLeave);
             // 
             // label10
             // 
@@ -284,8 +303,8 @@ namespace Atiran.MenuBar.Panels
             // 
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(21)))), ((int)(((byte)(100)))), ((int)(((byte)(123)))));
             this.Controls.Add(this.lblDateTime);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.label5);
+            this.Controls.Add(this.lblSalMali);
+            this.Controls.Add(this.btnLine);
             this.Controls.Add(this.label10);
             this.Controls.Add(this.btnShortcutDesk);
             this.Controls.Add(this.label6);
@@ -308,25 +327,10 @@ namespace Atiran.MenuBar.Panels
 
         }
 
-        //-------
-        private void MakeYellow(object sender, EventArgs e)
-        {
-            //((ToolStripMenuItem)sender).Image = Properties.Resources.selected;
-        }
-
-
-
-
-        //-------
-
-        private void label_MouseEnter(object sender, EventArgs e)
-        {
-            ((Label)sender).BackColor = Color.SkyBlue;
-        }
-
         private void label_MouseLeave(object sender, EventArgs e)
         {
-            ((Label)sender).BackColor = Color.Transparent;
+            ((Control)sender).BackColor = Color.Transparent;
+            ((Control)sender).ForeColor = Color.White;
         }
 
 
@@ -335,10 +339,6 @@ namespace Atiran.MenuBar.Panels
             ((Label)sender).BackColor = Color.DeepSkyBlue;
         }
 
-        private void lblClose_MouseEnter(object sender, EventArgs e)
-        {
-            ((Label)sender).BackColor = Color.Red;
-        }
 
         private void lblClose_MouseDown(object sender, MouseEventArgs e)
         {
@@ -375,16 +375,20 @@ namespace Atiran.MenuBar.Panels
             sh1.Show(mainPane);
         }
 
-        private void miUserActivs_MouseEnter(object sender, EventArgs e)
+        private void label_MouseEnter(object sender, EventArgs e)
         {
             ((Control) sender).BackColor = Color.Wheat;
             ((Control) sender).ForeColor = Color.Black;
         }
 
-        private void label9_MouseLeave(object sender, EventArgs e)
+        private void btnLine_Click(object sender, EventArgs e)
         {
-            ((Control)sender).BackColor = Color.Transparent;
-            ((Control) sender).ForeColor = Color.White;
+            DeskTab ali = new DeskTab()
+            {
+                Text =  "انتخاب لاين فروش",
+                StartPosition = FormStartPosition.CenterParent
+            };
+            ali.ShowDialog();
         }
 
         private void timer1_Tick(object sender, EventArgs e)

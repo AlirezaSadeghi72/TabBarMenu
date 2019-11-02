@@ -58,7 +58,7 @@ namespace Atiran.DataLayer.Context
         }
         //-----
 
-        public static List<UserShortcut> UserShortcuts(int UserID)
+        public static List<UserShortcut> GetUserShortcuts(int UserID)
         {
             List<UserShortcut> Shortcats = new List<UserShortcut>();
             using (var ctx = new DBEntities())
@@ -87,6 +87,32 @@ namespace Atiran.DataLayer.Context
                     v10 = r.Menu.Form.v10
                 }).ToList();
 
+            }
+        }
+
+        public static List<ActiveUser> GetActiveUsers()
+        {
+            using (var ctx = new DBEntities())
+            {
+                return ctx.sys_users.AsNoTracking().Where(u => u.IsLoggedIn == true && u.active == true).Select(r =>
+                    new ActiveUser()
+                    {
+                        user_id = r.user_id,
+                        user_name = r.user_name,
+                        user_lname = r.user_lname,
+                        user_fname = r.user_fname,
+                        user_pic = r.user_pic,
+                        IsLoggedIn = r.IsLoggedIn,
+                        active = r.active
+                    }).ToList();
+            }
+        }
+
+        public static string GetNameSalMali(int SalMaliID)
+        {
+            using (var ctx = new DBEntities())
+            {
+                return ctx.sal_mali.AsNoTracking().FirstOrDefault(s=>s.sal_maliID == SalMaliID).name;
             }
         }
 
