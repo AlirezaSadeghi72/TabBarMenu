@@ -52,6 +52,29 @@
           <Property Name="Active" Type="bit" />
           <Property Name="GroupSarfaslID" Type="int" Nullable="false" />
         </EntityType>
+        <EntityType Name="sys_users">
+          <Key>
+            <PropertyRef Name="user_id" />
+          </Key>
+          <Property Name="user_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="user_password" Type="varbinary" MaxLength="50" Nullable="false" />
+          <Property Name="user_name" Type="varchar" MaxLength="80" />
+          <Property Name="user_lname" Type="varchar" MaxLength="30" Nullable="false" />
+          <Property Name="user_fname" Type="varchar" MaxLength="30" Nullable="false" />
+          <Property Name="role_id" Type="int" />
+          <Property Name="skin_id" Type="int" />
+          <Property Name="user_pic" Type="image" />
+          <Property Name="IsLocked" Type="bit" />
+          <Property Name="IsLoggedIn" Type="bit" />
+          <Property Name="TafsilCow" Type="nchar" MaxLength="10" />
+          <Property Name="TafsilID" Type="bigint" />
+          <Property Name="phone" Type="nvarchar" MaxLength="11" />
+          <Property Name="email" Type="nvarchar" MaxLength="50" />
+          <Property Name="nationalCode" Type="nvarchar" MaxLength="11" />
+          <Property Name="address" Type="nvarchar(max)" />
+          <Property Name="active" Type="bit" />
+          <Property Name="shmo" Type="int" Nullable="false" />
+        </EntityType>
         <EntityType Name="zirsarfasls">
           <Key>
             <PropertyRef Name="rdf" />
@@ -105,6 +128,14 @@
           <Property Name="Name" Type="nvarchar" MaxLength="1000" Nullable="false" />
           <Property Name="Status" Type="int" />
         </EntityType>
+        <EntityType Name="UserFavorites">
+          <Key>
+            <PropertyRef Name="RowID" />
+          </Key>
+          <Property Name="RowID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="UserID" Type="int" Nullable="false" />
+          <Property Name="MenuID" Type="int" Nullable="false" />
+        </EntityType>
         <EntityType Name="Version">
           <Key>
             <PropertyRef Name="RowID" />
@@ -151,6 +182,30 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_UserFavorites_Menu">
+          <End Role="Menu" Type="Self.Menu" Multiplicity="1" />
+          <End Role="UserFavorites" Type="Self.UserFavorites" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Menu">
+              <PropertyRef Name="MenuID" />
+            </Principal>
+            <Dependent Role="UserFavorites">
+              <PropertyRef Name="MenuID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UserFavorites_sys_users">
+          <End Role="sys_users" Type="Self.sys_users" Multiplicity="1" />
+          <End Role="UserFavorites" Type="Self.UserFavorites" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="sys_users">
+              <PropertyRef Name="user_id" />
+            </Principal>
+            <Dependent Role="UserFavorites">
+              <PropertyRef Name="UserID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_zirsarfasls_sarfasls">
           <End Role="sarfasls" Type="Self.sarfasls" Multiplicity="1">
             <OnDelete Action="Cascade" />
@@ -165,28 +220,17 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Function Name="USP_GetDataForSarfasl" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-          <Parameter Name="FromDate" Type="char" Mode="In" />
-          <Parameter Name="ToDate" Type="char" Mode="In" />
-          <Parameter Name="listGroupSarfasl" Type="nvarchar(max)" Mode="In" />
-          <Parameter Name="listSarfasl" Type="nvarchar(max)" Mode="In" />
-          <Parameter Name="listZirSarfasl" Type="nvarchar(max)" Mode="In" />
-        </Function>
-        <Function Name="USP_GetDataStimulSoft_Sarfasl_ZirSarfasl" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-          <Parameter Name="Fromdate" Type="char" Mode="In" />
-          <Parameter Name="Todate" Type="char" Mode="In" />
-          <Parameter Name="SarfaslID" Type="int" Mode="In" />
-          <Parameter Name="ListZirSarfasl" Type="nvarchar(max)" Mode="In" />
-        </Function>
         <EntityContainer Name="DBModelStoreContainer">
           <EntitySet Name="act_zirsarfasls" EntityType="Self.act_zirsarfasls" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="GroupSarfasl" EntityType="Self.GroupSarfasl" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="overal_setting" EntityType="Self.overal_setting" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="sarfasls" EntityType="Self.sarfasls" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="sys_users" EntityType="Self.sys_users" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="zirsarfasls" EntityType="Self.zirsarfasls" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Form" EntityType="Self.Form" Schema="security" store:Type="Tables" />
           <EntitySet Name="Menu" EntityType="Self.Menu" Schema="security" store:Type="Tables" />
           <EntitySet Name="SubSystem" EntityType="Self.SubSystem" Schema="security" store:Type="Tables" />
+          <EntitySet Name="UserFavorites" EntityType="Self.UserFavorites" Schema="security" store:Type="Tables" />
           <EntitySet Name="Version" EntityType="Self.Version" Schema="security" store:Type="Tables" />
           <AssociationSet Name="FK_act_zirsarfasls_zirsarfasls" Association="Self.FK_act_zirsarfasls_zirsarfasls">
             <End Role="zirsarfasls" EntitySet="zirsarfasls" />
@@ -199,6 +243,14 @@
           <AssociationSet Name="FK_sarfasls_GroupSarfasl" Association="Self.FK_sarfasls_GroupSarfasl">
             <End Role="GroupSarfasl" EntitySet="GroupSarfasl" />
             <End Role="sarfasls" EntitySet="sarfasls" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserFavorites_Menu" Association="Self.FK_UserFavorites_Menu">
+            <End Role="Menu" EntitySet="Menu" />
+            <End Role="UserFavorites" EntitySet="UserFavorites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserFavorites_sys_users" Association="Self.FK_UserFavorites_sys_users">
+            <End Role="sys_users" EntitySet="sys_users" />
+            <End Role="UserFavorites" EntitySet="UserFavorites" />
           </AssociationSet>
           <AssociationSet Name="FK_zirsarfasls_sarfasls" Association="Self.FK_zirsarfasls_sarfasls">
             <End Role="sarfasls" EntitySet="sarfasls" />
@@ -299,6 +351,7 @@
           <Property Name="order" Type="Int32" />
           <Property Name="Shortcut" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Form" Relationship="Self.FK_Menu_Form" FromRole="Menu" ToRole="Form" />
+          <NavigationProperty Name="UserFavorites" Relationship="DBModel.FK_UserFavorites_Menu" FromRole="Menu" ToRole="UserFavorite" />
         </EntityType>
         <EntityType Name="SubSystem">
           <Key>
@@ -395,6 +448,16 @@
             <End Role="GroupSarfasl" EntitySet="GroupSarfasls" />
             <End Role="sarfasl" EntitySet="sarfasls" />
           </AssociationSet>
+          <EntitySet Name="sys_users" EntityType="DBModel.sys_users" />
+          <EntitySet Name="UserFavorites" EntityType="DBModel.UserFavorite" />
+          <AssociationSet Name="FK_UserFavorites_sys_users" Association="DBModel.FK_UserFavorites_sys_users">
+            <End Role="sys_users" EntitySet="sys_users" />
+            <End Role="UserFavorite" EntitySet="UserFavorites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserFavorites_Menu" Association="DBModel.FK_UserFavorites_Menu">
+            <End Role="Menu" EntitySet="Menus" />
+            <End Role="UserFavorite" EntitySet="UserFavorites" />
+          </AssociationSet>
         </EntityContainer>
         <ComplexType Name="USP_GetDataForSarfasl_Result">
           <Property Type="Int32" Name="ZID" Nullable="false" />
@@ -455,6 +518,64 @@
             </Principal>
             <Dependent Role="sarfasl">
               <PropertyRef Name="GroupSarfaslID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="sys_users">
+          <Key>
+            <PropertyRef Name="user_id" />
+          </Key>
+          <Property Name="user_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="user_password" Type="Binary" Nullable="false" MaxLength="50" FixedLength="false" />
+          <Property Name="user_name" Type="String" MaxLength="80" FixedLength="false" Unicode="false" />
+          <Property Name="user_lname" Type="String" Nullable="false" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="user_fname" Type="String" Nullable="false" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="role_id" Type="Int32" />
+          <Property Name="skin_id" Type="Int32" />
+          <Property Name="user_pic" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="IsLocked" Type="Boolean" />
+          <Property Name="IsLoggedIn" Type="Boolean" />
+          <Property Name="TafsilCow" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
+          <Property Name="TafsilID" Type="Int64" />
+          <Property Name="phone" Type="String" MaxLength="11" FixedLength="false" Unicode="true" />
+          <Property Name="email" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="nationalCode" Type="String" MaxLength="11" FixedLength="false" Unicode="true" />
+          <Property Name="address" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="active" Type="Boolean" />
+          <Property Name="shmo" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="UserFavorites" Relationship="DBModel.FK_UserFavorites_sys_users" FromRole="sys_users" ToRole="UserFavorite" />
+        </EntityType>
+        <EntityType Name="UserFavorite">
+          <Key>
+            <PropertyRef Name="RowID" />
+          </Key>
+          <Property Name="RowID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserID" Type="Int32" Nullable="false" />
+          <Property Name="MenuID" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="sys_users" Relationship="DBModel.FK_UserFavorites_sys_users" FromRole="UserFavorite" ToRole="sys_users" />
+          <NavigationProperty Name="Menu" Relationship="DBModel.FK_UserFavorites_Menu" FromRole="UserFavorite" ToRole="Menu" />
+        </EntityType>
+        <Association Name="FK_UserFavorites_sys_users">
+          <End Type="DBModel.sys_users" Role="sys_users" Multiplicity="1" />
+          <End Type="DBModel.UserFavorite" Role="UserFavorite" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="sys_users">
+              <PropertyRef Name="user_id" />
+            </Principal>
+            <Dependent Role="UserFavorite">
+              <PropertyRef Name="UserID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UserFavorites_Menu">
+          <End Type="DBModel.Menu" Role="Menu" Multiplicity="1" />
+          <End Type="DBModel.UserFavorite" Role="UserFavorite" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Menu">
+              <PropertyRef Name="MenuID" />
+            </Principal>
+            <Dependent Role="UserFavorite">
+              <PropertyRef Name="MenuID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -572,61 +693,45 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <FunctionImportMapping FunctionImportName="USP_GetDataForSarfasl" FunctionName="DBModel.Store.USP_GetDataForSarfasl">
-            <ResultMapping>
-              <ComplexTypeMapping TypeName="DBModel.USP_GetDataForSarfasl_Result">
-                <ScalarProperty Name="ZID" ColumnName="ZID" />
-                <ScalarProperty Name="ZSarfaslID" ColumnName="ZSarfaslID" />
-                <ScalarProperty Name="ZName" ColumnName="ZName" />
-                <ScalarProperty Name="Zhas_dar" ColumnName="Zhas_dar" />
-                <ScalarProperty Name="ZActive" ColumnName="ZActive" />
-                <ScalarProperty Name="SID" ColumnName="SID" />
-                <ScalarProperty Name="SName" ColumnName="SName" />
-                <ScalarProperty Name="Shas_dar" ColumnName="Shas_dar" />
-                <ScalarProperty Name="Swho_def" ColumnName="Swho_def" />
-                <ScalarProperty Name="SActive" ColumnName="SActive" />
-                <ScalarProperty Name="SGroupSarfaslID" ColumnName="SGroupSarfaslID" />
-                <ScalarProperty Name="ZMan" ColumnName="ZMan" />
-                <ScalarProperty Name="Zbed" ColumnName="Zbed" />
-                <ScalarProperty Name="Zbes" ColumnName="Zbes" />
-                <ScalarProperty Name="zID1" ColumnName="zID1" />
-                <ScalarProperty Name="ZMan_All" ColumnName="ZMan_All" />
-                <ScalarProperty Name="sID2" ColumnName="sID2" />
-                <ScalarProperty Name="SMan_All" ColumnName="SMan_All" />
-                <ScalarProperty Name="sID1" ColumnName="sID1" />
-                <ScalarProperty Name="SMan" ColumnName="SMan" />
-                <ScalarProperty Name="Sbed" ColumnName="Sbed" />
-                <ScalarProperty Name="Sbes" ColumnName="Sbes" />
-              </ComplexTypeMapping>
-            </ResultMapping>
-          </FunctionImportMapping>
-          <FunctionImportMapping FunctionImportName="USP_GetDataStimulSoft_Sarfasl_ZirSarfasl" FunctionName="DBModel.Store.USP_GetDataStimulSoft_Sarfasl_ZirSarfasl">
-            <ResultMapping>
-              <ComplexTypeMapping TypeName="DBModel.USP_GetDataStimulSoft_Sarfasl_ZirSarfasl_Result">
-                <ScalarProperty Name="rdf" ColumnName="rdf" />
-                <ScalarProperty Name="sanadno" ColumnName="sanadno" />
-                <ScalarProperty Name="kind" ColumnName="kind" />
-                <ScalarProperty Name="date" ColumnName="date" />
-                <ScalarProperty Name="rdfsarfasl" ColumnName="rdfsarfasl" />
-                <ScalarProperty Name="rdfzirsarfasl" ColumnName="rdfzirsarfasl" />
-                <ScalarProperty Name="dis" ColumnName="dis" />
-                <ScalarProperty Name="bed" ColumnName="bed" />
-                <ScalarProperty Name="bes" ColumnName="bes" />
-                <ScalarProperty Name="bed_bes" ColumnName="bed_bes" />
-                <ScalarProperty Name="NameSarfasl" ColumnName="NameSarfasl" />
-                <ScalarProperty Name="NameZirsarfasl" ColumnName="NameZirsarfasl" />
-                <ScalarProperty Name="user" ColumnName="user" />
-                <ScalarProperty Name="bed_gh" ColumnName="bed_gh" />
-                <ScalarProperty Name="bes_gh" ColumnName="bes_gh" />
-              </ComplexTypeMapping>
-            </ResultMapping>
-          </FunctionImportMapping>
           <EntitySetMapping Name="GroupSarfasls">
             <EntityTypeMapping TypeName="DBModel.GroupSarfasl">
               <MappingFragment StoreEntitySet="GroupSarfasl">
                 <ScalarProperty Name="Active" ColumnName="Active" />
                 <ScalarProperty Name="GroupSarfaslName" ColumnName="GroupSarfaslName" />
                 <ScalarProperty Name="GroupSarfaslID" ColumnName="GroupSarfaslID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="sys_users">
+            <EntityTypeMapping TypeName="DBModel.sys_users">
+              <MappingFragment StoreEntitySet="sys_users">
+                <ScalarProperty Name="shmo" ColumnName="shmo" />
+                <ScalarProperty Name="active" ColumnName="active" />
+                <ScalarProperty Name="address" ColumnName="address" />
+                <ScalarProperty Name="nationalCode" ColumnName="nationalCode" />
+                <ScalarProperty Name="email" ColumnName="email" />
+                <ScalarProperty Name="phone" ColumnName="phone" />
+                <ScalarProperty Name="TafsilID" ColumnName="TafsilID" />
+                <ScalarProperty Name="TafsilCow" ColumnName="TafsilCow" />
+                <ScalarProperty Name="IsLoggedIn" ColumnName="IsLoggedIn" />
+                <ScalarProperty Name="IsLocked" ColumnName="IsLocked" />
+                <ScalarProperty Name="user_pic" ColumnName="user_pic" />
+                <ScalarProperty Name="skin_id" ColumnName="skin_id" />
+                <ScalarProperty Name="role_id" ColumnName="role_id" />
+                <ScalarProperty Name="user_fname" ColumnName="user_fname" />
+                <ScalarProperty Name="user_lname" ColumnName="user_lname" />
+                <ScalarProperty Name="user_name" ColumnName="user_name" />
+                <ScalarProperty Name="user_password" ColumnName="user_password" />
+                <ScalarProperty Name="user_id" ColumnName="user_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UserFavorites">
+            <EntityTypeMapping TypeName="DBModel.UserFavorite">
+              <MappingFragment StoreEntitySet="UserFavorites">
+                <ScalarProperty Name="MenuID" ColumnName="MenuID" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="RowID" ColumnName="RowID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

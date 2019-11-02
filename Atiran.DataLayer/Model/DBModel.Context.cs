@@ -22,7 +22,7 @@ namespace Atiran.DataLayer.Model
         {
         }
     
-        protected  override void OnModelCreating(DbModelBuilder modelBuilder)
+        protected internal override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             throw new UnintentionalCodeFirstException();
         }
@@ -36,6 +36,8 @@ namespace Atiran.DataLayer.Model
         public virtual DbSet<SubSystem> SubSystems { get; set; }
         public virtual DbSet<Version> Versions { get; set; }
         public virtual DbSet<GroupSarfasl> GroupSarfasls { get; set; }
+        public virtual DbSet<sys_users> sys_users { get; set; }
+        public virtual DbSet<UserFavorite> UserFavorites { get; set; }
     
         public virtual ObjectResult<USP_GetDataForSarfasl_Result> USP_GetDataForSarfasl(string fromDate, string toDate, string listGroupSarfasl, string listSarfasl, string listZirSarfasl)
         {

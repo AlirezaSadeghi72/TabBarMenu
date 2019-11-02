@@ -12,24 +12,33 @@ namespace Atiran.DataLayer.Model
     using System;
     using System.Collections.Generic;
     
-    public partial class Menu
+    public partial class sys_users
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Menu()
+        public sys_users()
         {
             this.UserFavorites = new HashSet<UserFavorite>();
         }
     
-        public int MenuID { get; set; }
-        public Nullable<int> SubSystemID { get; set; }
-        public string Text { get; set; }
-        public string Description { get; set; }
-        public Nullable<int> ParentMenuID { get; set; }
-        public Nullable<int> FormID { get; set; }
-        public Nullable<int> order { get; set; }
-        public string Shortcut { get; set; }
+        public int user_id { get; set; }
+        public byte[] user_password { get; set; }
+        public string user_name { get; set; }
+        public string user_lname { get; set; }
+        public string user_fname { get; set; }
+        public Nullable<int> role_id { get; set; }
+        public Nullable<int> skin_id { get; set; }
+        public byte[] user_pic { get; set; }
+        public Nullable<bool> IsLocked { get; set; }
+        public Nullable<bool> IsLoggedIn { get; set; }
+        public string TafsilCow { get; set; }
+        public Nullable<long> TafsilID { get; set; }
+        public string phone { get; set; }
+        public string email { get; set; }
+        public string nationalCode { get; set; }
+        public string address { get; set; }
+        public Nullable<bool> active { get; set; }
+        public int shmo { get; set; }
     
-        public virtual Form Form { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<UserFavorite> UserFavorites { get; set; }
     }

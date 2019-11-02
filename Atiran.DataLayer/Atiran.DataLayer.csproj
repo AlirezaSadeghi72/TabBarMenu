@@ -89,6 +89,12 @@
     <Compile Include="Model\SubSystem.cs">
       <DependentUpon>DBModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Model\sys_users.cs">
+      <DependentUpon>DBModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Model\UserFavorite.cs">
+      <DependentUpon>DBModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Model\USP_GetDataForSarfasl_Result.cs">
       <DependentUpon>DBModel.tt</DependentUpon>
     </Compile>
