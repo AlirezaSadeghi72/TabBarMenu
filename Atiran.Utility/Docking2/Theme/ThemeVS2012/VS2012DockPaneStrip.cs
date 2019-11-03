@@ -98,7 +98,7 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2012
 
         private const int _DocumentStripGapTop = 0;
         private const int _DocumentStripGapBottom = 1;
-        private const int _DocumentTabMaxWidth = 200;
+        private const int _DocumentTabMaxWidth = 400;
         private const int _DocumentButtonGapTop = 3;
         private const int _DocumentButtonGapBottom = 3;
         private const int _DocumentButtonGapBetween = 0;
@@ -1311,7 +1311,7 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2012
         }
 
         private void WindowList_Click(object sender, EventArgs e)
-        {
+        {//alireza bya inja
             SelectMenu.Items.Clear();
             foreach (TabVS2012 tab in Tabs)
             {
