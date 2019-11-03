@@ -38,15 +38,15 @@ namespace Atiran.MenuBar.Panels
         private ToolStripMenuItem asfdasToolStripMenuItem;
         private ToolStripMenuItem asdfasdfToolStripMenuItem;
         private ShortcutDesk sh1;
-        private PersianCalendar pc =new PersianCalendar();
-        public int UserID , SalMaliID;
+        private PersianCalendar pc = new PersianCalendar();
+        public int UserID, SalMaliID;
 
         public MainButton()
         {
             InitializeComponent();
             this.BackColor = Color.Transparent;
             timer1.Start();
-            
+
         }
         private void MainButton_Load(object sender, EventArgs e)
         {
@@ -60,21 +60,20 @@ namespace Atiran.MenuBar.Panels
                 List<ActiveUser> users = Connection.GetActiveUsers();
 
                 miUserActivs.DropDownItems.Clear();
-                miUserActivs.DropDownItems.AddRange(users.Select(u=>new ToolStripMenuItem()
+                miUserActivs.DropDownItems.AddRange(users.Select(u => new ToolStripMenuItem()
                 {
-                    Text =  u.user_name,
+                    Text = u.user_name,
                     RightToLeft = RightToLeft.Yes,
                     ForeColor = SystemColors.ButtonFace,
                     BackColor = Color.FromArgb(40, 130, 150),
                     Font = new Font("IRANSans(FaNum)", 11)
-            }).ToArray());
+                }).ToArray());
 
                 miUserActivs.Text = users.FirstOrDefault(u => u.user_id == UserID).user_name;
                 lblSalMali.Text = Connection.GetNameSalMali(SalMaliID);
 
             }
             msUserActivs.Renderer = new ToolStripProfessionalRendererAtiran();
-            msUserActivs.BackColor = Color.FromArgb(21, 100, 123);
         }
         private void InitializeComponent()
         {
@@ -327,18 +326,10 @@ namespace Atiran.MenuBar.Panels
 
         }
 
-        private void label_MouseLeave(object sender, EventArgs e)
-        {
-            ((Control)sender).BackColor = Color.Transparent;
-            ((Control)sender).ForeColor = Color.White;
-        }
-
-
         private void label_MouseDown(object sender, MouseEventArgs e)
         {
             ((Label)sender).BackColor = Color.DeepSkyBlue;
         }
-
 
         private void lblClose_MouseDown(object sender, MouseEventArgs e)
         {
@@ -347,14 +338,14 @@ namespace Atiran.MenuBar.Panels
 
         private void lblClose_Click(object sender, EventArgs e)
         {
-            ((Form) this.TopLevelControl).Close();
+            ((Form)this.TopLevelControl).Close();
         }
 
         private void lblMaximis_Click(object sender, EventArgs e)
         {
-            if (((Form) this.TopLevelControl).WindowState == FormWindowState.Normal)
+            if (((Form)this.TopLevelControl).WindowState == FormWindowState.Normal)
             {
-                ((Form) this.TopLevelControl).WindowState = FormWindowState.Maximized;
+                ((Form)this.TopLevelControl).WindowState = FormWindowState.Maximized;
                 lblMaximis.Image = Resources.Maximis_2;
             }
             else
@@ -366,7 +357,7 @@ namespace Atiran.MenuBar.Panels
 
         private void lblMinimis_Click(object sender, EventArgs e)
         {
-            ((Form) this.TopLevelControl).WindowState = FormWindowState.Minimized;
+            ((Form)this.TopLevelControl).WindowState = FormWindowState.Minimized;
         }
 
         private void lblShortcutDesk_Click(object sender, EventArgs e)
@@ -377,15 +368,22 @@ namespace Atiran.MenuBar.Panels
 
         private void label_MouseEnter(object sender, EventArgs e)
         {
-            ((Control) sender).BackColor = Color.Wheat;
-            ((Control) sender).ForeColor = Color.Black;
+            //msUserActivs.BackColor = Color.FromArgb(21, 100, 123);
+            ((Control)sender).BackColor = Color.FromArgb(128, Color.FromArgb(20, 130, 150)); //Color.Wheat;
+            //((Control)sender).ForeColor = Color.Black;
+        }
+
+        private void label_MouseLeave(object sender, EventArgs e)
+        {
+            ((Control)sender).BackColor = Color.Transparent;
+            //((Control)sender).ForeColor = Color.White;
         }
 
         private void btnLine_Click(object sender, EventArgs e)
         {
             DeskTab ali = new DeskTab()
             {
-                Text =  "انتخاب لاين فروش",
+                Text = "انتخاب لاين فروش",
                 StartPosition = FormStartPosition.CenterParent
             };
             ali.ShowDialog();
@@ -394,7 +392,7 @@ namespace Atiran.MenuBar.Panels
         private void timer1_Tick(object sender, EventArgs e)
         {
             DateTime td = DateTime.Now;
-            lblDateTime.Text = String.Format("{0}/{1}/{2}   {3}:{4}:{5}",pc.GetYear(td).ToString("0000"),pc.GetMonth(td).ToString("00"), pc.GetDayOfMonth(td).ToString("00"), td.Hour.ToString("00"), td.Minute.ToString("00"), td.Second.ToString("00"));
+            lblDateTime.Text = String.Format("{0}/{1}/{2}   {3}:{4}:{5}", pc.GetYear(td).ToString("0000"), pc.GetMonth(td).ToString("00"), pc.GetDayOfMonth(td).ToString("00"), td.Hour.ToString("00"), td.Minute.ToString("00"), td.Second.ToString("00"));
         }
     }
 }
