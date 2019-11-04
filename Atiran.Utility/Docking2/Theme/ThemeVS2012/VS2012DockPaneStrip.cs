@@ -107,7 +107,7 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2012
         private const int _DocumentTabGapLeft = 0;//3;
         private const int _DocumentTabGapRight = 0;//3;
         private const int _DocumentIconGapBottom = 2;//2;
-        private const int _DocumentIconGapLeft = 8;
+        private const int _DocumentIconGapLeft = 13;
         private const int _DocumentIconGapRight = 0;
         private const int _DocumentIconHeight = 16;
         private const int _DocumentIconWidth = 16;
@@ -1112,9 +1112,12 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2012
             var rectCloseButton = GetCloseButtonRect(rect);
 
             Rectangle rectIcon = new Rectangle(
-                rect.X + DocumentIconGapLeft,
+                rect.X + DocumentIconGapLeft - 6,
                 rect.Y + rect.Height - DocumentIconGapBottom - DocumentIconHeight,
                 DocumentIconWidth, DocumentIconHeight);
+
+            //Rectangle rectIcon = new Rectangle(rect.X + rect.Width - 20, rect.Y + 3, 16, 16);
+
             Rectangle rectText = PatchController.EnableHighDpi == true
                 ? new Rectangle(
                     rect.X + DocumentIconGapLeft,
@@ -1308,6 +1311,12 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2012
             const int gap = 3;
             var imageSize = PatchController.EnableHighDpi == true ? rectTab.Height - gap * 2 : 15;
             return new Rectangle(rectTab.X + rectTab.Width - imageSize - gap - 1, rectTab.Y + gap, imageSize, imageSize);
+            //return new Rectangle(rectTab.X + rectTab.Width - imageSize - gap - 1, rectTab.Y + gap, imageSize, imageSize);
+
+            //return new Rectangle(
+            //    rectTab.X + DocumentIconGapLeft - 6,
+            //    rectTab.Y + rectTab.Height - DocumentIconGapBottom - DocumentIconHeight,
+            //    DocumentIconWidth, DocumentIconHeight);
         }
 
         private void WindowList_Click(object sender, EventArgs e)

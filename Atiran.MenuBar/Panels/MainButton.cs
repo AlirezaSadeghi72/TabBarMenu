@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Atiran.DataLayer.Context;
 using Atiran.DataLayer.Services;
@@ -40,6 +39,7 @@ namespace Atiran.MenuBar.Panels
         private ShortcutDesk sh1;
         private PersianCalendar pc = new PersianCalendar();
         public int UserID, SalMaliID;
+        private ToolStripMenuItem miRestartApplication;
 
         public MainButton()
         {
@@ -89,13 +89,14 @@ namespace Atiran.MenuBar.Panels
             this.btnShortcutDesk = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
             this.msUserActivs = new System.Windows.Forms.MenuStrip();
-            this.lblMinimis = new System.Windows.Forms.Label();
-            this.lblMaximis = new System.Windows.Forms.Label();
-            this.lblClose = new System.Windows.Forms.Label();
+            this.miRestartApplication = new System.Windows.Forms.ToolStripMenuItem();
             this.miUserActivs = new System.Windows.Forms.ToolStripMenuItem();
             this.sadfsfToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.asfdasToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.asdfasdfToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.lblMinimis = new System.Windows.Forms.Label();
+            this.lblMaximis = new System.Windows.Forms.Label();
+            this.lblClose = new System.Windows.Forms.Label();
             this.msUserActivs.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -106,6 +107,7 @@ namespace Atiran.MenuBar.Panels
             // lblDateTime
             // 
             this.lblDateTime.BackColor = System.Drawing.Color.Transparent;
+            this.lblDateTime.Cursor = System.Windows.Forms.Cursors.Arrow;
             this.lblDateTime.Font = new System.Drawing.Font("IRANSans(FaNum)", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(178)));
             this.lblDateTime.Location = new System.Drawing.Point(3, 5);
             this.lblDateTime.Name = "lblDateTime";
@@ -118,6 +120,7 @@ namespace Atiran.MenuBar.Panels
             // label2
             // 
             this.label2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(17)))), ((int)(((byte)(81)))), ((int)(((byte)(100)))));
+            this.label2.Cursor = System.Windows.Forms.Cursors.Arrow;
             this.label2.Location = new System.Drawing.Point(164, 2);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(3, 38);
@@ -126,6 +129,7 @@ namespace Atiran.MenuBar.Panels
             // label3
             // 
             this.label3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(17)))), ((int)(((byte)(81)))), ((int)(((byte)(100)))));
+            this.label3.Cursor = System.Windows.Forms.Cursors.Arrow;
             this.label3.Location = new System.Drawing.Point(287, 1);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(3, 38);
@@ -134,6 +138,7 @@ namespace Atiran.MenuBar.Panels
             // lblSalMali
             // 
             this.lblSalMali.BackColor = System.Drawing.Color.Transparent;
+            this.lblSalMali.Cursor = System.Windows.Forms.Cursors.Arrow;
             this.lblSalMali.Font = new System.Drawing.Font("IRANSans(FaNum)", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(178)));
             this.lblSalMali.Location = new System.Drawing.Point(167, 5);
             this.lblSalMali.Name = "lblSalMali";
@@ -162,6 +167,7 @@ namespace Atiran.MenuBar.Panels
             // label6
             // 
             this.label6.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(17)))), ((int)(((byte)(81)))), ((int)(((byte)(100)))));
+            this.label6.Cursor = System.Windows.Forms.Cursors.Arrow;
             this.label6.Location = new System.Drawing.Point(493, 1);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(3, 38);
@@ -170,6 +176,7 @@ namespace Atiran.MenuBar.Panels
             // label8
             // 
             this.label8.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(17)))), ((int)(((byte)(81)))), ((int)(((byte)(100)))));
+            this.label8.Cursor = System.Windows.Forms.Cursors.Arrow;
             this.label8.Location = new System.Drawing.Point(621, 0);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(3, 38);
@@ -194,6 +201,7 @@ namespace Atiran.MenuBar.Panels
             // label10
             // 
             this.label10.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(17)))), ((int)(((byte)(81)))), ((int)(((byte)(100)))));
+            this.label10.Cursor = System.Windows.Forms.Cursors.Arrow;
             this.label10.Location = new System.Drawing.Point(776, 0);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(3, 38);
@@ -206,60 +214,23 @@ namespace Atiran.MenuBar.Panels
             this.msUserActivs.Dock = System.Windows.Forms.DockStyle.None;
             this.msUserActivs.Font = new System.Drawing.Font("IRANSans(FaNum)", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.msUserActivs.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.miRestartApplication,
             this.miUserActivs});
-            this.msUserActivs.Location = new System.Drawing.Point(478, 2);
+            this.msUserActivs.Location = new System.Drawing.Point(439, 1);
             this.msUserActivs.Name = "msUserActivs";
-            this.msUserActivs.Size = new System.Drawing.Size(142, 36);
+            this.msUserActivs.Size = new System.Drawing.Size(180, 36);
             this.msUserActivs.TabIndex = 9;
             this.msUserActivs.Text = "menuStrip1";
             // 
-            // lblMinimis
+            // miRestartApplication
             // 
-            this.lblMinimis.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblMinimis.BackColor = System.Drawing.Color.Transparent;
-            this.lblMinimis.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(178)));
-            this.lblMinimis.ForeColor = System.Drawing.Color.Transparent;
-            this.lblMinimis.Image = global::Atiran.MenuBar.Properties.Resources.Minimis_1;
-            this.lblMinimis.Location = new System.Drawing.Point(1006, 7);
-            this.lblMinimis.Name = "lblMinimis";
-            this.lblMinimis.Size = new System.Drawing.Size(24, 24);
-            this.lblMinimis.TabIndex = 4;
-            this.lblMinimis.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.lblMinimis.Click += new System.EventHandler(this.lblMinimis_Click);
-            this.lblMinimis.MouseDown += new System.Windows.Forms.MouseEventHandler(this.label_MouseDown);
-            this.lblMinimis.MouseLeave += new System.EventHandler(this.label_MouseLeave);
-            // 
-            // lblMaximis
-            // 
-            this.lblMaximis.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblMaximis.BackColor = System.Drawing.Color.Transparent;
-            this.lblMaximis.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(178)));
-            this.lblMaximis.ForeColor = System.Drawing.Color.Transparent;
-            this.lblMaximis.Image = global::Atiran.MenuBar.Properties.Resources.Maximis_1;
-            this.lblMaximis.Location = new System.Drawing.Point(1033, 7);
-            this.lblMaximis.Name = "lblMaximis";
-            this.lblMaximis.Size = new System.Drawing.Size(24, 24);
-            this.lblMaximis.TabIndex = 3;
-            this.lblMaximis.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.lblMaximis.Click += new System.EventHandler(this.lblMaximis_Click);
-            this.lblMaximis.MouseDown += new System.Windows.Forms.MouseEventHandler(this.label_MouseDown);
-            this.lblMaximis.MouseLeave += new System.EventHandler(this.label_MouseLeave);
-            // 
-            // lblClose
-            // 
-            this.lblClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblClose.BackColor = System.Drawing.Color.Transparent;
-            this.lblClose.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(178)));
-            this.lblClose.ForeColor = System.Drawing.Color.Transparent;
-            this.lblClose.Image = global::Atiran.MenuBar.Properties.Resources.Exit_1;
-            this.lblClose.Location = new System.Drawing.Point(1060, 7);
-            this.lblClose.Name = "lblClose";
-            this.lblClose.Size = new System.Drawing.Size(24, 24);
-            this.lblClose.TabIndex = 2;
-            this.lblClose.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.lblClose.Click += new System.EventHandler(this.lblClose_Click);
-            this.lblClose.MouseDown += new System.Windows.Forms.MouseEventHandler(this.lblClose_MouseDown);
-            this.lblClose.MouseLeave += new System.EventHandler(this.label_MouseLeave);
+            this.miRestartApplication.AutoSize = false;
+            this.miRestartApplication.Image = global::Atiran.MenuBar.Properties.Resources.icoUser;
+            this.miRestartApplication.Name = "miRestartApplication";
+            this.miRestartApplication.Size = new System.Drawing.Size(28, 37);
+            this.miRestartApplication.Text = " ";
+            this.miRestartApplication.TextImageRelation = System.Windows.Forms.TextImageRelation.Overlay;
+            this.miRestartApplication.Click += new System.EventHandler(this.miRestartApplication_Click);
             // 
             // miUserActivs
             // 
@@ -270,12 +241,12 @@ namespace Atiran.MenuBar.Panels
             this.asdfasdfToolStripMenuItem});
             this.miUserActivs.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.miUserActivs.ForeColor = System.Drawing.Color.White;
-            this.miUserActivs.Image = global::Atiran.MenuBar.Properties.Resources.icoUser;
             this.miUserActivs.Name = "miUserActivs";
             this.miUserActivs.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.miUserActivs.Size = new System.Drawing.Size(122, 35);
+            this.miUserActivs.Size = new System.Drawing.Size(94, 37);
             this.miUserActivs.Text = "كاربر";
             this.miUserActivs.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.miUserActivs.TextImageRelation = System.Windows.Forms.TextImageRelation.Overlay;
             // 
             // sadfsfToolStripMenuItem
             // 
@@ -297,6 +268,60 @@ namespace Atiran.MenuBar.Panels
             this.asdfasdfToolStripMenuItem.Name = "asdfasdfToolStripMenuItem";
             this.asdfasdfToolStripMenuItem.Size = new System.Drawing.Size(150, 24);
             this.asdfasdfToolStripMenuItem.Text = "asdfasdf";
+            // 
+            // lblMinimis
+            // 
+            this.lblMinimis.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblMinimis.BackColor = System.Drawing.Color.Transparent;
+            this.lblMinimis.Cursor = System.Windows.Forms.Cursors.Arrow;
+            this.lblMinimis.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(178)));
+            this.lblMinimis.ForeColor = System.Drawing.Color.Transparent;
+            this.lblMinimis.Image = global::Atiran.MenuBar.Properties.Resources.Minimis_1;
+            this.lblMinimis.Location = new System.Drawing.Point(996, 1);
+            this.lblMinimis.Name = "lblMinimis";
+            this.lblMinimis.Size = new System.Drawing.Size(32, 38);
+            this.lblMinimis.TabIndex = 4;
+            this.lblMinimis.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblMinimis.Click += new System.EventHandler(this.lblMinimis_Click);
+            this.lblMinimis.MouseDown += new System.Windows.Forms.MouseEventHandler(this.label_MouseDown);
+            this.lblMinimis.MouseEnter += new System.EventHandler(this.label_MouseEnter);
+            this.lblMinimis.MouseLeave += new System.EventHandler(this.label_MouseLeave);
+            // 
+            // lblMaximis
+            // 
+            this.lblMaximis.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblMaximis.BackColor = System.Drawing.Color.Transparent;
+            this.lblMaximis.Cursor = System.Windows.Forms.Cursors.Arrow;
+            this.lblMaximis.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(178)));
+            this.lblMaximis.ForeColor = System.Drawing.Color.Transparent;
+            this.lblMaximis.Image = global::Atiran.MenuBar.Properties.Resources.Maximis_1;
+            this.lblMaximis.Location = new System.Drawing.Point(1028, 1);
+            this.lblMaximis.Name = "lblMaximis";
+            this.lblMaximis.Size = new System.Drawing.Size(32, 38);
+            this.lblMaximis.TabIndex = 3;
+            this.lblMaximis.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblMaximis.Click += new System.EventHandler(this.lblMaximis_Click);
+            this.lblMaximis.MouseDown += new System.Windows.Forms.MouseEventHandler(this.label_MouseDown);
+            this.lblMaximis.MouseEnter += new System.EventHandler(this.label_MouseEnter);
+            this.lblMaximis.MouseLeave += new System.EventHandler(this.label_MouseLeave);
+            // 
+            // lblClose
+            // 
+            this.lblClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblClose.BackColor = System.Drawing.Color.Transparent;
+            this.lblClose.Cursor = System.Windows.Forms.Cursors.Arrow;
+            this.lblClose.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(178)));
+            this.lblClose.ForeColor = System.Drawing.Color.Transparent;
+            this.lblClose.Image = global::Atiran.MenuBar.Properties.Resources.Exit_1;
+            this.lblClose.Location = new System.Drawing.Point(1060, 1);
+            this.lblClose.Name = "lblClose";
+            this.lblClose.Size = new System.Drawing.Size(34, 38);
+            this.lblClose.TabIndex = 2;
+            this.lblClose.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblClose.Click += new System.EventHandler(this.lblClose_Click);
+            this.lblClose.MouseDown += new System.Windows.Forms.MouseEventHandler(this.lblClose_MouseDown);
+            this.lblClose.MouseEnter += new System.EventHandler(this.label_MouseEnter);
+            this.lblClose.MouseLeave += new System.EventHandler(this.label_MouseLeave);
             // 
             // MainButton
             // 
@@ -320,6 +345,7 @@ namespace Atiran.MenuBar.Panels
             this.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.Size = new System.Drawing.Size(1094, 278);
             this.Load += new System.EventHandler(this.MainButton_Load);
+            this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MainButton_MouseDown);
             this.msUserActivs.ResumeLayout(false);
             this.msUserActivs.PerformLayout();
             this.ResumeLayout(false);
@@ -362,8 +388,10 @@ namespace Atiran.MenuBar.Panels
 
         private void lblShortcutDesk_Click(object sender, EventArgs e)
         {
+           
             sh1.Text = "ميزكار";
             sh1.Show(mainPane);
+
         }
 
         private void label_MouseEnter(object sender, EventArgs e)
@@ -389,10 +417,38 @@ namespace Atiran.MenuBar.Panels
             ali.ShowDialog();
         }
 
+        private void miRestartApplication_Click(object sender, EventArgs e)
+        {
+            Application.Restart();
+        }
+
         private void timer1_Tick(object sender, EventArgs e)
         {
             DateTime td = DateTime.Now;
             lblDateTime.Text = String.Format("{0}/{1}/{2}   {3}:{4}:{5}", pc.GetYear(td).ToString("0000"), pc.GetMonth(td).ToString("00"), pc.GetDayOfMonth(td).ToString("00"), td.Hour.ToString("00"), td.Minute.ToString("00"), td.Second.ToString("00"));
         }
+
+        #region moving form by muse in header
+
+        public const int WM_NCLBUTTONDOWN = 0x00A1;
+        public const int HT_CAPTION = 0x2;
+
+        [DllImport("user32.dll")]
+        public static extern int SendMessage(IntPtr hWnd,
+            int Msg, int wParam, int lParam);
+        [DllImportAttribute("user32.dll")]
+        public static extern bool ReleaseCapture();
+
+        private void MainButton_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                ReleaseCapture();
+                SendMessage(((Form)TopLevelControl).Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
+            }
+        }
+
+        #endregion
+
     }
 }

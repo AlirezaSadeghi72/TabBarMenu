@@ -14,7 +14,7 @@ namespace Atiran.MenuBar.Class
         protected  override void OnRenderArrow(ToolStripArrowRenderEventArgs e)
         {
             //e.ArrowRectangle = Rectangle.Empty;
-            //base.OnRenderArrow(e);
+            base.OnRenderArrow(e);
         }
         //protected internal override void OnRenderItemImage(ToolStripItemImageRenderEventArgs e)
         //{

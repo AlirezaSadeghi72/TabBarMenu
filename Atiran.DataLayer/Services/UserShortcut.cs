@@ -8,15 +8,16 @@ namespace Atiran.DataLayer.Services
 {
     public class UserShortcut
     {
-        //-------- userFavorite
-        public int RowID { get; set; }
-        public int UserID { get; set; }
-        public int MenuID { get; set; }
-
         //------------- Menu
 
         public string Text { get; set; }
         public string Shortcut { get; set; }
+
+
+        //-------- userFavorite
+        public int RowID { get; set; }
+        public int UserID { get; set; }
+        public int MenuID { get; set; }
 
         //------------- Form
 
