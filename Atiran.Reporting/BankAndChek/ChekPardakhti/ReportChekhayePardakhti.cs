@@ -34,7 +34,7 @@ namespace Atiran.Reporting.BankAndChek.ChekPardakhti
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox1.Location = new System.Drawing.Point(0, 0);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(364, 280);
+            this.groupBox1.Size = new System.Drawing.Size(1280, 680);
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "groupBox1";
@@ -42,7 +42,7 @@ namespace Atiran.Reporting.BankAndChek.ChekPardakhti
             // btnCancel
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnCancel.Location = new System.Drawing.Point(6, 251);
+            this.btnCancel.Location = new System.Drawing.Point(6, 650);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 2;
@@ -55,7 +55,7 @@ namespace Atiran.Reporting.BankAndChek.ChekPardakhti
             this.label1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label1.Location = new System.Drawing.Point(3, 16);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(358, 261);
+            this.label1.Size = new System.Drawing.Size(1274, 661);
             this.label1.TabIndex = 3;
             this.label1.Text = "label1";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -64,7 +64,7 @@ namespace Atiran.Reporting.BankAndChek.ChekPardakhti
             // 
             this.Controls.Add(this.groupBox1);
             this.Name = "ReportChekhayePardakhti";
-            this.Size = new System.Drawing.Size(364, 280);
+            this.Size = new System.Drawing.Size(1280, 680);
             this.groupBox1.ResumeLayout(false);
             this.ResumeLayout(false);
 

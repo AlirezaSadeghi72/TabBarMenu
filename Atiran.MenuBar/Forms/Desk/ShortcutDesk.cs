@@ -19,9 +19,11 @@ namespace Atiran.MenuBar.Forms
     {
         private TextBox txtSearch;
         private List<UserShortcut> shortcuts;
-        //private List<ListViewItem> AllItem;
         private DockPanel MainTab1;
         private DataGridView dataGridView1;
+        private ContextMenuStrip contextMenuStrip1;
+        private System.ComponentModel.IContainer components;
+        private ToolStripMenuItem miAddEdit;
         private int _userID;
 
         public ShortcutDesk(ref DockPanel ali, int UserID = 1)
@@ -29,24 +31,25 @@ namespace Atiran.MenuBar.Forms
             InitializeComponent();
             MainTab1 = ali;
             _userID = UserID;
-            //dataGridView1.Columns.Clear();
-            //dataGridView1.Rows.Clear();
 
             shortcuts = Connection.GetUserShortcuts(UserID);
             dataGridView1.DataSource = shortcuts;
             SetGrid();
-            //CreateMenus();
 
         }
 
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             this.txtSearch = new System.Windows.Forms.TextBox();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.miAddEdit = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // txtSearch
@@ -64,8 +67,7 @@ namespace Atiran.MenuBar.Forms
             // 
             this.dataGridView1.AllowUserToAddRows = false;
             this.dataGridView1.AllowUserToDeleteRows = false;
-            this.dataGridView1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            this.dataGridView1.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.dataGridView1.BackgroundColor = System.Drawing.Color.White;
             this.dataGridView1.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.dataGridView1.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
@@ -94,7 +96,6 @@ namespace Atiran.MenuBar.Forms
             this.dataGridView1.ReadOnly = true;
             this.dataGridView1.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.dataGridView1.RowHeadersVisible = false;
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle3.BackColor = System.Drawing.Color.White;
             dataGridViewCellStyle3.ForeColor = System.Drawing.Color.Black;
             this.dataGridView1.RowsDefaultCellStyle = dataGridViewCellStyle3;
@@ -102,6 +103,20 @@ namespace Atiran.MenuBar.Forms
             this.dataGridView1.Size = new System.Drawing.Size(603, 252);
             this.dataGridView1.TabIndex = 6;
             this.dataGridView1.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellDoubleClick);
+            // 
+            // contextMenuStrip1
+            // 
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.miAddEdit});
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 48);
+            // 
+            // miAddEdit
+            // 
+            this.miAddEdit.Name = "miAddEdit";
+            this.miAddEdit.Size = new System.Drawing.Size(180, 22);
+            this.miAddEdit.Text = "ويرايش / افزودن";
+            this.miAddEdit.Click += new System.EventHandler(this.miAddEdit_Click);
             // 
             // ShortcutDesk
             // 
@@ -114,35 +129,17 @@ namespace Atiran.MenuBar.Forms
             this.Name = "ShortcutDesk";
             this.ShowHint = Atiran.Utility.Docking2.DockState.DockRight;
             this.ShowInTaskbar = false;
+            this.TabPageContextMenuStrip = this.contextMenuStrip1;
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
         }
-
-        //private void Form_Click(object sender, EventArgs e)
-        //{
-        //    //((MyTag)((ToolStripItem)sender).Tag).FormId
-        //    string Namespace = "Atiran.Reporting.BankAndChek.ChekPardakhti";
-        //    string Class = "ReportChekhayePardakhti";
-        //    string typeName = Namespace + "." + Class;
-        //    AddTab(((ToolStripItem)sender).Text, typeName);
-        //}
-
+        
         private void txtSearch_TextChanged(object sender, EventArgs e)
         {
-            //menuStrip1.Items.Clear();
-            //menuStrip1.Items.AddRange(AllItem.Where(a=>a.Text.Contains(txtSearch.Text)).ToArray());
-            //listView1.Items.Clear();
-            //listView1.Items.AddRange(AllItem.Where(a => a.Text.Contains(txtSearch.Text)).ToArray());
             dataGridView1.DataSource = shortcuts.Where(s => s.Text.Contains(txtSearch.Text)).ToList();
-            //try
-            //{
-            //    listView1.Items[0].Selected = true;
-            //}
-            //catch (Exception)
-            //{
-            //}
         }
 
         private void txtSearch_KeyDown(object sender, KeyEventArgs e)
@@ -155,18 +152,7 @@ namespace Atiran.MenuBar.Forms
                 {
                     case Keys.Up:
                         {
-                            //if (dataGridView1.SelectedItems.Count > 0)
-                            //{
-                            //    try
-                            //    {
-                            //        listView1.Items[listView1.SelectedItems[0].Index - 1].Selected = true;
-                            //    }
-                            //    catch (Exception)
-                            //    {
-                            //        if (listView1.Items.Count > 0)
-                            //            listView1.Items[listView1.Items.Count - 1].Selected = true;
-                            //    }
-                            //}
+
                             if (rowIndexSelected - 1 >= 0)
                             {
                                 dataGridView1.Rows[rowIndexSelected - 1].Cells["Text"].Selected = true;
@@ -180,18 +166,7 @@ namespace Atiran.MenuBar.Forms
                         }
                     case Keys.Down:
                         {
-                            //if (listView1.SelectedItems.Count > 0)
-                            //{
-                            //    try
-                            //    {
-                            //        listView1.Items[listView1.SelectedItems[0].Index + 1].Selected = true;
-                            //    }
-                            //    catch (Exception)
-                            //    {
-                            //        if (listView1.Items.Count > 0)
-                            //            listView1.Items[0].Selected = true;
-                            //    }
-                            //}
+
                             if (rowIndexSelected + 1 == countRowGrid)
                             {
                                 dataGridView1.Rows[0].Cells["Text"].Selected = true;
@@ -203,27 +178,19 @@ namespace Atiran.MenuBar.Forms
 
                             break;
                         }
-                    //case Keys.Enter:
-                    //    {
-                    //        OpenTab();
-                    //        break;
-                    //    }
                 }
             }
         }
-
-
+        
         private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-                OpenTab();
+            OpenTab();
         }
-        //private void dataGridView1_KeyDown(object sender, KeyEventArgs e)
-        //{
-        //    if (e.KeyCode == Keys.Enter)
-        //    {
-        //        OpenTab();
-        //    }
-        //}
+
+        private void miAddEdit_Click(object sender, EventArgs e)
+        {
+
+        }
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
@@ -241,48 +208,21 @@ namespace Atiran.MenuBar.Forms
 
         #region Method
 
-        private void CreateMenus()
-        {
-            //foreach (var item in shortcuts)
-            //{
-            //    ToolStripMenuItem tmp = new ToolStripMenuItem();
-            //    {
-            //        tmp.Text = item.Text;
-            //        tmp.Tag = new MyTag()
-            //        {
-            //            MenuId = item.MenuID,
-            //            FormId = item.FormID
-            //        };
-            //        tmp.RightToLeft = RightToLeft.Yes;
-            //        tmp.ForeColor = System.Drawing.SystemColors.ButtonFace;
-            //        tmp.Size = new System.Drawing.Size(97, tmp.Height + 20);
-            //        tmp.Font = new Font("IRANSans(FaNum)", 11);
-            //        tmp.Click += Form_Click;
-
-            //    }
-            //    menuStrip1.Items.Add(tmp);
-            //}
-            //AllItem = menuStrip1.Items.Cast<ToolStripItem>().ToList();
-
-
-        }
-
         private void SetGrid()
         {
             foreach (DataGridViewColumn col in dataGridView1.Columns)
                 col.Visible = false;
 
             dataGridView1.Columns["Text"].Visible = true;
+            dataGridView1.Columns["Text"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dataGridView1.Columns["Text"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
             dataGridView1.Columns["Text"].HeaderText = "نام";
 
-            List<DataGridViewColumn> ali1 = new List<DataGridViewColumn>();
-            foreach (DataGridViewColumn col in dataGridView1.Columns)
-            {
-                if (col.Visible == true)
-                {
-                    ali1.Add(col);
-                }
-            }
+            dataGridView1.Columns["Ico"].Visible = true;
+            dataGridView1.Columns["Ico"].Width = 30;
+            dataGridView1.Columns["Ico"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridView1.Columns["Ico"].HeaderText = "ايكون";
+
         }
 
         private void OpenTab()
@@ -300,7 +240,6 @@ namespace Atiran.MenuBar.Forms
             control.Dock = DockStyle.Fill;
             control.label1.Text = "لود كردن usercontrol مربوط به " + text;
 
-            //MainTab1.ActiveDocument = MainTab1.ActiveContent;
             DeskTab sh = new DeskTab();
             sh.Text = text;
             sh.Controls.Add(control);
@@ -321,16 +260,13 @@ namespace Atiran.MenuBar.Forms
 
         public void RelodeForm()
         {
-            //listView1.Items.Clear();
             shortcuts = Connection.GetUserShortcuts(_userID);
             dataGridView1.DataSource = shortcuts;
             SetGrid();
-
-            //CreateMenus();
         }
 
 
         #endregion
-        
+
     }
 }

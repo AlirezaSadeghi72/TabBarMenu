@@ -147,16 +147,18 @@ namespace Atiran.MenuBar.Forms
             this.pnlFooter.Name = "pnlFooter";
             this.pnlFooter.Size = new System.Drawing.Size(1200, 56);
             this.pnlFooter.TabIndex = 2;
+            this.pnlFooter.Visible = false;
             // 
             // MyMnSt
             // 
+            this.MyMnSt.AutoSize = false;
             this.MyMnSt.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(130)))), ((int)(((byte)(150)))));
             this.MyMnSt.Font = new System.Drawing.Font("IRANSans(FaNum)", 8.249999F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(178)));
             this.MyMnSt.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.Flow;
             this.MyMnSt.Location = new System.Drawing.Point(0, 38);
             this.MyMnSt.Name = "MyMnSt";
             this.MyMnSt.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.MyMnSt.Size = new System.Drawing.Size(1200, 4);
+            this.MyMnSt.Size = new System.Drawing.Size(1200, 36);
             this.MyMnSt.TabIndex = 8;
             this.MyMnSt.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MyMnSt_KeyDown);
             // 
@@ -167,13 +169,13 @@ namespace Atiran.MenuBar.Forms
             this.MainTab.Dock = System.Windows.Forms.DockStyle.Fill;
             this.MainTab.DockBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(238)))), ((int)(((byte)(238)))), ((int)(((byte)(242)))));
             this.MainTab.Font = new System.Drawing.Font("IRANSans", 11F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(178)));
-            this.MainTab.Location = new System.Drawing.Point(0, 42);
+            this.MainTab.Location = new System.Drawing.Point(0, 74);
             this.MainTab.Name = "MainTab";
             this.MainTab.Padding = new System.Windows.Forms.Padding(6);
             this.MainTab.RightToLeftLayout = true;
             this.MainTab.ShowAutoHideContentOnHover = false;
             this.MainTab.ShowDocumentIcon = true;
-            this.MainTab.Size = new System.Drawing.Size(1200, 473);
+            this.MainTab.Size = new System.Drawing.Size(1200, 441);
             this.MainTab.TabIndex = 7;
             this.MainTab.TabStop = true;
             this.MainTab.Theme = this.vS2017LightTheme1;
@@ -196,7 +198,6 @@ namespace Atiran.MenuBar.Forms
             this.pnlMainButtons.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.MainTab)).EndInit();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -216,10 +217,12 @@ namespace Atiran.MenuBar.Forms
                         tmp.RightToLeft = RightToLeft.Yes;
                         tmp.ForeColor = System.Drawing.SystemColors.ButtonFace;
                         tmp.BackColor = System.Drawing.Color.FromArgb(20, 130, 150);
-                        tmp.AutoSize = false;
-                        tmp.Size = new System.Drawing.Size(97, tmp.Height + 20);
                         tmp.Font = new Font("IRANSans(FaNum)", 11);
+                        tmp.Image = Properties.Resources.LemonChiffon;
+                        tmp.ImageScaling = ToolStripItemImageScaling.None;
+                        tmp.Height = MyMnSt.Height;
                     }
+
                     MyMnSt.Items.Add(tmp);
                     CreateMenus(tmp);
                 }
@@ -242,6 +245,10 @@ namespace Atiran.MenuBar.Forms
                         tmp.ForeColor = System.Drawing.SystemColors.ButtonFace;
                         tmp.BackColor = System.Drawing.Color.FromArgb(40, 130, 150);
                         tmp.Font = new Font("IRANSans(FaNum)", 11);
+                        tmp.Image = Properties.Resources.LemonChiffon;
+                        tmp.ImageAlign = ContentAlignment.MiddleCenter;
+                        tmp.ImageScaling = ToolStripItemImageScaling.None;
+                        tmp.Height = MyMnSt.Height;
                     }
                     ((ToolStripMenuItem)TStrip).DropDownItems.Add(tmp);
                     if ((item.FormID ?? 0) > 0)
@@ -251,26 +258,28 @@ namespace Atiran.MenuBar.Forms
 
                 if (((ToolStripMenuItem)TStrip).DropDownItems.Count > 0)
                 {
-                    //((ToolStripMenuItem)TStrip).Image =
-                    //    Properties.Resources.Expand;
-
 
                     ((ToolStripMenuItem)TStrip).MouseHover +=
                         MyMenuItem_MouseHover;
-                    ((ToolStripMenuItem)TStrip).MouseLeave +=
-                        MyMenuItem_MouseLeave;
                     if (tag.ParentId == -1)
                     {
-                        ((ToolStripMenuItem)TStrip).MouseEnter +=
+                        ((ToolStripMenuItem) TStrip).Image =
+                             Properties.Resources.expandleft;
+                        ((ToolStripMenuItem)TStrip).DropDownOpened +=
                             RootMenuItem_MouseEnter;
+                        ((ToolStripMenuItem)TStrip).DropDownClosed +=
+                            RootMenuItem_MouseLeave;
                     }
                     else
                     {
+                        ((ToolStripMenuItem)TStrip).Image =
+                            Properties.Resources.expandleft;
+                        ((ToolStripMenuItem)TStrip).DropDownClosed +=
+                            MyMenuItem_MouseLeave;
                         ((ToolStripMenuItem)TStrip).Alignment =
                             ToolStripItemAlignment.Left;
-                        ((ToolStripMenuItem)TStrip).MouseEnter +=
+                        ((ToolStripMenuItem)TStrip).DropDownOpened +=
                             MyMenuItem_MouseEnter;
-
                     }
                 }
                 else
@@ -369,12 +378,12 @@ namespace Atiran.MenuBar.Forms
 
         private void MakeYellow(object sender, EventArgs e)
         {
-            //((ToolStripMenuItem)sender).Image = Properties.Resources.selected;
+            ((ToolStripMenuItem)sender).Image = Properties.Resources.Yellow;
         }
 
         private void MakeBack(object sender, EventArgs e)
         {
-            ((ToolStripMenuItem)sender).Image = null;
+            ((ToolStripMenuItem)sender).Image = Properties.Resources.LemonChiffon;
         }
 
         private void MyMenuItem_MouseHover(object sender, EventArgs e)
@@ -384,18 +393,20 @@ namespace Atiran.MenuBar.Forms
 
         private void RootMenuItem_MouseEnter(object sender, EventArgs e)
         {
-
-            // ((ToolStripMenuItem)sender).Image = Properties.Resources.expandDown;
+            ((ToolStripMenuItem)sender).Image = Properties.Resources.expandDown;
         }
-
+        private void RootMenuItem_MouseLeave(object sender, EventArgs e)
+        {
+            ((ToolStripMenuItem)sender).Image = Properties.Resources.expandleft;
+        }
         private void MyMenuItem_MouseLeave(object sender, EventArgs e)
         {
-            //((ToolStripMenuItem)sender).Image = Properties.Resources.Expand;
+            ((ToolStripMenuItem)sender).Image = Properties.Resources.expandleft;
         }
 
         private void MyMenuItem_MouseEnter(object sender, EventArgs e)
         {
-            //((ToolStripMenuItem)sender).Image = Properties.Resources.expandleft;
+            ((ToolStripMenuItem)sender).Image = Properties.Resources.expandDown;
         }
 
         private void MyMenuItem_Load(object sender, EventArgs e)

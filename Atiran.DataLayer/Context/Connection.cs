@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using System.Drawing;
 using Atiran.DataLayer.Model;
 using Atiran.DataLayer.Services;
 
@@ -63,7 +64,7 @@ namespace Atiran.DataLayer.Context
             List<UserShortcut> Shortcats = new List<UserShortcut>();
             using (var ctx = new DBEntities())
             {
-                return ctx.UserFavorites.AsNoTracking().Where(u => u.UserID == UserID).Select(r => new UserShortcut()
+                return ctx.UserFavorites.AsNoTracking().Where(u => u.UserID == UserID).ToList().Select(r => new UserShortcut()
                 {
                     UserID = r.UserID,
                     FormID = r.Menu.Form.FormId,
@@ -74,6 +75,7 @@ namespace Atiran.DataLayer.Context
                     NameSpace = r.Menu.Form.NameSpace,
                     RowID = r.RowID,
                     Text = r.Menu.Text,
+                    Ico = Properties.Resources.ico,
                     Title = r.Menu.Form.Title,
                     v1 = r.Menu.Form.v1,
                     v2 = r.Menu.Form.v2,

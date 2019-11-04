@@ -34,8 +34,6 @@ namespace Atiran.MenuBar.Panels
         private MenuStrip msUserActivs;
         private ToolStripMenuItem miUserActivs;
         private ToolStripMenuItem sadfsfToolStripMenuItem;
-        private ToolStripMenuItem asfdasToolStripMenuItem;
-        private ToolStripMenuItem asdfasdfToolStripMenuItem;
         private ShortcutDesk sh1;
         private PersianCalendar pc = new PersianCalendar();
         public int UserID, SalMaliID;
@@ -60,16 +58,20 @@ namespace Atiran.MenuBar.Panels
                 List<ActiveUser> users = Connection.GetActiveUsers();
 
                 miUserActivs.DropDownItems.Clear();
-                miUserActivs.DropDownItems.AddRange(users.Select(u => new ToolStripMenuItem()
-                {
-                    Text = u.user_name,
-                    RightToLeft = RightToLeft.Yes,
-                    ForeColor = SystemColors.ButtonFace,
-                    BackColor = Color.FromArgb(40, 130, 150),
-                    Font = new Font("IRANSans(FaNum)", 11)
-                }).ToArray());
+                List<ToolStripMenuItem> list = new List<ToolStripMenuItem>();
+                foreach (var u in users)
+                    list.Add(new ToolStripMenuItem()
+                    {
+                        Text = u.user_name,
+                        RightToLeft = RightToLeft.Yes,
+                        ForeColor = SystemColors.ButtonFace,
+                        BackColor = Color.FromArgb(40, 130, 150),
+                        Font = new Font("IRANSans(FaNum)", 11),
+                    });
 
-                miUserActivs.Text = users.FirstOrDefault(u => u.user_id == UserID).user_name;
+                miUserActivs.DropDownItems.AddRange(toolStripItems: list.ToArray());
+
+                miUserActivs.Text = users.FirstOrDefault(u => u.user_id == UserID)?.user_name;
                 lblSalMali.Text = Connection.GetNameSalMali(SalMaliID);
 
             }
@@ -92,8 +94,6 @@ namespace Atiran.MenuBar.Panels
             this.miRestartApplication = new System.Windows.Forms.ToolStripMenuItem();
             this.miUserActivs = new System.Windows.Forms.ToolStripMenuItem();
             this.sadfsfToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.asfdasToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.asdfasdfToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.lblMinimis = new System.Windows.Forms.Label();
             this.lblMaximis = new System.Windows.Forms.Label();
             this.lblClose = new System.Windows.Forms.Label();
@@ -225,6 +225,7 @@ namespace Atiran.MenuBar.Panels
             // miRestartApplication
             // 
             this.miRestartApplication.AutoSize = false;
+            this.miRestartApplication.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.miRestartApplication.Image = global::Atiran.MenuBar.Properties.Resources.icoUser;
             this.miRestartApplication.Name = "miRestartApplication";
             this.miRestartApplication.Size = new System.Drawing.Size(28, 37);
@@ -235,10 +236,9 @@ namespace Atiran.MenuBar.Panels
             // miUserActivs
             // 
             this.miUserActivs.AutoSize = false;
+            this.miUserActivs.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.miUserActivs.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.sadfsfToolStripMenuItem,
-            this.asfdasToolStripMenuItem,
-            this.asdfasdfToolStripMenuItem});
+            this.sadfsfToolStripMenuItem});
             this.miUserActivs.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.miUserActivs.ForeColor = System.Drawing.Color.White;
             this.miUserActivs.Name = "miUserActivs";
@@ -251,23 +251,12 @@ namespace Atiran.MenuBar.Panels
             // sadfsfToolStripMenuItem
             // 
             this.sadfsfToolStripMenuItem.AutoSize = false;
+            this.sadfsfToolStripMenuItem.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.sadfsfToolStripMenuItem.Image = global::Atiran.MenuBar.Properties.Resources.expandleft;
+            this.sadfsfToolStripMenuItem.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.sadfsfToolStripMenuItem.Name = "sadfsfToolStripMenuItem";
             this.sadfsfToolStripMenuItem.Size = new System.Drawing.Size(180, 24);
             this.sadfsfToolStripMenuItem.Text = "sadfsf";
-            // 
-            // asfdasToolStripMenuItem
-            // 
-            this.asfdasToolStripMenuItem.AutoSize = false;
-            this.asfdasToolStripMenuItem.Name = "asfdasToolStripMenuItem";
-            this.asfdasToolStripMenuItem.Size = new System.Drawing.Size(150, 24);
-            this.asfdasToolStripMenuItem.Text = "asfdas";
-            // 
-            // asdfasdfToolStripMenuItem
-            // 
-            this.asdfasdfToolStripMenuItem.AutoSize = false;
-            this.asdfasdfToolStripMenuItem.Name = "asdfasdfToolStripMenuItem";
-            this.asdfasdfToolStripMenuItem.Size = new System.Drawing.Size(150, 24);
-            this.asdfasdfToolStripMenuItem.Text = "asdfasdf";
             // 
             // lblMinimis
             // 
@@ -399,6 +388,7 @@ namespace Atiran.MenuBar.Panels
             //msUserActivs.BackColor = Color.FromArgb(21, 100, 123);
             ((Control)sender).BackColor = Color.FromArgb(128, Color.FromArgb(20, 130, 150)); //Color.Wheat;
             //((Control)sender).ForeColor = Color.Black;
+            ((Control) sender).Focus();
         }
 
         private void label_MouseLeave(object sender, EventArgs e)
@@ -430,9 +420,6 @@ namespace Atiran.MenuBar.Panels
 
         #region moving form by muse in header
 
-        public const int WM_NCLBUTTONDOWN = 0x00A1;
-        public const int HT_CAPTION = 0x2;
-
         [DllImport("user32.dll")]
         public static extern int SendMessage(IntPtr hWnd,
             int Msg, int wParam, int lParam);
@@ -444,7 +431,7 @@ namespace Atiran.MenuBar.Panels
             if (e.Button == MouseButtons.Left)
             {
                 ReleaseCapture();
-                SendMessage(((Form)TopLevelControl).Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
+                SendMessage(((Form)TopLevelControl).Handle, 0x00A1, 0x2, 0);
             }
         }
 
