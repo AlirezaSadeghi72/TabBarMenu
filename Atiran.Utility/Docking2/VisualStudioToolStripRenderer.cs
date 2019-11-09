@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
+using Atiran.Utility.Docking2.Theme.ThemeVS2017;
 
 namespace Atiran.Utility.Docking2
 {
@@ -28,13 +29,23 @@ namespace Atiran.Utility.Docking2
         private SolidBrush _statusGripAccentBrush;
         private SolidBrush _toolBarBrush;
         private SolidBrush _gripBrush;
+        public static Image CloseButtom ;
         private Pen _toolBarBorderPen;
         private VisualStudioColorTable _table;
         private DockPanelColorPalette _palette;
 
+        private Rectangle GetCloseButtonRect(Rectangle rectItem)
+        {
+            return new Rectangle(rectItem.X + rectItem.Width - 25, rectItem.Y + 3, 14, 14);
+        }
+
+
+
+
+        public bool UseBottonCloseOnMenuStrip { get; set; }
         public bool UseGlassOnMenuStrip { get; set; }
 
-        public VisualStudioToolStripRenderer(DockPanelColorPalette palette)
+        public VisualStudioToolStripRenderer(DockPanelColorPalette palette )
             : base(new VisualStudioColorTable(palette))
         {
             _table = (VisualStudioColorTable)ColorTable;
@@ -46,35 +57,39 @@ namespace Atiran.Utility.Docking2
             _toolBarBrush = new SolidBrush(palette.CommandBarToolbarDefault.Background);
             _gripBrush = new SolidBrush(palette.CommandBarToolbarDefault.Grip);
             _toolBarBorderPen = new Pen(palette.CommandBarToolbarDefault.Border);
-
+            CloseButtom = ImageServiceHelper.GetImage(Theme.ThemeVS2012.Resources.MaskTabClose, _palette.TabSelectedInactive.Button,
+                _palette.TabSelectedInactive.Background);
             UseGlassOnMenuStrip = true;
         }
 
         #region Rendering Improvements (includes fixes for bugs occured when Windows Classic theme is on).
         //*
-        protected  override void OnRenderMenuItemBackground(ToolStripItemRenderEventArgs e)
+        protected override void OnRenderMenuItemBackground(ToolStripItemRenderEventArgs e)
         {
+            bool isMenuDropDown = e.Item.Owner is MenuStrip;
+            // Rect of item's content area.
+            Rectangle contentRect = e.Item.ContentRectangle;
+
+            // Fix item rect.
+            Rectangle itemRect = isMenuDropDown
+                ? new Rectangle(
+                    contentRect.X + 2, contentRect.Y - 2,
+                    contentRect.Width - 5, contentRect.Height + 3)
+                : new Rectangle(
+                    contentRect.X, contentRect.Y - 1,
+                    contentRect.Width, contentRect.Height + 1);
+
             // Do not draw disabled item background.
             if (e.Item.Enabled)
             {
-                bool isMenuDropDown = e.Item.Owner is MenuStrip;
+                
+
                 if (isMenuDropDown && e.Item.Pressed)
                 {
                     base.OnRenderMenuItemBackground(e);
                 }
                 else if (e.Item.Selected)
                 {
-                    // Rect of item's content area.
-                    Rectangle contentRect = e.Item.ContentRectangle;
-
-                    // Fix item rect.
-                    Rectangle itemRect = isMenuDropDown
-                                             ? new Rectangle(
-                                                   contentRect.X + 2, contentRect.Y - 2,
-                                                   contentRect.Width - 5, contentRect.Height + 3)
-                                             : new Rectangle(
-                                                   contentRect.X, contentRect.Y - 1,
-                                                   contentRect.Width, contentRect.Height + 1);
 
                     // Border pen and fill brush.
                     Color pen = ColorTable.MenuItemBorder;
@@ -90,14 +105,33 @@ namespace Atiran.Utility.Docking2
                     {
                         brushBegin = ColorTable.MenuItemSelected;
                         brushEnd = Color.Empty;
+                        
                     }
+
+                    DrawRectangle(e.Graphics, itemRect, brushBegin, brushEnd, pen, UseGlassOnMenuStrip);
+                    //drow image close
+                    if (e.Item.Tag != null)
+                    {
+                        e.Graphics.DrawImage(CloseButtom,
+                            GetCloseButtonRect(itemRect));
+
+                    }
+                }
+                else if (e.Item.BackColor != SystemColors.Control)
+                {
+
+                    // Border pen and fill brush.
+                    Color pen = ColorTable.MenuItemBorder;
+                    Color brushBegin = e.Item.BackColor;
+                    Color brushEnd = Color.Empty;
 
                     DrawRectangle(e.Graphics, itemRect, brushBegin, brushEnd, pen, UseGlassOnMenuStrip);
                 }
             }
         }
 
-        protected  override void OnRenderToolStripBorder(ToolStripRenderEventArgs e)
+
+        protected override void OnRenderToolStripBorder(ToolStripRenderEventArgs e)
         {
             var status = e.ToolStrip as StatusStrip;
             if (status != null)
@@ -124,7 +158,7 @@ namespace Atiran.Utility.Docking2
             e.Graphics.DrawRectangle(_toolBarBorderPen, new Rectangle(rect.Location, new Size(rect.Width - 1, rect.Height - 1)));
         }
 
-        protected  override void OnRenderToolStripBackground(ToolStripRenderEventArgs e)
+        protected override void OnRenderToolStripBackground(ToolStripRenderEventArgs e)
         {
             var status = e.ToolStrip as StatusStrip;
             if (status != null)
@@ -150,7 +184,7 @@ namespace Atiran.Utility.Docking2
             e.Graphics.FillRectangle(_toolBarBrush, e.ToolStrip.ClientRectangle);
         }
 
-        protected  override void OnRenderStatusStripSizingGrip(ToolStripRenderEventArgs e)
+        protected override void OnRenderStatusStripSizingGrip(ToolStripRenderEventArgs e)
         {
             // IMPORTANT: below code was taken from Microsoft's reference code (MIT license).
             Graphics g = e.Graphics;
@@ -194,7 +228,7 @@ namespace Atiran.Utility.Docking2
             }
         }
 
-        protected  override void OnRenderGrip(ToolStripGripRenderEventArgs e)
+        protected override void OnRenderGrip(ToolStripGripRenderEventArgs e)
         {
             Graphics g = e.Graphics;
             Rectangle bounds = e.GripBounds;
@@ -260,7 +294,7 @@ namespace Atiran.Utility.Docking2
             }
         }
 
-        protected  override void OnRenderButtonBackground(ToolStripItemRenderEventArgs e)
+        protected override void OnRenderButtonBackground(ToolStripItemRenderEventArgs e)
         {
             ToolStripButton button = e.Item as ToolStripButton;
             if (button != null && button.Enabled)
@@ -317,14 +351,14 @@ namespace Atiran.Utility.Docking2
             }
         }
 
-        protected  override void Initialize(ToolStrip toolStrip)
+        protected override void Initialize(ToolStrip toolStrip)
         {
             base.Initialize(toolStrip);
             // IMPORTANT: enlarge grip area so grip can be rendered fully.
             toolStrip.GripMargin = new Padding(toolStrip.GripMargin.All + 1);
         }
 
-        protected  override void OnRenderOverflowButtonBackground(ToolStripItemRenderEventArgs e)
+        protected override void OnRenderOverflowButtonBackground(ToolStripItemRenderEventArgs e)
         {
             var cache = _palette.CommandBarMenuPopupDefault.BackgroundTop;
 
@@ -337,13 +371,13 @@ namespace Atiran.Utility.Docking2
                 _palette.CommandBarMenuPopupDefault.BackgroundTop = cache;
         }
 
-        protected  override void OnRenderArrow(ToolStripArrowRenderEventArgs e)
+        protected override void OnRenderArrow(ToolStripArrowRenderEventArgs e)
         {
             e.ArrowColor = e.Item.Selected ? _palette.CommandBarMenuPopupHovered.Arrow : _palette.CommandBarMenuPopupDefault.Arrow;
             base.OnRenderArrow(e);
         }
 
-        protected  override void OnRenderItemCheck(ToolStripItemImageRenderEventArgs e)
+        protected override void OnRenderItemCheck(ToolStripItemImageRenderEventArgs e)
         {
             ////base.OnRenderItemCheck(e);
             using (var imageAttr = new ImageAttributes())
@@ -373,7 +407,7 @@ namespace Atiran.Utility.Docking2
             }
         }
 
-        protected  override void OnRenderSeparator(ToolStripSeparatorRenderEventArgs e)
+        protected override void OnRenderSeparator(ToolStripSeparatorRenderEventArgs e)
         {
             Rectangle r = e.Item.ContentRectangle;
             if (e.Vertical)
@@ -410,7 +444,7 @@ namespace Atiran.Utility.Docking2
             }
         }
 
-        protected  override void OnRenderItemText(ToolStripItemTextRenderEventArgs e)
+        protected override void OnRenderItemText(ToolStripItemTextRenderEventArgs e)
         {
             Color color = Color.Black;
             var toolStrip = e.ToolStrip;
@@ -484,13 +518,13 @@ namespace Atiran.Utility.Docking2
                     color = _palette.CommandBarMenuDefault.Text;
                 }
             }
-            else 
+            else
             {
                 // Default color, if not it will be black no matter what 
                 if (!e.Item.Enabled)
                 {
                     color = _palette.CommandBarMenuPopupDisabled.Text;
-                } 
+                }
                 else
                 {
                     color = _palette.CommandBarMenuDefault.Text;
@@ -498,18 +532,19 @@ namespace Atiran.Utility.Docking2
             }
 
             TextRenderer.DrawText(e.Graphics, e.Text, e.TextFont, e.TextRectangle, color, e.TextFormat);
+
         }
 
         #region helpers
-        private static void DrawRectangle(Graphics graphics, Rectangle rect, Color brushBegin, 
+        private static void DrawRectangle(Graphics graphics, Rectangle rect, Color brushBegin,
             Color brushMiddle, Color brushEnd, Color penColor, bool glass)
         {
             RectangleF firstHalf = new RectangleF(
-                rect.X, rect.Y, 
+                rect.X, rect.Y,
                 rect.Width, (float)rect.Height / 2);
 
             RectangleF secondHalf = new RectangleF(
-                rect.X, rect.Y + (float)rect.Height / 2, 
+                rect.X, rect.Y + (float)rect.Height / 2,
                 rect.Width, (float)rect.Height / 2);
 
             if (brushMiddle.IsEmpty && brushEnd.IsEmpty)
@@ -544,7 +579,7 @@ namespace Atiran.Utility.Docking2
             DrawRectangle(graphics, rect, brushBegin, Color.Empty, brushEnd, penColor, glass);
         }
 
-        private static void DrawRectangle(Graphics graphics, Rectangle rect, Color brush, 
+        private static void DrawRectangle(Graphics graphics, Rectangle rect, Color brush,
             Color penColor, bool glass)
         {
             DrawRectangle(graphics, rect, brush, Color.Empty, Color.Empty, penColor, glass);

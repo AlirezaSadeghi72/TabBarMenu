@@ -11,15 +11,23 @@ namespace Atiran.MenuBar.Class
     public class ToolStripProfessionalRendererAtiran : ToolStripProfessionalRenderer
     {
         public ToolStripProfessionalRendererAtiran() : base(new MyColors()) { }
-        protected  override void OnRenderArrow(ToolStripArrowRenderEventArgs e)
+        protected override void OnRenderArrow(ToolStripArrowRenderEventArgs e)
         {
-            //e.ArrowRectangle = Rectangle.Empty;
+            e.ArrowRectangle = Rectangle.Empty;
+            if (e.Item.Selected)
+            {
+                e.Graphics.DrawImage(new Bitmap(Properties.Resources.expandleft, new Size(16, 16)), new Point(5, 5));
+            }
+            else
+            {
+                e.Graphics.DrawImage(new Bitmap(Properties.Resources.expandDown, new Size(16, 16)), new Point(5, 5));
+            }
             //base.OnRenderArrow(e);
         }
-        //protected override void OnRenderItemImage(ToolStripItemImageRenderEventArgs e)
-        //{
-        //    base.OnRenderItemImage(e);
-        //}
+        protected override void OnRenderItemImage(ToolStripItemImageRenderEventArgs e)
+        {
+            base.OnRenderItemImage(e);
+        }
     }
     partial class MyColors : ProfessionalColorTable
     {

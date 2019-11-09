@@ -47,7 +47,7 @@ namespace Atiran.MenuBar.Forms
             // 
             this.miCloseAllButThis.Name = "miCloseAllButThis";
             this.miCloseAllButThis.Size = new System.Drawing.Size(185, 22);
-            this.miCloseAllButThis.Text = "بستن همه به غير از اين";
+            this.miCloseAllButThis.Text = "بستن  ساير تب ها";
             this.miCloseAllButThis.Click += new System.EventHandler(this.miCloseAllButThis_Click);
             // 
             // miCloseAll

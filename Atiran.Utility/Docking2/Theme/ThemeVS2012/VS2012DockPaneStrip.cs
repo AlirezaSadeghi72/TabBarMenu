@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 using System.ComponentModel;
+using System.Linq;
 
 namespace Atiran.Utility.Docking2.Theme.ThemeVS2012
 {
@@ -1154,7 +1155,6 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2012
             Image image = null;
             Color paint;
             var imageService = DockPane.DockPanel.Theme.ImageService;
-
             if (DockPane.ActiveContent == tab.Content)
             {
                 if (DockPane.IsActiveDocumentPane)
@@ -1194,6 +1194,7 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2012
                 {
                     paint = inactiveColor;
                     text = inactiveText;
+                    image = imageService.TabHoverLostFocus_Close;
                 }
             }
 
@@ -1291,6 +1292,7 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2012
             var indexHit = HitTest();
             if (indexHit > -1)
                 TabCloseButtonHit(indexHit);
+
         }
 
         private void TabCloseButtonHit(int index)
@@ -1320,49 +1322,112 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2012
         }
 
         private void WindowList_Click(object sender, EventArgs e)
-        {//alireza bya inja
+        {
+            SelectMenu.ShowCheckMargin = true;
             SelectMenu.Items.Clear();
             foreach (TabVS2012 tab in Tabs)
             {
                 IDockContent content = tab.Content;
+
                 ToolStripItem item = SelectMenu.Items.Add(content.DockHandler.TabText, content.DockHandler.Icon.ToBitmap());
                 item.Tag = tab.Content;
+
                 item.Click += new EventHandler(ContextMenuItem_Click);
+                item.MouseMove += new MouseEventHandler(ContextMenuItem_MuseMove);
+                //item.BackgroundImage = DockPane.ActiveContent == content ? new Bitmap(Resources.MaskTabClose) :null;
+                if (DockPane.ActiveContent == content)
+                {
+                    item.BackColor = Color.SkyBlue;
+                }
             }
 
-            var workingArea = Screen.GetWorkingArea(ButtonWindowList.PointToScreen(new Point(ButtonWindowList.Width / 2, ButtonWindowList.Height / 2)));
-            var menu = new Rectangle(ButtonWindowList.PointToScreen(new Point(0, ButtonWindowList.Location.Y + ButtonWindowList.Height)), SelectMenu.Size);
-            var menuMargined = new Rectangle(menu.X - SelectMenuMargin, menu.Y - SelectMenuMargin, menu.Width + SelectMenuMargin, menu.Height + SelectMenuMargin);
-            if (workingArea.Contains(menuMargined))
+            ShowDropDown();
+
+        }
+
+        private void ShowDropDown()
+        {
+            try
             {
-                SelectMenu.Show(menu.Location);
-            }
-            else
-            {
-                var newPoint = menu.Location;
-                newPoint.X = DrawHelper.Balance(SelectMenu.Width, SelectMenuMargin, newPoint.X, workingArea.Left, workingArea.Right);
-                newPoint.Y = DrawHelper.Balance(SelectMenu.Size.Height, SelectMenuMargin, newPoint.Y, workingArea.Top, workingArea.Bottom);
-                var button = ButtonWindowList.PointToScreen(new Point(0, ButtonWindowList.Height));
-                if (newPoint.Y < button.Y)
+                var workingArea = Screen.GetWorkingArea(ButtonWindowList.PointToScreen(new Point(ButtonWindowList.Width / 2, ButtonWindowList.Height / 2)));
+                var menu = new Rectangle(ButtonWindowList.PointToScreen(new Point(0, ButtonWindowList.Location.Y + ButtonWindowList.Height)), SelectMenu.Size);
+                var menuMargined = new Rectangle(menu.X - SelectMenuMargin, menu.Y - SelectMenuMargin, menu.Width + SelectMenuMargin, menu.Height + SelectMenuMargin);
+                if (workingArea.Contains(menuMargined))
                 {
-                    // flip the menu up to be above the button.
-                    newPoint.Y = button.Y - ButtonWindowList.Height;
-                    SelectMenu.Show(newPoint, ToolStripDropDownDirection.AboveRight);
+                    SelectMenu.Show(menu.Location);
                 }
                 else
                 {
-                    SelectMenu.Show(newPoint);
+                    var newPoint = menu.Location;
+                    newPoint.X = DrawHelper.Balance(SelectMenu.Width, SelectMenuMargin, newPoint.X, workingArea.Left, workingArea.Right);
+                    newPoint.Y = DrawHelper.Balance(SelectMenu.Size.Height, SelectMenuMargin, newPoint.Y, workingArea.Top, workingArea.Bottom);
+                    var button = ButtonWindowList.PointToScreen(new Point(0, ButtonWindowList.Height));
+                    if (newPoint.Y < button.Y)
+                    {
+                        // flip the menu up to be above the button.
+                        newPoint.Y = button.Y - ButtonWindowList.Height;
+                        SelectMenu.Show(newPoint, ToolStripDropDownDirection.AboveRight);
+                    }
+                    else
+                    {
+                        SelectMenu.Show(newPoint);
+                    }
                 }
+            }
+            catch (Exception)
+            {
+            }
+        }
+
+        private bool IsCloseButtonMenu(ToolStripMenuItem item)
+        {
+            Rectangle contentRect = item.Bounds;
+
+            Rectangle ButtonRec =
+                new Rectangle(contentRect.X + contentRect.Width - 25, contentRect.Y, 14, 14);
+            Rectangle MuoseRec =
+                new Rectangle(contentRect.X + contentRect.Width - 25, contentRect.Y + ((contentRect.Height)), 14, 14);
+            if (item.Bounds.Contains(ButtonRec) && MuoseRec.Contains(new Rectangle(PointToClient(MousePosition), new Size(1, 1))))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        private void ContextMenuItem_MuseMove(object sender, EventArgs e)
+        {
+            ToolStripMenuItem item = sender as ToolStripMenuItem;
+            if (item != null)
+            {
+                var imageService = DockPane.DockPanel.Theme.ImageService;
+
+                VisualStudioToolStripRenderer.CloseButtom = IsCloseButtonMenu(item) ? imageService.TabLostFocus_Close : imageService.TabHoverLostFocus_Close;
+
             }
         }
 
         private void ContextMenuItem_Click(object sender, EventArgs e)
         {
+
             ToolStripMenuItem item = sender as ToolStripMenuItem;
             if (item != null)
             {
                 IDockContent content = (IDockContent)item.Tag;
-                DockPane.ActiveContent = content;
+
+                if (IsCloseButtonMenu(item))
+                {
+                    var Tab = Tabs.FirstOrDefault(u => u.Content == content);
+                    var index = Tabs.IndexOf(Tab);
+                    TryCloseTab(index);
+                    SelectMenu.Items.Remove(item);
+                    ShowDropDown();
+                }
+                else
+                {
+                    DockPane.ActiveContent = content;
+                    SelectMenu.Close();
+                }
             }
         }
 
@@ -1442,6 +1507,7 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2012
                 GraphicsPath path = GetTabOutline(tab, true, false);
                 if (path.IsVisible(point))
                     return Tabs.IndexOf(tab);
+
             }
 
             return -1;

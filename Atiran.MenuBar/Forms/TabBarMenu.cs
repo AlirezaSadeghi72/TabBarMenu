@@ -28,6 +28,7 @@ namespace Atiran.MenuBar.Forms
         private DockPanel MainTab;
         private MenuStrip MyMnSt;
         private int _userID = 1005;
+        private Utility.Docking2.Theme.ThemeVS2012.VS2012LightTheme vS2012LightTheme1;
         private int _salMaliID = 1;
         //private CustomTabControl MainTab;
         //private Image CloseImage = Resources.close_button;
@@ -110,6 +111,7 @@ namespace Atiran.MenuBar.Forms
             this.MyMnSt = new System.Windows.Forms.MenuStrip();
             this.MainTab = new Atiran.Utility.Docking2.DockPanel();
             this.vS2017LightTheme1 = new Atiran.Utility.Docking2.Theme.ThemeVS2017.VS2017LightTheme();
+            this.vS2012LightTheme1 = new Atiran.Utility.Docking2.Theme.ThemeVS2012.VS2012LightTheme();
             this.pnlMainButtons.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MainTab)).BeginInit();
             this.SuspendLayout();
@@ -147,7 +149,6 @@ namespace Atiran.MenuBar.Forms
             this.pnlFooter.Name = "pnlFooter";
             this.pnlFooter.Size = new System.Drawing.Size(1200, 56);
             this.pnlFooter.TabIndex = 2;
-            this.pnlFooter.Visible = false;
             // 
             // MyMnSt
             // 
@@ -165,9 +166,10 @@ namespace Atiran.MenuBar.Forms
             // MainTab
             // 
             this.MainTab.AllowDrop = true;
-            this.MainTab.CausesValidation = false;
             this.MainTab.Dock = System.Windows.Forms.DockStyle.Fill;
             this.MainTab.DockBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(238)))), ((int)(((byte)(238)))), ((int)(((byte)(242)))));
+            this.MainTab.DockLeftPortion = 0.15D;
+            this.MainTab.DockRightPortion = 0.15D;
             this.MainTab.Font = new System.Drawing.Font("IRANSans", 11F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(178)));
             this.MainTab.Location = new System.Drawing.Point(0, 74);
             this.MainTab.Name = "MainTab";
@@ -194,6 +196,7 @@ namespace Atiran.MenuBar.Forms
             this.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.TabBarMenu_FormClosed);
             this.Load += new System.EventHandler(this.MyMenuItem_Load);
             this.pnlMainButtons.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.MainTab)).EndInit();
@@ -214,12 +217,13 @@ namespace Atiran.MenuBar.Forms
                         tmp.Text = sub.Name;
                         tmp.Tag = new MyTag()
                         { MenuId = sub.SubSystemId, FormId = 0, ParentId = -1 };
-                        tmp.RightToLeft = RightToLeft.Yes;
                         tmp.ForeColor = System.Drawing.SystemColors.ButtonFace;
                         tmp.BackColor = System.Drawing.Color.FromArgb(20, 130, 150);
                         tmp.Font = new Font("IRANSans(FaNum)", 11);
                         tmp.Image = Properties.Resources.LemonChiffon;
                         tmp.ImageScaling = ToolStripItemImageScaling.None;
+                        tmp.TextImageRelation = TextImageRelation.ImageBeforeText;
+                        //tmp.RightToLeftAutoMirrorImage = true;
                         tmp.Height = MyMnSt.Height;
                     }
 
@@ -239,9 +243,9 @@ namespace Atiran.MenuBar.Forms
                     tmp = new ToolStripMenuItem();
                     {
                         tmp.Text = item.Text;
+                        tmp.TextAlign = ContentAlignment.BottomLeft;
                         tmp.Tag = new MyTag()
                         { MenuId = item.MenuID, FormId = item.FormID ?? 0, ParentId = item.ParentMenuID ?? 0 };
-                        tmp.RightToLeft = RightToLeft.Yes;
                         tmp.ForeColor = System.Drawing.SystemColors.ButtonFace;
                         tmp.BackColor = System.Drawing.Color.FromArgb(40, 130, 150);
                         tmp.Font = new Font("IRANSans(FaNum)", 11);
@@ -263,7 +267,8 @@ namespace Atiran.MenuBar.Forms
                         MyMenuItem_MouseHover;
                     if (tag.ParentId == -1)
                     {
-                        ((ToolStripMenuItem) TStrip).Image =
+                        //((ToolStripMenuItem)TStrip).TextImageRelation = TextImageRelation.TextBeforeImage;
+                        ((ToolStripMenuItem)TStrip).Image =
                              Properties.Resources.expandleft;
                         ((ToolStripMenuItem)TStrip).DropDownOpened +=
                             RootMenuItem_MouseEnter;
@@ -272,14 +277,14 @@ namespace Atiran.MenuBar.Forms
                     }
                     else
                     {
-                        ((ToolStripMenuItem)TStrip).Image =
-                            Properties.Resources.expandleft;
-                        ((ToolStripMenuItem)TStrip).DropDownClosed +=
-                            MyMenuItem_MouseLeave;
-                        ((ToolStripMenuItem)TStrip).Alignment =
-                            ToolStripItemAlignment.Left;
-                        ((ToolStripMenuItem)TStrip).DropDownOpened +=
-                            MyMenuItem_MouseEnter;
+                        ((ToolStripMenuItem)TStrip).Image = null;
+                        //Properties.Resources.expandleft;
+                        //((ToolStripMenuItem)TStrip).DropDownClosed +=
+                        //    MyMenuItem_MouseLeave;
+                        //((ToolStripMenuItem)TStrip).Alignment =
+                        //    ToolStripItemAlignment.Left;
+                        //((ToolStripMenuItem)TStrip).DropDownOpened +=
+                        //    MyMenuItem_MouseEnter;
                     }
                 }
                 else
@@ -331,7 +336,14 @@ namespace Atiran.MenuBar.Forms
                     }
                 case Keys.Scroll:
                     {
-
+                        try
+                        {
+                            MainTab.NextTabFocus();
+                        }
+                        catch (Exception)
+                        {
+                            break;
+                        }
                         return true;
                     }
                 case Keys.Left:
@@ -388,7 +400,7 @@ namespace Atiran.MenuBar.Forms
 
         private void MyMenuItem_MouseHover(object sender, EventArgs e)
         {
-            ((ToolStripMenuItem)sender).ShowDropDown();
+            //((ToolStripMenuItem)sender).ShowDropDown();
         }
 
         private void RootMenuItem_MouseEnter(object sender, EventArgs e)
@@ -399,15 +411,15 @@ namespace Atiran.MenuBar.Forms
         {
             ((ToolStripMenuItem)sender).Image = Properties.Resources.expandleft;
         }
-        private void MyMenuItem_MouseLeave(object sender, EventArgs e)
-        {
-            ((ToolStripMenuItem)sender).Image = Properties.Resources.expandleft;
-        }
+        //private void MyMenuItem_MouseLeave(object sender, EventArgs e)
+        //{
+        //    ((ToolStripMenuItem)sender).Image = Properties.Resources.expandleft;
+        //}
 
-        private void MyMenuItem_MouseEnter(object sender, EventArgs e)
-        {
-            ((ToolStripMenuItem)sender).Image = Properties.Resources.expandDown;
-        }
+        //private void MyMenuItem_MouseEnter(object sender, EventArgs e)
+        //{
+        //    ((ToolStripMenuItem)sender).Image = Properties.Resources.expandDown;
+        //}
 
         private void MyMenuItem_Load(object sender, EventArgs e)
         {
@@ -481,7 +493,7 @@ namespace Atiran.MenuBar.Forms
 
         //#endregion
 
-        #endregion
+
 
         private void MyMnSt_KeyDown(object sender, KeyEventArgs e)
         {
@@ -493,6 +505,10 @@ namespace Atiran.MenuBar.Forms
         }
 
 
-
+        private void TabBarMenu_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            Application.Exit();
+        }
+        #endregion
     }
 }

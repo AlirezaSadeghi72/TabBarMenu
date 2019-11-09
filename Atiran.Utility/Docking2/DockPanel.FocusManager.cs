@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 
 namespace Atiran.Utility.Docking2
 {
@@ -565,6 +566,33 @@ namespace Atiran.Utility.Docking2
         public DockPane ActiveDocumentPane
         {
             get { return FocusManager.ActiveDocumentPane; }
+        }
+
+        public void NextTabFocus()
+        {
+            int index = -1;
+            var allDocuments = ActiveDocumentPane.Contents;
+            for (int i =0 ; i< allDocuments.Count();i++)
+            {
+                if (allDocuments[i] == ActiveContent)
+                {
+                    index = i;
+                    break;
+                }
+            }
+
+            if (index > -1)
+            {
+                try
+                {
+                    ActiveDocumentPane.ActiveContent = allDocuments[index+1];
+                }
+                catch (Exception)
+                {
+                    ActiveDocumentPane.ActiveContent = allDocuments[0];
+                }
+            }
+
         }
 
         private static readonly object ActiveDocumentChangedEvent = new object();
