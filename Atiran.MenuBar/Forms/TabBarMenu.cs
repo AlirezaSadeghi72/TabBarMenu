@@ -188,7 +188,8 @@ namespace Atiran.MenuBar.Forms
             string Namespace = "Atiran.Reporting.BankAndChek.ChekPardakhti";
             string Class = "ReportChekhayePardakhti";
             string typeName = Namespace + "." + Class;
-            if (((ToolStripItem)sender).Text == "اخذ چك پرداختي")
+            var ali = ((ToolStripMenuItem)MyMnSt.Items[7]).DropDown.Items.Cast<ToolStripMenuItem>().ToList();
+            if (ali.Any(a=>a.Text == ((ToolStripItem)sender).Text))
                 AddTab(((ToolStripItem)sender).Text, typeName, false);
             else
                 AddTab(((ToolStripItem)sender).Text, typeName, true);
@@ -291,7 +292,7 @@ namespace Atiran.MenuBar.Forms
                     try
                     {
                         //MainTab.TabPages.Remove(MainTab.TabPages[MainTab.SelectedIndex]);
-                        if (((DeskTab)ActiveMdiChild).isQuestionClose)
+                        if (((DeskTab)ActiveMdiChild).ShowQuestionClose)
                         {
                             if (ShowPersianMessageBox.ShowMessge("پيغام", "آيا تب " + Text + " بسته شود",
                                     MessageBoxButtons.YesNo) == DialogResult.Yes)
@@ -514,7 +515,7 @@ namespace Atiran.MenuBar.Forms
 
         }
 
-        private void AddTab(string text, string typeName, bool isQuestionClose)
+        private void AddTab(string text, string typeName, bool ShowQuestionClose)
         {
             var control = (ReportChekhayePardakhti)GetObjectFromString(typeName);
             control.Dock = DockStyle.Fill;
@@ -529,7 +530,7 @@ namespace Atiran.MenuBar.Forms
             Atiran.Utility.Docking2.Desk.DeskTab sh = new Atiran.Utility.Docking2.Desk.DeskTab();
             sh.Text = text;
             sh.Controls.Add(control);
-            sh.isQuestionClose = isQuestionClose;
+            sh.ShowQuestionClose = ShowQuestionClose;
             sh.Show(MainTab);
 
             //MainTab.TabPages.Add(name, text);
@@ -557,7 +558,7 @@ namespace Atiran.MenuBar.Forms
 
         private void TryClose(Atiran.Utility.Docking2.Desk.DeskTab form)
         {
-            if (form.isQuestionClose)
+            if (form.ShowQuestionClose)
             {
                 if (ShowPersianMessageBox.ShowMessge("پيغام", "آيا تب " + form.Text + " بسته شود", MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {

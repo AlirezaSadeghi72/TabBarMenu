@@ -236,7 +236,7 @@ namespace Atiran.MenuBar.Forms
             //AddTab(dataGridView1.SelectedRows[0].Cells["Text"].Value.ToString(), typeName,false);
         }
 
-        private void AddTab(string text, string typeName, bool isQuestionClose)
+        private void AddTab(string text, string typeName, bool ShowQuestionClose)
         {
             var control = (ReportChekhayePardakhti)GetObjectFromString(typeName);
             control.Dock = DockStyle.Fill;
@@ -245,7 +245,7 @@ namespace Atiran.MenuBar.Forms
             DeskTab sh = new DeskTab();
             sh.Text = text;
             sh.Controls.Add(control);
-            sh.isQuestionClose = isQuestionClose;
+            sh.ShowQuestionClose = ShowQuestionClose;
             sh.Show(MainTab1);
         }
 

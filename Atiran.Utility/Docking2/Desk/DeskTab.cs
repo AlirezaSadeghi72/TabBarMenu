@@ -74,7 +74,7 @@ namespace Atiran.Utility.Docking2.Desk
 
         }
 
-        public bool isQuestionClose = false;
+        public bool ShowQuestionClose = false;
         private string m_fileName = string.Empty;
         private ContextMenuStrip contextMenuStrip1;
         private System.ComponentModel.IContainer components;
@@ -146,7 +146,7 @@ namespace Atiran.Utility.Docking2.Desk
 
         private void TryClose(DeskTab form)
         {
-            if (form.isQuestionClose)
+            if (form.ShowQuestionClose)
             {
                 if (ShowPersianMessageBox.ShowMessge("پيغام", "آيا تب " + form.Text + " بسته شود",
                         

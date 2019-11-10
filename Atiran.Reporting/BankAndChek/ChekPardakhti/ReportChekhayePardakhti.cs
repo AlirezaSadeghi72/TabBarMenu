@@ -99,7 +99,7 @@ namespace Atiran.Reporting.BankAndChek.ChekPardakhti
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            if (((DeskTab)((Form)this.TopLevelControl).ActiveMdiChild).isQuestionClose)
+            if (((DeskTab)((Form)this.TopLevelControl).ActiveMdiChild).ShowQuestionClose)
             {
                 if (ShowPersianMessageBox.ShowMessge("پيغام", "آيا تب " + ((Form)this.TopLevelControl).ActiveMdiChild.Text + " بسته شود",
                         MessageBoxButtons.YesNo) == DialogResult.Yes)
