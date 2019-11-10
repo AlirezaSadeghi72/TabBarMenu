@@ -415,6 +415,18 @@
     </Compile>
     <Compile Include="Docking\Win32\Enums.cs" />
     <Compile Include="Docking\Win32\NativeMethods.cs" />
+    <Compile Include="MassageBox\ConfirmMessageBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MassageBox\Resources.Designer.cs">
+      <DependentUpon>Resources.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="MassageBox\ShowPersianMessageBox.cs" />
+    <Compile Include="MassageBox\YesNoMessageBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -505,6 +517,11 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="MassageBox\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -523,6 +540,7 @@
     <None Include="Docking2\Theme\ThemeVS2015\Resources\vs2015light.vstheme.gz" />
     <None Include="Docking2\Theme\ThemeVS2017\Resources\vs2017Dark.vstheme.gz" />
     <None Include="Docking2\Theme\ThemeVS2017\Resources\vs2017Light.vstheme.gz" />
+    <None Include="MassageBox\Resources\Confirm1.png.xar" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
@@ -575,6 +593,11 @@
     <Content Include="Docking2\Theme\ThemeVS2012\Resources\MaskWindowLeft.png" />
     <Content Include="Docking2\Theme\ThemeVS2012\Resources\MaskWindowRight.png" />
     <Content Include="Docking2\Theme\ThemeVS2012\Resources\MaskWindowTop.png" />
+    <Content Include="MassageBox\Resources\Close.png" />
+    <Content Include="MassageBox\Resources\Close1.png" />
+    <Content Include="MassageBox\Resources\CloseMouseHover.png" />
+    <Content Include="MassageBox\Resources\confirm.png" />
+    <Content Include="MassageBox\Resources\Question.png" />
     <Content Include="Resources\DockIndicator_PaneDiamond.bmp" />
     <Content Include="Resources\DockIndicator_PaneDiamond_Bottom.bmp" />
     <Content Include="Resources\DockIndicator_PaneDiamond_Fill.bmp" />

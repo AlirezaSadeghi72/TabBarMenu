@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Atiran.Utility.Docking2;
+using Atiran.Utility.MassageBox;
 
 namespace Atiran.Utility.Docking2.Desk
 {
@@ -147,9 +148,9 @@ namespace Atiran.Utility.Docking2.Desk
         {
             if (form.isQuestionClose)
             {
-                if (MessageBox.Show("آيا تب " + Text + " بسته شود",
-                        "هشدار",
-                        MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                if (ShowPersianMessageBox.ShowMessge("پيغام", "آيا تب " + form.Text + " بسته شود",
+                        
+                        MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {
                     form.Close();
                 }
@@ -160,15 +161,5 @@ namespace Atiran.Utility.Docking2.Desk
             }
         }
 
-        //private void DeskTab_FormClosing(object sender, FormClosingEventArgs e)
-        //{
-        //    if (isQuestionClose)
-        //    {
-        //        e.Cancel = (MessageBox.Show("آيا تب " + Text + " بسته شود",
-        //                        "هشدار",
-        //                        MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No);
-        //    }
-
-        //}
     }
 }

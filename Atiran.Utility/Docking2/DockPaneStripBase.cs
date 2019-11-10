@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Security.Permissions;
 using System.Diagnostics.CodeAnalysis;
 using Atiran.Utility.Docking2.Desk;
+using Atiran.Utility.MassageBox;
 
 namespace Atiran.Utility.Docking2
 {
@@ -266,8 +267,8 @@ namespace Atiran.Utility.Docking2
 
                 if ((Tabs[index].Content.DockHandler.Form as DeskTab).isQuestionClose)
                 {
-                    if (MessageBox.Show("آيا تب " + Tabs[index].Content.DockHandler.TabText + " بسته شود", "هشدار",
-                              MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                    if (ShowPersianMessageBox.ShowMessge("پيغام", "آيا تب " + Tabs[index].Content.DockHandler.TabText + " بسته شود",
+                              MessageBoxButtons.YesNo) == DialogResult.Yes)
                     {
 
                         // Close the specified content.

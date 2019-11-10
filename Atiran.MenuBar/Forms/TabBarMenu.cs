@@ -12,6 +12,7 @@ using Atiran.Reporting.BankAndChek.ChekPardakhti;
 using Atiran.Utility.Docking2;
 using Atiran.Utility.Docking2.Desk;
 using Atiran.Utility.Docking2.Theme.ThemeVS2017;
+using Atiran.Utility.MassageBox;
 using Menu = Atiran.DataLayer.Model.Menu;
 
 namespace Atiran.MenuBar.Forms
@@ -292,9 +293,8 @@ namespace Atiran.MenuBar.Forms
                         //MainTab.TabPages.Remove(MainTab.TabPages[MainTab.SelectedIndex]);
                         if (((DeskTab)ActiveMdiChild).isQuestionClose)
                         {
-                            if (MessageBox.Show("آيا تب " + Text + " بسته شود",
-                                    "هشدار",
-                                    MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                            if (ShowPersianMessageBox.ShowMessge("پيغام", "آيا تب " + Text + " بسته شود",
+                                    MessageBoxButtons.YesNo) == DialogResult.Yes)
                             {
                                 ActiveMdiChild.Close();
                             }
@@ -343,7 +343,7 @@ namespace Atiran.MenuBar.Forms
         {
             foreach (Atiran.Utility.Docking2.Desk.DeskTab form in MdiChildren)
             {
-                TryCose(form);
+                TryClose(form);
             }
 
             if (MdiChildren.Length > 0)
@@ -555,13 +555,11 @@ namespace Atiran.MenuBar.Forms
             return new Control();
         }
 
-        private void TryCose(Atiran.Utility.Docking2.Desk.DeskTab form)
+        private void TryClose(Atiran.Utility.Docking2.Desk.DeskTab form)
         {
             if (form.isQuestionClose)
             {
-                if (MessageBox.Show("آيا تب " + Text + " بسته شود",
-                        "هشدار",
-                        MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                if (ShowPersianMessageBox.ShowMessge("پيغام", "آيا تب " + form.Text + " بسته شود", MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {
                     form.Close();
                 }

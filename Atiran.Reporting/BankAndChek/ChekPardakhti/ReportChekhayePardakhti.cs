@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Atiran.Utility.Docking2;
 using Atiran.Utility.Docking2.Desk;
+using Atiran.Utility.MassageBox;
 
 namespace Atiran.Reporting.BankAndChek.ChekPardakhti
 {
@@ -100,9 +101,8 @@ namespace Atiran.Reporting.BankAndChek.ChekPardakhti
         {
             if (((DeskTab)((Form)this.TopLevelControl).ActiveMdiChild).isQuestionClose)
             {
-                if (MessageBox.Show("آيا تب " + Text + " بسته شود",
-                        "هشدار",
-                        MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                if (ShowPersianMessageBox.ShowMessge("پيغام", "آيا تب " + ((Form)this.TopLevelControl).ActiveMdiChild.Text + " بسته شود",
+                        MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {
                     ((Form)this.TopLevelControl).ActiveMdiChild.Close();
                 }
