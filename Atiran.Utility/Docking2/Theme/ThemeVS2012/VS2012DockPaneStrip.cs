@@ -1292,7 +1292,6 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2012
             var indexHit = HitTest();
             if (indexHit > -1)
                 TabCloseButtonHit(indexHit);
-
         }
 
         private void TabCloseButtonHit(int index)
@@ -1419,9 +1418,11 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2012
                 {
                     var Tab = Tabs.FirstOrDefault(u => u.Content == content);
                     var index = Tabs.IndexOf(Tab);
-                    TryCloseTab(index);
-                    SelectMenu.Items.Remove(item);
+
+                    if (TryCloseTab(index))
+                        SelectMenu.Items.Remove(item);
                     ShowDropDown();
+
                 }
                 else
                 {

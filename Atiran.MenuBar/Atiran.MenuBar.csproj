@@ -57,9 +57,6 @@
   <ItemGroup>
     <Compile Include="Class\MyTag.cs" />
     <Compile Include="Class\ToolStripProfessionalRendererAtiran.cs" />
-    <Compile Include="Forms\Desk\DeskTab.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="Forms\formtest.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -74,9 +71,6 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Forms\Desk\DeskTab.resx">
-      <DependentUpon>DeskTab.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Forms\formtest.resx">
       <DependentUpon>formtest.cs</DependentUpon>
     </EmbeddedResource>

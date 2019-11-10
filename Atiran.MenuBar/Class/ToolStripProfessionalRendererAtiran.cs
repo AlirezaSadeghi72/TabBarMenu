@@ -27,6 +27,19 @@ namespace Atiran.MenuBar.Class
         protected override void OnRenderItemImage(ToolStripItemImageRenderEventArgs e)
         {
             base.OnRenderItemImage(e);
+            if (e.Item.Tag is MyTag && ((MyTag)e.Item.Tag).FormId > 0)
+            {
+                if (!e.Item.Selected)
+                {
+                    e.Graphics.DrawImage(new Bitmap(Properties.Resources.LemonChiffon, new Size(16, 16)),
+                        new Point(e.Item.ContentRectangle.Right - 19, e.Item.ContentRectangle.Top + 6));
+                }
+                else
+                {
+                    e.Graphics.DrawImage(new Bitmap(Properties.Resources.Yellow, new Size(16, 16)),
+                        new Point(e.Item.ContentRectangle.Right - 19, e.Item.ContentRectangle.Top + 6));
+                }
+            }
         }
     }
     partial class MyColors : ProfessionalColorTable

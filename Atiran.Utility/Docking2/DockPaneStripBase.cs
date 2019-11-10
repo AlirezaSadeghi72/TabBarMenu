@@ -6,12 +6,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Security.Permissions;
 using System.Diagnostics.CodeAnalysis;
+using Atiran.Utility.Docking2.Desk;
 
 namespace Atiran.Utility.Docking2
 {
     public abstract class DockPaneStripBase : Control
     {
-        [SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible")]        
+        [SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible")]
         protected internal class Tab : IDisposable
         {
             private IDockContent m_content;
@@ -67,7 +68,7 @@ namespace Atiran.Utility.Docking2
             }
         }
 
-        [SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible")]        
+        [SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible")]
         protected sealed class TabCollection : IEnumerable<Tab>
         {
             #region IEnumerable Members
@@ -201,7 +202,7 @@ namespace Atiran.Utility.Docking2
         }
 
         private Rectangle _dragBox = Rectangle.Empty;
-        protected  override void OnMouseDown(MouseEventArgs e)
+        protected override void OnMouseDown(MouseEventArgs e)
         {
             base.OnMouseDown(e);
             int index = HitTest();
@@ -233,11 +234,11 @@ namespace Atiran.Utility.Docking2
             }
         }
 
-        protected  override void OnMouseMove(MouseEventArgs e)
+        protected override void OnMouseMove(MouseEventArgs e)
         {
             base.OnMouseMove(e);
 
-            if (e.Button != MouseButtons.Left || _dragBox.Contains(e.Location)) 
+            if (e.Button != MouseButtons.Left || _dragBox.Contains(e.Location))
                 return;
 
             if (DockPane.ActiveContent == null)
@@ -261,14 +262,34 @@ namespace Atiran.Utility.Docking2
         {
             if (index >= 0 || index < Tabs.Count)
             {
-                // Close the specified content.
                 IDockContent content = Tabs[index].Content;
-                DockPane.CloseContent(content);
-                if (PatchController.EnableSelectClosestOnClose == true)
-                    SelectClosestPane(index);
 
-                return true;
+                if ((Tabs[index].Content.DockHandler.Form as DeskTab).isQuestionClose)
+                {
+                    if (MessageBox.Show("آيا تب " + Tabs[index].Content.DockHandler.TabText + " بسته شود", "هشدار",
+                              MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                    {
+
+                        // Close the specified content.
+                        DockPane.CloseContent(content);
+                        if (PatchController.EnableSelectClosestOnClose == true)
+                            SelectClosestPane(index);
+                        return true;
+
+                    }
+                }
+                else
+                {
+                        // Close the specified content.
+                        DockPane.CloseContent(content);
+                        if (PatchController.EnableSelectClosestOnClose == true)
+                            SelectClosestPane(index);
+                        return true;
+
+                }
+
             }
+
             return false;
         }
 
@@ -278,12 +299,12 @@ namespace Atiran.Utility.Docking2
             {
                 index = index - 1;
 
-                if (index >= 0 || index < Tabs.Count)                
-                    DockPane.ActiveContent = Tabs[index].Content;                
+                if (index >= 0 || index < Tabs.Count)
+                    DockPane.ActiveContent = Tabs[index].Content;
             }
         }
 
-        protected  override void OnMouseUp(MouseEventArgs e)
+        protected override void OnMouseUp(MouseEventArgs e)
         {
             base.OnMouseUp(e);
 
@@ -292,7 +313,7 @@ namespace Atiran.Utility.Docking2
         }
 
         [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
-        protected  override void WndProc(ref Message m)
+        protected override void WndProc(ref Message m)
         {
             if (m.Msg == (int)Win32.Msgs.WM_LBUTTONDBLCLK)
             {
@@ -303,7 +324,7 @@ namespace Atiran.Utility.Docking2
                 {
                     IDockContent content = Tabs[index].Content;
                     if (content.DockHandler.CheckDockState(!content.DockHandler.IsFloat) != DockState.Unknown)
-                        content.DockHandler.IsFloat = !content.DockHandler.IsFloat;	
+                        content.DockHandler.IsFloat = !content.DockHandler.IsFloat;
                 }
 
                 return;
@@ -313,7 +334,7 @@ namespace Atiran.Utility.Docking2
             return;
         }
 
-        protected  override void OnDragOver(DragEventArgs drgevent)
+        protected override void OnDragOver(DragEventArgs drgevent)
         {
             base.OnDragOver(drgevent);
 
@@ -344,7 +365,7 @@ namespace Atiran.Utility.Docking2
             return new Rectangle(parent.PointToScreen(new Point(rectangle.Left, rectangle.Top)), new Size(rectangle.Width, rectangle.Height));
         }
 
-        protected  override AccessibleObject CreateAccessibilityInstance()
+        protected override AccessibleObject CreateAccessibilityInstance()
         {
             return new DockPaneStripAccessibleObject(this);
         }
@@ -443,6 +464,6 @@ namespace Atiran.Utility.Docking2
                 }
             }
         }
- 
+
     }
 }

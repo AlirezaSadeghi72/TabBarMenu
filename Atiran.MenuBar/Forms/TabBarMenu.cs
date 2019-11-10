@@ -10,6 +10,7 @@ using Atiran.MenuBar.Class;
 using Atiran.MenuBar.Panels;
 using Atiran.Reporting.BankAndChek.ChekPardakhti;
 using Atiran.Utility.Docking2;
+using Atiran.Utility.Docking2.Desk;
 using Atiran.Utility.Docking2.Theme.ThemeVS2017;
 using Menu = Atiran.DataLayer.Model.Menu;
 
@@ -72,37 +73,7 @@ namespace Atiran.MenuBar.Forms
 
 
         }
-
-        private void FirstTurn()
-        {
-            //ToolStripItem next = MyMnSt.Items.Add(Properties.Resources.next);
-            //next.Click += Next_Click;
-            ToolStripMenuItem tmp = new ToolStripMenuItem()
-            {
-                Tag = new MyTag() { MenuId = 0, FormId = 0, ParentId = -2 }
-            };
-            CreateMenus(tmp);
-        }
-
-        //private void Next_Click(object sender, EventArgs e)
-        //{
-        //    ToolStripItem[] tsc = new ToolStripItem[MyMnSt.Items.Count];
-        //    MyMnSt.Items.CopyTo(tsc, 0);
-        //    MyMnSt.Items.Clear();
-        //    for (int i = 0; i < tsc.Length; i++)
-        //    {
-        //        if (i == 0)
-        //            MyMnSt.Items.Add(tsc[0]);
-        //        else
-        //        {
-        //            if (i == 1)
-        //                MyMnSt.Items.Add(tsc[tsc.Length - 1]);
-        //            else
-        //                MyMnSt.Items.Add(tsc[i - 1]);
-        //        }
-        //    }
-        //}
-
+     
         private void InitializeComponent()
         {
             this.pnlMainButtons = new System.Windows.Forms.Panel();
@@ -161,7 +132,6 @@ namespace Atiran.MenuBar.Forms
             this.MyMnSt.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.MyMnSt.Size = new System.Drawing.Size(1200, 36);
             this.MyMnSt.TabIndex = 8;
-            this.MyMnSt.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MyMnSt_KeyDown);
             // 
             // MainTab
             // 
@@ -196,12 +166,253 @@ namespace Atiran.MenuBar.Forms
             this.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.TabBarMenu_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.TabBarMenu_FormClosed);
             this.Load += new System.EventHandler(this.MyMenuItem_Load);
             this.pnlMainButtons.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.MainTab)).EndInit();
             this.ResumeLayout(false);
 
+        }
+        
+        #region Event
+        private void Form_Click(object sender, EventArgs e)
+        {
+            //MessageBox.Show("The Form whit Id " +
+            //                ((MyTag)((ToolStripItem)sender).Tag).FormId +
+            //                " has been hitted!");
+
+            //((MyTag)((ToolStripItem)sender).Tag).
+            //string typeName = mb.self.Form.NameSpace + "." + mb.self.Form.Class;
+            string Namespace = "Atiran.Reporting.BankAndChek.ChekPardakhti";
+            string Class = "ReportChekhayePardakhti";
+            string typeName = Namespace + "." + Class;
+            if (((ToolStripItem)sender).Text == "اخذ چك پرداختي")
+                AddTab(((ToolStripItem)sender).Text, typeName, false);
+            else
+                AddTab(((ToolStripItem)sender).Text, typeName, true);
+            //AddTab(((ToolStripItem)sender).Text, typeName, false);
+
+        }
+
+        private void MakeYellow(object sender, EventArgs e)
+        {
+            ((ToolStripMenuItem)sender).Image = Properties.Resources.Yellow;
+        }
+
+        private void MakeBack(object sender, EventArgs e)
+        {
+            ((ToolStripMenuItem)sender).Image = Properties.Resources.LemonChiffon;
+        }
+
+        private void ItemMenuStrip_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+            var DropDownItems = ((ToolStripDropDownMenu)sender).Items.Cast<ToolStripMenuItem>().ToList();
+            if (DropDownItems.Any(a => a.Selected && a.DropDown.Items.Count == 0) && e.KeyCode == Keys.Left)
+            {
+                var RootItems = MyMnSt.Items.Cast<ToolStripMenuItem>().Where(t => ((MyTag)t.Tag).ParentId < 0).ToList();
+                var RootPressItem = RootItems
+                    .Where(t => t.Pressed && t.DropDown.Visible).ToList();
+                if (RootPressItem.Count() > 0)
+                {
+                    var index = RootItems.IndexOf(RootPressItem[0]);
+
+                    if (RootItems[(index + 1) % RootItems.Count].DropDownItems.Count > 0)
+                    {
+                        RootItems[(index + 1) % RootItems.Count].DropDown.Show();
+                        RootItems[(index + 1) % RootItems.Count].DropDown.Focus();
+                    }
+                    else
+                    {
+                        var index1 = MyMnSt.Items.Cast<ToolStripMenuItem>().ToList()
+                            .IndexOf(RootItems[(index + 1) % RootItems.Count]);
+                        MyMnSt.Focus();
+                        MyMnSt.Items[index1].Select();
+                    }
+
+                }
+            }
+        }
+
+        private void ItemMenuStrip_MouseHover(object sender, EventArgs e)
+        {
+            //((ToolStripMenuItem)sender).ShowDropDown();
+        }
+
+        private void RootMenuItem_MouseEnter(object sender, EventArgs e)
+        {
+            ((ToolStripMenuItem)sender).Image = Properties.Resources.expandDown;
+        }
+
+        private void RootMenuItem_MouseLeave(object sender, EventArgs e)
+        {
+            ((ToolStripMenuItem)sender).Image = Properties.Resources.expandleft;
+        }
+
+        //private void MyMenuItem_MouseLeave(object sender, EventArgs e)
+        //{
+        //    ((ToolStripMenuItem)sender).Image = Properties.Resources.expandleft;
+        //}
+
+        //private void MyMenuItem_MouseEnter(object sender, EventArgs e)
+        //{
+        //    ((ToolStripMenuItem)sender).Image = Properties.Resources.expandDown;
+        //}
+
+        private void MyMenuItem_Load(object sender, EventArgs e)
+        {
+            MyMnSt.Renderer = new ToolStripProfessionalRendererAtiran();
+            MyMnSt.BackColor = Color.FromArgb(20, 130, 150);
+        }
+
+        private void pnlMainButtons_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            WindowState = WindowState == FormWindowState.Normal ? FormWindowState.Maximized : FormWindowState.Normal;
+        }
+
+
+        //private void Shortcut_Click(object sender, EventArgs e)
+        //{
+        //    sh1.Text = "ميزكار";
+        //    sh1.Show(MainTab);
+        //    //DeskTab sh = new DeskTab();
+        //    //sh.Text = "ميزكار";
+        //    //sh.Show(dockPanel2,DockState.DockRight);
+        //}
+
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            switch (keyData)
+            {
+                case Keys.Escape:
+                case (Keys.Alt | Keys.F4):
+                {
+                    try
+                    {
+                        //MainTab.TabPages.Remove(MainTab.TabPages[MainTab.SelectedIndex]);
+                        if (((DeskTab)ActiveMdiChild).isQuestionClose)
+                        {
+                            if (MessageBox.Show("آيا تب " + Text + " بسته شود",
+                                    "هشدار",
+                                    MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                            {
+                                ActiveMdiChild.Close();
+                            }
+                        }
+                        else
+                        {
+                            ActiveMdiChild.Close();
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        //CloseProgramm();
+                        this.Close();
+                    }
+                    return true;
+                }
+                case Keys.Home:
+                {
+                    MyMnSt.Focus();
+                    return true;
+                }
+                case Keys.Scroll:
+                {
+                    try
+                    {
+                        MainTab.NextTabFocus();
+                    }
+                    catch (Exception)
+                    {
+                        break;
+                    }
+                    return true;
+                }
+            }
+
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
+
+
+        private void TabBarMenu_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            Application.Exit();
+        }
+
+        private void TabBarMenu_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            foreach (Atiran.Utility.Docking2.Desk.DeskTab form in MdiChildren)
+            {
+                TryCose(form);
+            }
+
+            if (MdiChildren.Length > 0)
+            {
+                e.Cancel = true;
+            }
+        }
+
+
+        //private void CloseProgramm()
+        //{
+        //    UI.WindowsForms.MessageBoxes.MessageBoxWarning.state = 0;
+        //    DialogResult close =
+        //        Atiran.UI.WindowsForms.MessageBoxes.CustomMessageForm.CustomMessageBox.Show("پيام سيستم",
+        //            "آيا مي خواهيد از سيستم خارج شويد؟", "w");
+        //    UI.WindowsForms.MessageBoxes.MessageBoxWarning.state = 1;
+        //    if (close == DialogResult.Yes)
+        //    {
+        //        if (CheckBackupPermission.HavePermission())
+        //        {
+        //            DialogResult res =
+        //                Atiran.UI.WindowsForms.MessageBoxes.CustomMessageForm.CustomMessageBox.Show("پيام سيستم",
+        //                    "آيا مي خواهيد از اطلاعات پشتيبان بگيريد؟", "w");
+        //            if (res == DialogResult.Yes)
+        //            {
+        //                // backup
+        //                Atiran.BackupAndRestore.AtiranBackup c = new Atiran.BackupAndRestore.AtiranBackup(true);
+        //                new Atiran.UI.WindowsForms.Shortcuts.UserControlLoader(c, true, false, true);
+        //            }
+        //        }
+
+        //        // user Logouted
+        //        Connections.UserService.UserLogouted(Connections.GetCurrentSysUser.Instance.user_id);
+        //        Application.Exit();
+        //    }
+        //}
+
+        #endregion
+
+        #region Method
+
+        //private void Next_Click(object sender, EventArgs e)
+        //{
+        //    ToolStripItem[] tsc = new ToolStripItem[MyMnSt.Items.Count];
+        //    MyMnSt.Items.CopyTo(tsc, 0);
+        //    MyMnSt.Items.Clear();
+        //    for (int i = 0; i < tsc.Length; i++)
+        //    {
+        //        if (i == 0)
+        //            MyMnSt.Items.Add(tsc[0]);
+        //        else
+        //        {
+        //            if (i == 1)
+        //                MyMnSt.Items.Add(tsc[tsc.Length - 1]);
+        //            else
+        //                MyMnSt.Items.Add(tsc[i - 1]);
+        //        }
+        //    }
+        //}
+
+        private void FirstTurn()
+        {
+            //ToolStripItem next = MyMnSt.Items.Add(Properties.Resources.next);
+            //next.Click += Next_Click;
+            ToolStripMenuItem tmp = new ToolStripMenuItem()
+            {
+                Tag = new MyTag() { MenuId = 0, FormId = 0, ParentId = -2 }
+            };
+            CreateMenus(tmp);
         }
 
         public void CreateMenus(ToolStripItem TStrip)
@@ -264,7 +475,7 @@ namespace Atiran.MenuBar.Forms
                 {
 
                     ((ToolStripMenuItem)TStrip).MouseHover +=
-                        MyMenuItem_MouseHover;
+                        ItemMenuStrip_MouseHover;
                     if (tag.ParentId == -1)
                     {
                         //((ToolStripMenuItem)TStrip).TextImageRelation = TextImageRelation.TextBeforeImage;
@@ -274,10 +485,14 @@ namespace Atiran.MenuBar.Forms
                             RootMenuItem_MouseEnter;
                         ((ToolStripMenuItem)TStrip).DropDownClosed +=
                             RootMenuItem_MouseLeave;
+
                     }
                     else
                     {
                         ((ToolStripMenuItem)TStrip).Image = null;
+
+                        ((ToolStripMenuItem)TStrip).DropDown.PreviewKeyDown += ItemMenuStrip_PreviewKeyDown;
+
                         //Properties.Resources.expandleft;
                         //((ToolStripMenuItem)TStrip).DropDownClosed +=
                         //    MyMenuItem_MouseLeave;
@@ -285,6 +500,7 @@ namespace Atiran.MenuBar.Forms
                         //    ToolStripItemAlignment.Left;
                         //((ToolStripMenuItem)TStrip).DropDownOpened +=
                         //    MyMenuItem_MouseEnter;
+
                     }
                 }
                 else
@@ -292,153 +508,13 @@ namespace Atiran.MenuBar.Forms
                     ((ToolStripMenuItem)TStrip).MouseEnter += MakeYellow;
                     ((ToolStripMenuItem)TStrip).MouseLeave += MakeBack;
                 }
-            }
-        }
 
-        private void Form_Click(object sender, EventArgs e)
-        {
-            //MessageBox.Show("The Form whit Id " +
-            //                ((MyTag)((ToolStripItem)sender).Tag).FormId +
-            //                " has been hitted!");
 
-            //((MyTag)((ToolStripItem)sender).Tag).
-            //string typeName = mb.self.Form.NameSpace + "." + mb.self.Form.Class;
-            string Namespace = "Atiran.Reporting.BankAndChek.ChekPardakhti";
-            string Class = "ReportChekhayePardakhti";
-            string typeName = Namespace + "." + Class;
-            AddTab(((ToolStripItem)sender).Text, "tab" + ((MyTag)((ToolStripItem)sender).Tag).FormId, typeName);
-
-        }
-
-        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
-        {
-            switch (keyData)
-            {
-                case Keys.Escape:
-                case (Keys.Alt | Keys.F4):
-                    {
-                        try
-                        {
-                            //MainTab.TabPages.Remove(MainTab.TabPages[MainTab.SelectedIndex]);
-                            ActiveMdiChild.Close();
-                        }
-                        catch (Exception)
-                        {
-                            //CloseProgramm();
-                            this.Close();
-                        }
-                        return true;
-                    }
-                case Keys.Home:
-                    {
-                        MyMnSt.Focus();
-                        return true;
-                    }
-                case Keys.Scroll:
-                    {
-                        try
-                        {
-                            MainTab.NextTabFocus();
-                        }
-                        catch (Exception)
-                        {
-                            break;
-                        }
-                        return true;
-                    }
-                case Keys.Left:
-                    {
-                        //if (MyMnSt.Focused)
-                        //{
-                        //    return true;
-                        //}
-                        break;
-                    }
             }
 
-
-            return base.ProcessCmdKey(ref msg, keyData);
         }
 
-        //private void CloseProgramm()
-        //{
-        //    UI.WindowsForms.MessageBoxes.MessageBoxWarning.state = 0;
-        //    DialogResult close =
-        //        Atiran.UI.WindowsForms.MessageBoxes.CustomMessageForm.CustomMessageBox.Show("پيام سيستم",
-        //            "آيا مي خواهيد از سيستم خارج شويد؟", "w");
-        //    UI.WindowsForms.MessageBoxes.MessageBoxWarning.state = 1;
-        //    if (close == DialogResult.Yes)
-        //    {
-        //        if (CheckBackupPermission.HavePermission())
-        //        {
-        //            DialogResult res =
-        //                Atiran.UI.WindowsForms.MessageBoxes.CustomMessageForm.CustomMessageBox.Show("پيام سيستم",
-        //                    "آيا مي خواهيد از اطلاعات پشتيبان بگيريد؟", "w");
-        //            if (res == DialogResult.Yes)
-        //            {
-        //                // backup
-        //                Atiran.BackupAndRestore.AtiranBackup c = new Atiran.BackupAndRestore.AtiranBackup(true);
-        //                new Atiran.UI.WindowsForms.Shortcuts.UserControlLoader(c, true, false, true);
-        //            }
-        //        }
-
-        //        // user Logouted
-        //        Connections.UserService.UserLogouted(Connections.GetCurrentSysUser.Instance.user_id);
-        //        Application.Exit();
-        //    }
-        //}
-
-        private void MakeYellow(object sender, EventArgs e)
-        {
-            ((ToolStripMenuItem)sender).Image = Properties.Resources.Yellow;
-        }
-
-        private void MakeBack(object sender, EventArgs e)
-        {
-            ((ToolStripMenuItem)sender).Image = Properties.Resources.LemonChiffon;
-        }
-
-        private void MyMenuItem_MouseHover(object sender, EventArgs e)
-        {
-            //((ToolStripMenuItem)sender).ShowDropDown();
-        }
-
-        private void RootMenuItem_MouseEnter(object sender, EventArgs e)
-        {
-            ((ToolStripMenuItem)sender).Image = Properties.Resources.expandDown;
-        }
-        private void RootMenuItem_MouseLeave(object sender, EventArgs e)
-        {
-            ((ToolStripMenuItem)sender).Image = Properties.Resources.expandleft;
-        }
-        //private void MyMenuItem_MouseLeave(object sender, EventArgs e)
-        //{
-        //    ((ToolStripMenuItem)sender).Image = Properties.Resources.expandleft;
-        //}
-
-        //private void MyMenuItem_MouseEnter(object sender, EventArgs e)
-        //{
-        //    ((ToolStripMenuItem)sender).Image = Properties.Resources.expandDown;
-        //}
-
-        private void MyMenuItem_Load(object sender, EventArgs e)
-        {
-            MyMnSt.Renderer = new ToolStripProfessionalRendererAtiran();
-            MyMnSt.BackColor = Color.FromArgb(20, 130, 150);
-        }
-
-        private void pnlMainButtons_MouseDoubleClick(object sender, MouseEventArgs e)
-        {
-            WindowState = WindowState == FormWindowState.Normal ? FormWindowState.Maximized : FormWindowState.Normal;
-        }
-
-
-
-        #region me
-
-        #region Method
-
-        private void AddTab(string text, string name, string typeName)
+        private void AddTab(string text, string typeName, bool isQuestionClose)
         {
             var control = (ReportChekhayePardakhti)GetObjectFromString(typeName);
             control.Dock = DockStyle.Fill;
@@ -450,9 +526,10 @@ namespace Atiran.MenuBar.Forms
             //    Dock = DockStyle.Bottom
             //};
 
-            DeskTab sh = new DeskTab();
+            Atiran.Utility.Docking2.Desk.DeskTab sh = new Atiran.Utility.Docking2.Desk.DeskTab();
             sh.Text = text;
             sh.Controls.Add(control);
+            sh.isQuestionClose = isQuestionClose;
             sh.Show(MainTab);
 
             //MainTab.TabPages.Add(name, text);
@@ -478,37 +555,24 @@ namespace Atiran.MenuBar.Forms
             return new Control();
         }
 
-        #endregion
-
-        //#region Event
-
-        //private void Shortcut_Click(object sender, EventArgs e)
-        //{
-        //    sh1.Text = "ميزكار";
-        //    sh1.Show(MainTab);
-        //    //DeskTab sh = new DeskTab();
-        //    //sh.Text = "ميزكار";
-        //    //sh.Show(dockPanel2,DockState.DockRight);
-        //}
-
-        //#endregion
-
-
-
-        private void MyMnSt_KeyDown(object sender, KeyEventArgs e)
+        private void TryCose(Atiran.Utility.Docking2.Desk.DeskTab form)
         {
-
-            //if(((ToolStripMenuItem)sender).DropDown.Items.Count > 0)
-            //{
-
-            //}
+            if (form.isQuestionClose)
+            {
+                if (MessageBox.Show("آيا تب " + Text + " بسته شود",
+                        "هشدار",
+                        MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                {
+                    form.Close();
+                }
+            }
+            else
+            {
+                form.Close();
+            }
         }
 
-
-        private void TabBarMenu_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            Application.Exit();
-        }
         #endregion
+
     }
 }

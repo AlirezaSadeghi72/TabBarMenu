@@ -49,6 +49,9 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Docking2\Configuration\PatchSection.cs" />
+    <Compile Include="Docking2\Desk\DeskTab.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Docking2\DockAreasEditor.cs" />
     <Compile Include="Docking2\DockContent.cs">
       <SubType>Form</SubType>
@@ -453,6 +456,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Docking2\Desk\DeskTab.resx">
+      <DependentUpon>DeskTab.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Docking2\Strings.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>

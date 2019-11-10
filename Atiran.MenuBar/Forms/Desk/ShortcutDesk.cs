@@ -12,6 +12,7 @@ using Atiran.DataLayer.Context;
 using Atiran.DataLayer.Services;
 using Atiran.MenuBar.Class;
 using Atiran.Reporting.BankAndChek.ChekPardakhti;
+using Atiran.Utility.Docking2.Desk;
 
 namespace Atiran.MenuBar.Forms
 {
@@ -231,10 +232,11 @@ namespace Atiran.MenuBar.Forms
             string Namespace = "Atiran.Reporting.BankAndChek.ChekPardakhti";
             string Class = "ReportChekhayePardakhti";
             string typeName = Namespace + "." + Class;
-            AddTab(dataGridView1.SelectedRows[0].Cells["Text"].Value.ToString(), typeName);
+            AddTab(dataGridView1.SelectedRows[0].Cells["Text"].Value.ToString(), typeName,true);
+            //AddTab(dataGridView1.SelectedRows[0].Cells["Text"].Value.ToString(), typeName,false);
         }
 
-        private void AddTab(string text, string typeName)
+        private void AddTab(string text, string typeName, bool isQuestionClose)
         {
             var control = (ReportChekhayePardakhti)GetObjectFromString(typeName);
             control.Dock = DockStyle.Fill;
@@ -243,6 +245,7 @@ namespace Atiran.MenuBar.Forms
             DeskTab sh = new DeskTab();
             sh.Text = text;
             sh.Controls.Add(control);
+            sh.isQuestionClose = isQuestionClose;
             sh.Show(MainTab1);
         }
 

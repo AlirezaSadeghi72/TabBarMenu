@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Atiran.Utility.Docking2;
 
-namespace Atiran.MenuBar.Forms
+namespace Atiran.Utility.Docking2.Desk
 {
-    public class DeskTab: DockContent
+    public class DeskTab : DockContent
     {
         public DeskTab()
         {
@@ -34,26 +34,26 @@ namespace Atiran.MenuBar.Forms
             this.miCloseAllButThis,
             this.miCloseAll});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(186, 70);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(161, 70);
             // 
             // miClose
             // 
             this.miClose.Name = "miClose";
-            this.miClose.Size = new System.Drawing.Size(185, 22);
+            this.miClose.Size = new System.Drawing.Size(160, 22);
             this.miClose.Text = "بستن";
             this.miClose.Click += new System.EventHandler(this.miClose_Click);
             // 
             // miCloseAllButThis
             // 
             this.miCloseAllButThis.Name = "miCloseAllButThis";
-            this.miCloseAllButThis.Size = new System.Drawing.Size(185, 22);
+            this.miCloseAllButThis.Size = new System.Drawing.Size(160, 22);
             this.miCloseAllButThis.Text = "بستن  ساير تب ها";
             this.miCloseAllButThis.Click += new System.EventHandler(this.miCloseAllButThis_Click);
             // 
             // miCloseAll
             // 
             this.miCloseAll.Name = "miCloseAll";
-            this.miCloseAll.Size = new System.Drawing.Size(185, 22);
+            this.miCloseAll.Size = new System.Drawing.Size(160, 22);
             this.miCloseAll.Text = "بستن همه";
             this.miCloseAll.Click += new System.EventHandler(this.miCloseAll_Click);
             // 
@@ -67,11 +67,13 @@ namespace Atiran.MenuBar.Forms
             this.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.RightToLeftLayout = true;
             this.TabPageContextMenuStrip = this.contextMenuStrip1;
+            //this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.DeskTab_FormClosing);
             this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
 
+        public bool isQuestionClose = false;
         private string m_fileName = string.Empty;
         private ContextMenuStrip contextMenuStrip1;
         private System.ComponentModel.IContainer components;
@@ -91,7 +93,7 @@ namespace Atiran.MenuBar.Forms
                     FileInfo efInfo = new FileInfo(value);
 
                     string fext = efInfo.Extension.ToUpper();
-                    
+
                     s.Close();
                 }
 
@@ -101,7 +103,7 @@ namespace Atiran.MenuBar.Forms
         }
 
         private bool m_resetText = true;
-        protected  override void OnPaint(PaintEventArgs e)
+        protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
 
@@ -112,32 +114,61 @@ namespace Atiran.MenuBar.Forms
             }
         }
 
-        protected  override string GetPersistString()
+        protected override string GetPersistString()
         {
             // Add extra information into the persist string for this document
             // so that it is available when deserialized.
             return GetType().ToString() + "," + FileName + "," + Text;
         }
 
-
         private void miClose_Click(object sender, EventArgs e)
         {
-            this.Close();
+            TryClose(this);
         }
 
         private void miCloseAllButThis_Click(object sender, EventArgs e)
         {
-            foreach (Form form in ((Form)TopLevelControl).MdiChildren)
+            foreach (DeskTab form in ((Form)TopLevelControl).MdiChildren)
             {
                 if (form != this)
-                    form.Close();
+                    TryClose(form);
             }
         }
 
         private void miCloseAll_Click(object sender, EventArgs e)
         {
-                foreach (Form form in ((Form)TopLevelControl).MdiChildren)
-                    form.Close();
+            foreach (DeskTab form in ((Form)TopLevelControl).MdiChildren)
+            {
+                TryClose(form);
+            }
         }
+
+        private void TryClose(DeskTab form)
+        {
+            if (form.isQuestionClose)
+            {
+                if (MessageBox.Show("آيا تب " + Text + " بسته شود",
+                        "هشدار",
+                        MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                {
+                    form.Close();
+                }
+            }
+            else
+            {
+                form.Close();
+            }
+        }
+
+        //private void DeskTab_FormClosing(object sender, FormClosingEventArgs e)
+        //{
+        //    if (isQuestionClose)
+        //    {
+        //        e.Cancel = (MessageBox.Show("آيا تب " + Text + " بسته شود",
+        //                        "هشدار",
+        //                        MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No);
+        //    }
+
+        //}
     }
 }

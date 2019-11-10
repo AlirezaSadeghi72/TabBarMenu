@@ -5,14 +5,18 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Atiran.Utility.Docking2;
+using Atiran.Utility.Docking2.Desk;
 
 namespace Atiran.Reporting.BankAndChek.ChekPardakhti
 {
-    public class ReportChekhayePardakhti: UserControl
+    public class ReportChekhayePardakhti : UserControl
     {
         private GroupBox groupBox1;
         public Label label1;
+        private TextBox textBox1;
+        private Button button1;
         private Button btnCancel;
+        private string Text1;
 
         public ReportChekhayePardakhti()
         {
@@ -22,6 +26,8 @@ namespace Atiran.Reporting.BankAndChek.ChekPardakhti
         private void InitializeComponent()
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.button1 = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
@@ -29,6 +35,8 @@ namespace Atiran.Reporting.BankAndChek.ChekPardakhti
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.textBox1);
+            this.groupBox1.Controls.Add(this.button1);
             this.groupBox1.Controls.Add(this.btnCancel);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -38,6 +46,23 @@ namespace Atiran.Reporting.BankAndChek.ChekPardakhti
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "groupBox1";
+            // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(751, 19);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(256, 20);
+            this.textBox1.TabIndex = 5;
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(751, 45);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(256, 23);
+            this.button1.TabIndex = 4;
+            this.button1.Text = "button1";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // btnCancel
             // 
@@ -66,13 +91,34 @@ namespace Atiran.Reporting.BankAndChek.ChekPardakhti
             this.Name = "ReportChekhayePardakhti";
             this.Size = new System.Drawing.Size(1280, 680);
             this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
 
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            ((Form) this.TopLevelControl).ActiveMdiChild.Close();
+            if (((DeskTab)((Form)this.TopLevelControl).ActiveMdiChild).isQuestionClose)
+            {
+                if (MessageBox.Show("آيا تب " + Text + " بسته شود",
+                        "هشدار",
+                        MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                {
+                    ((Form)this.TopLevelControl).ActiveMdiChild.Close();
+                }
+            }
+            else
+            {
+                ((Form)this.TopLevelControl).ActiveMdiChild.Close();
+            }
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Text1 = Text1 ?? ((Form)this.TopLevelControl).ActiveMdiChild.Text;
+
+            ((Form)this.TopLevelControl).ActiveMdiChild.Text = Text1 + " -> " + textBox1.Text;
+        }
+
     }
 }
