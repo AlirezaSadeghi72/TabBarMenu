@@ -1,6 +1,7 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
+using Atiran.Utility.Docking2.Win32;
 
 namespace Atiran.Utility.Docking2
 {
@@ -34,43 +35,40 @@ namespace Atiran.Utility.Docking2
             TopMost = true;
             SizeChanged += (sender, args) =>
             {
-                if (BackgroundColor != null)
-                {
-                    Invalidate();
-                }
+                if (BackgroundColor != null) Invalidate();
             };
         }
 
         public Color? BackgroundColor { get; set; }
 
-        protected  override CreateParams CreateParams
+        protected override CreateParams CreateParams
         {
             get
             {
-                CreateParams createParams = base.CreateParams;
-                createParams.ExStyle |= (int)(Win32.WindowExStyles.WS_EX_NOACTIVATE | Win32.WindowExStyles.WS_EX_TOOLWINDOW);
+                var createParams = base.CreateParams;
+                createParams.ExStyle |= (int) (WindowExStyles.WS_EX_NOACTIVATE | WindowExStyles.WS_EX_TOOLWINDOW);
                 return createParams;
             }
         }
 
-        protected  override void WndProc(ref Message m)
+        //The form can be still activated by explicity calling Activate
+        protected override bool ShowWithoutActivation => true;
+
+        protected override void WndProc(ref Message m)
         {
-            if (m.Msg == (int)Win32.Msgs.WM_NCHITTEST)
+            if (m.Msg == (int) Msgs.WM_NCHITTEST)
             {
-                m.Result = (IntPtr)Win32.HitTest.HTTRANSPARENT;
+                m.Result = (IntPtr) HitTest.HTTRANSPARENT;
                 return;
             }
 
             base.WndProc(ref m);
         }
 
-        protected  override void OnPaint(PaintEventArgs e)
+        protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
-            if (BackgroundColor == null)
-            {
-                return;
-            }
+            if (BackgroundColor == null) return;
 
             var all = ClientRectangle;
             if (all.Width > 10 && all.Height > 10)
@@ -80,12 +78,6 @@ namespace Atiran.Utility.Docking2
                 var center = new Rectangle(newLocation, newSize);
                 e.Graphics.FillRectangle(new SolidBrush(BackgroundColor.Value), center);
             }
-        }
-
-        //The form can be still activated by explicity calling Activate
-        protected  override bool ShowWithoutActivation
-        {
-            get { return true; }
         }
 
         public virtual void Show(bool bActivate)

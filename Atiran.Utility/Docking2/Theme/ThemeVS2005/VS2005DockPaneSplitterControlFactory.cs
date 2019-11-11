@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
-using Atiran.Utility.Docking2.Theme.ThemeVS2005;
 using static Atiran.Utility.Docking2.DockPane;
 using static Atiran.Utility.Docking2.DockPanelExtender;
 
@@ -21,15 +20,15 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2005
             {
             }
 
-            protected  override void OnPaint(PaintEventArgs e)
+            protected override void OnPaint(PaintEventArgs e)
             {
                 base.OnPaint(e);
 
                 if (DockPane.DockState != DockState.Document)
                     return;
 
-                Graphics g = e.Graphics;
-                Rectangle rect = ClientRectangle;
+                var g = e.Graphics;
+                var rect = ClientRectangle;
                 if (Alignment == DockAlignment.Top || Alignment == DockAlignment.Bottom)
                     g.DrawLine(SystemPens.ControlDark, rect.Left, rect.Bottom - 1, rect.Right, rect.Bottom - 1);
                 else if (Alignment == DockAlignment.Left || Alignment == DockAlignment.Right)

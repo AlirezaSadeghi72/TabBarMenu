@@ -19,7 +19,8 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2013
         {
         }
 
-        public VS2013DockPane(IDockContent content, DockPane previousPane, DockAlignment alignment, double proportion, bool show)
+        public VS2013DockPane(IDockContent content, DockPane previousPane, DockAlignment alignment, double proportion,
+            bool show)
             : base(content, previousPane, alignment, proportion, show)
         {
         }
@@ -30,27 +31,24 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2013
         {
         }
 
-        protected  override void OnPaint(PaintEventArgs e)
-        {
-            base.OnPaint(e);
-            var color = DockPanel.Theme.ColorPalette.ToolWindowBorder;
-            e.Graphics.FillRectangle(DockPanel.Theme.PaintingService.GetBrush(color), e.ClipRectangle);
-        }
-
         protected internal override Rectangle ContentRectangle
         {
             get
             {
                 var rect = base.ContentRectangle;
-                if (DockState == DockState.Document || Contents.Count == 1)
-                {
-                    rect.Height--;
-                }
+                if (DockState == DockState.Document || Contents.Count == 1) rect.Height--;
 
                 rect.Width -= 2;
                 rect.X++;
                 return rect;
             }
+        }
+
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            base.OnPaint(e);
+            var color = DockPanel.Theme.ColorPalette.ToolWindowBorder;
+            e.Graphics.FillRectangle(DockPanel.Theme.PaintingService.GetBrush(color), e.ClipRectangle);
         }
     }
 }

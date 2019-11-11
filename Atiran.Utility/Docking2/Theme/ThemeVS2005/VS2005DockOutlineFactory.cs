@@ -1,7 +1,6 @@
 ﻿using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
-using Atiran.Utility.Docking2;
 using static Atiran.Utility.Docking2.DockPanelExtender;
 
 namespace Atiran.Utility.Docking2.Theme.ThemeVS2005
@@ -17,25 +16,21 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2005
         {
             public VS2005DockOutline()
             {
-                m_dragForm = new DragForm();
+                DragForm = new DragForm();
                 SetDragForm(Rectangle.Empty);
                 DragForm.BackColor = SystemColors.ActiveCaption;
                 DragForm.Opacity = 0.5;
                 DragForm.Show(false);
             }
 
-            DragForm m_dragForm;
-            private DragForm DragForm
-            {
-                get { return m_dragForm; }
-            }
+            private DragForm DragForm { get; }
 
-            protected  override void OnShow()
+            protected override void OnShow()
             {
                 CalculateRegion();
             }
 
-            protected  override void OnClose()
+            protected override void OnClose()
             {
                 DragForm.Close();
             }
@@ -48,7 +43,7 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2005
                 if (!FloatWindowBounds.IsEmpty)
                     SetOutline(FloatWindowBounds);
                 else if (DockTo is DockPanel)
-                    SetOutline(DockTo as DockPanel, Dock, (ContentIndex != 0));
+                    SetOutline(DockTo as DockPanel, Dock, ContentIndex != 0);
                 else if (DockTo is DockPane)
                     SetOutline(DockTo as DockPane, Dock, ContentIndex);
                 else
@@ -67,26 +62,26 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2005
 
             private void SetOutline(DockPanel dockPanel, DockStyle dock, bool fullPanelEdge)
             {
-                Rectangle rect = fullPanelEdge ? dockPanel.DockArea : dockPanel.DocumentWindowBounds;
+                var rect = fullPanelEdge ? dockPanel.DockArea : dockPanel.DocumentWindowBounds;
                 rect.Location = dockPanel.PointToScreen(rect.Location);
                 if (dock == DockStyle.Top)
                 {
-                    int height = dockPanel.GetDockWindowSize(DockState.DockTop);
+                    var height = dockPanel.GetDockWindowSize(DockState.DockTop);
                     rect = new Rectangle(rect.X, rect.Y, rect.Width, height);
                 }
                 else if (dock == DockStyle.Bottom)
                 {
-                    int height = dockPanel.GetDockWindowSize(DockState.DockBottom);
+                    var height = dockPanel.GetDockWindowSize(DockState.DockBottom);
                     rect = new Rectangle(rect.X, rect.Bottom - height, rect.Width, height);
                 }
                 else if (dock == DockStyle.Left)
                 {
-                    int width = dockPanel.GetDockWindowSize(DockState.DockLeft);
+                    var width = dockPanel.GetDockWindowSize(DockState.DockLeft);
                     rect = new Rectangle(rect.X, rect.Y, width, rect.Height);
                 }
                 else if (dock == DockStyle.Right)
                 {
-                    int width = dockPanel.GetDockWindowSize(DockState.DockRight);
+                    var width = dockPanel.GetDockWindowSize(DockState.DockRight);
                     rect = new Rectangle(rect.Right - width, rect.Y, width, rect.Height);
                 }
                 else if (dock == DockStyle.Fill)
@@ -102,7 +97,7 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2005
             {
                 if (dock != DockStyle.Fill)
                 {
-                    Rectangle rect = pane.DisplayingRectangle;
+                    var rect = pane.DisplayingRectangle;
                     if (dock == DockStyle.Right)
                         rect.X += rect.Width / 2;
                     if (dock == DockStyle.Bottom)
@@ -117,21 +112,23 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2005
                 }
                 else if (contentIndex == -1)
                 {
-                    Rectangle rect = pane.DisplayingRectangle;
+                    var rect = pane.DisplayingRectangle;
                     rect.Location = pane.PointToScreen(rect.Location);
                     SetDragForm(rect);
                 }
                 else
                 {
-                    using (GraphicsPath path = pane.TabStripControl.GetOutline(contentIndex))
+                    using (var path = pane.TabStripControl.GetOutline(contentIndex))
                     {
-                        RectangleF rectF = path.GetBounds();
-                        Rectangle rect = new Rectangle((int)rectF.X, (int)rectF.Y, (int)rectF.Width, (int)rectF.Height);
-                        using (Matrix matrix = new Matrix(rect, new Point[] { new Point(0, 0), new Point(rect.Width, 0), new Point(0, rect.Height) }))
+                        var rectF = path.GetBounds();
+                        var rect = new Rectangle((int) rectF.X, (int) rectF.Y, (int) rectF.Width, (int) rectF.Height);
+                        using (var matrix = new Matrix(rect,
+                            new[] {new Point(0, 0), new Point(rect.Width, 0), new Point(0, rect.Height)}))
                         {
                             path.Transform(matrix);
                         }
-                        Region region = new Region(path);
+
+                        var region = new Region(path);
                         SetDragForm(rect, region);
                     }
                 }
@@ -142,10 +139,7 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2005
                 DragForm.Bounds = rect;
                 if (rect == Rectangle.Empty)
                 {
-                    if (DragForm.Region != null)
-                    {
-                        DragForm.Region.Dispose();
-                    }
+                    if (DragForm.Region != null) DragForm.Region.Dispose();
 
                     DragForm.Region = new Region(Rectangle.Empty);
                 }

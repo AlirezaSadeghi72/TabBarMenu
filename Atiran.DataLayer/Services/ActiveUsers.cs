@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Atiran.DataLayer.Services
+﻿namespace Atiran.DataLayer.Services
 {
     public class ActiveUser
     {
@@ -13,7 +7,7 @@ namespace Atiran.DataLayer.Services
         public string user_lname { get; set; }
         public string user_fname { get; set; }
         public byte[] user_pic { get; set; }
-        public Nullable<bool> IsLoggedIn { get; set; }
-        public Nullable<bool> active { get; set; }
+        public bool? IsLoggedIn { get; set; }
+        public bool? active { get; set; }
     }
 }

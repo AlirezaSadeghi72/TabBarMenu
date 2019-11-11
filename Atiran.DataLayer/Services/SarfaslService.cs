@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Atiran.DataLayer.Services
 {
@@ -22,6 +18,5 @@ namespace Atiran.DataLayer.Services
         public string bed_bes_Befor { get; set; }
 
         public List<ZirSarfaslService> ZirSarfasls { get; set; }
-
     }
 }

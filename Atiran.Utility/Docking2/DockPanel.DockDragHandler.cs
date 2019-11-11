@@ -1,171 +1,280 @@
-using System.Windows.Forms;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Windows.Forms;
 
 namespace Atiran.Utility.Docking2
 {
     partial class DockPanel
     {
-        #region IHitTest
-        public interface IHitTest
+        private DockDragHandler m_dockDragHandler;
+
+        private DockDragHandler GetDockDragHandler()
         {
-            DockStyle HitTest(Point pt);
-            DockStyle Status { get; set; }
+            if (m_dockDragHandler == null)
+                m_dockDragHandler = new DockDragHandler(this);
+            return m_dockDragHandler;
         }
 
-        public interface IPaneIndicator : IHitTest
+        internal void BeginDrag(IDockDragSource dragSource)
         {
-            Point Location { get; set; }
-            bool Visible { get; set; }
-            int Left { get; }
-            int Top { get; }
-            int Right { get; }
-            int Bottom { get; }
-            Rectangle ClientRectangle { get; }
-            int Width { get; }
-            int Height { get; }
-            GraphicsPath DisplayingGraphicsPath { get; }
+            GetDockDragHandler().BeginDrag(dragSource);
         }
-
-        public interface IPanelIndicator : IHitTest
-        {
-            Point Location { get; set; }
-            bool Visible { get; set; }
-            Rectangle Bounds { get; }
-            int Width { get; }
-            int Height { get; }
-        }
-
-        public struct HotSpotIndex
-        {
-            public HotSpotIndex(int x, int y, DockStyle dockStyle)
-            {
-                m_x = x;
-                m_y = y;
-                m_dockStyle = dockStyle;
-            }
-
-            private int m_x;
-            public int X
-            {
-                get { return m_x; }
-            }
-
-            private int m_y;
-            public int Y
-            {
-                get { return m_y; }
-            }
-
-            private DockStyle m_dockStyle;
-            public DockStyle DockStyle
-            {
-                get { return m_dockStyle; }
-            }
-        }
-
-        #endregion
 
         public sealed class DockDragHandler : DragHandler
         {
+            public DockDragHandler(DockPanel panel)
+                : base(panel)
+            {
+            }
+
+            public new IDockDragSource DragSource
+            {
+                get => base.DragSource as IDockDragSource;
+                set => base.DragSource = value;
+            }
+
+            public DockOutlineBase Outline { get; private set; }
+
+            private DockIndicator Indicator { get; set; }
+
+            private Rectangle FloatOutlineBounds { get; set; }
+
+            public void BeginDrag(IDockDragSource dragSource)
+            {
+                DragSource = dragSource;
+
+                if (!BeginDrag())
+                {
+                    DragSource = null;
+                    return;
+                }
+
+                Outline = DockPanel.Theme.Extender.DockOutlineFactory.CreateDockOutline();
+                Indicator = DockPanel.Theme.Extender.DockIndicatorFactory.CreateDockIndicator(this);
+                Indicator.Show(false);
+
+                FloatOutlineBounds = DragSource.BeginDrag(StartMousePosition);
+            }
+
+            protected override void OnDragging()
+            {
+                TestDrop();
+            }
+
+            protected override void OnEndDrag(bool abort)
+            {
+                DockPanel.SuspendLayout(true);
+
+                Outline.Close();
+                Indicator.Close();
+
+                EndDrag(abort);
+
+                // Queue a request to layout all children controls
+                DockPanel.PerformMdiClientLayout();
+
+                DockPanel.ResumeLayout(true, true);
+
+                DragSource.EndDrag();
+
+                DragSource = null;
+
+                // Fire notification
+                DockPanel.OnDocumentDragged();
+            }
+
+            private void TestDrop()
+            {
+                Outline.FlagTestDrop = false;
+
+                Indicator.FullPanelEdge = (ModifierKeys & Keys.Shift) != 0;
+
+                if ((ModifierKeys & Keys.Control) == 0)
+                {
+                    Indicator.TestDrop();
+
+                    if (!Outline.FlagTestDrop)
+                    {
+                        var pane = DockHelper.PaneAtPoint(MousePosition, DockPanel);
+                        if (pane != null && DragSource.IsDockStateValid(pane.DockState))
+                            pane.TestDrop(DragSource, Outline);
+                    }
+
+                    if (!Outline.FlagTestDrop && DragSource.IsDockStateValid(DockState.Float))
+                    {
+                        var floatWindow = DockHelper.FloatWindowAtPoint(MousePosition, DockPanel);
+                        if (floatWindow != null)
+                            floatWindow.TestDrop(DragSource, Outline);
+                    }
+                }
+                else
+                {
+                    Indicator.DockPane = DockHelper.PaneAtPoint(MousePosition, DockPanel);
+                }
+
+                if (!Outline.FlagTestDrop)
+                    if (DragSource.IsDockStateValid(DockState.Float))
+                    {
+                        var rect = FloatOutlineBounds;
+                        rect.Offset(MousePosition.X - StartMousePosition.X, MousePosition.Y - StartMousePosition.Y);
+                        Outline.Show(rect);
+                    }
+
+                if (!Outline.FlagTestDrop)
+                {
+                    Cursor.Current = Cursors.No;
+                    Outline.Show();
+                }
+                else
+                {
+                    Cursor.Current = DragControl.Cursor;
+                }
+            }
+
+            private void EndDrag(bool abort)
+            {
+                if (abort)
+                    return;
+
+                if (!Outline.FloatWindowBounds.IsEmpty)
+                {
+                    DragSource.FloatAt(Outline.FloatWindowBounds);
+                }
+                else if (Outline.DockTo is DockPane)
+                {
+                    var pane = Outline.DockTo as DockPane;
+                    DragSource.DockTo(pane, Outline.Dock, Outline.ContentIndex);
+                }
+                else if (Outline.DockTo is DockPanel)
+                {
+                    var panel = Outline.DockTo as DockPanel;
+                    panel.UpdateDockWindowZOrder(Outline.Dock, Outline.FlagFullEdge);
+                    DragSource.DockTo(panel, Outline.Dock);
+                }
+            }
+
             public class DockIndicator : DragForm
             {
                 #region consts
+
                 private int _PanelIndicatorMargin = 10;
+
                 #endregion
 
-                private DockDragHandler m_dragHandler;
+                private DockPane m_dockPane;
+
+                private bool m_fullPanelEdge;
+
+                private IHitTest m_hitTest;
+
+                private IPaneIndicator m_paneDiamond;
+
+                private IPanelIndicator m_panelBottom;
+
+                private IPanelIndicator m_panelFill;
+
+                private IPanelIndicator m_panelLeft;
+
+                private IPanelIndicator m_panelRight;
+
+                private IPanelIndicator m_panelTop;
 
                 public DockIndicator(DockDragHandler dragHandler)
                 {
-                    m_dragHandler = dragHandler;
-                    Controls.AddRange(new[] {
-                        (Control)PaneDiamond,
-                        (Control)PanelLeft,
-                        (Control)PanelRight,
-                        (Control)PanelTop,
-                        (Control)PanelBottom,
-                        (Control)PanelFill
-                        });
+                    DragHandler = dragHandler;
+                    Controls.AddRange(new[]
+                    {
+                        (Control) PaneDiamond,
+                        (Control) PanelLeft,
+                        (Control) PanelRight,
+                        (Control) PanelTop,
+                        (Control) PanelBottom,
+                        (Control) PanelFill
+                    });
                     Region = new Region(Rectangle.Empty);
                 }
 
-                private IPaneIndicator m_paneDiamond = null;
                 private IPaneIndicator PaneDiamond
                 {
                     get
                     {
                         if (m_paneDiamond == null)
-                            m_paneDiamond = m_dragHandler.DockPanel.Theme.Extender.PaneIndicatorFactory.CreatePaneIndicator(m_dragHandler.DockPanel.Theme);
+                            m_paneDiamond =
+                                DragHandler.DockPanel.Theme.Extender.PaneIndicatorFactory.CreatePaneIndicator(
+                                    DragHandler.DockPanel.Theme);
 
                         return m_paneDiamond;
                     }
                 }
 
-                private IPanelIndicator m_panelLeft = null;
                 private IPanelIndicator PanelLeft
                 {
                     get
                     {
                         if (m_panelLeft == null)
-                            m_panelLeft = m_dragHandler.DockPanel.Theme.Extender.PanelIndicatorFactory.CreatePanelIndicator(DockStyle.Left, m_dragHandler.DockPanel.Theme);
+                            m_panelLeft =
+                                DragHandler.DockPanel.Theme.Extender.PanelIndicatorFactory.CreatePanelIndicator(
+                                    DockStyle.Left, DragHandler.DockPanel.Theme);
 
                         return m_panelLeft;
                     }
                 }
 
-                private IPanelIndicator m_panelRight = null;
                 private IPanelIndicator PanelRight
                 {
                     get
                     {
                         if (m_panelRight == null)
-                            m_panelRight = m_dragHandler.DockPanel.Theme.Extender.PanelIndicatorFactory.CreatePanelIndicator(DockStyle.Right, m_dragHandler.DockPanel.Theme);
+                            m_panelRight =
+                                DragHandler.DockPanel.Theme.Extender.PanelIndicatorFactory.CreatePanelIndicator(
+                                    DockStyle.Right, DragHandler.DockPanel.Theme);
 
                         return m_panelRight;
                     }
                 }
 
-                private IPanelIndicator m_panelTop = null;
                 private IPanelIndicator PanelTop
                 {
                     get
                     {
                         if (m_panelTop == null)
-                            m_panelTop = m_dragHandler.DockPanel.Theme.Extender.PanelIndicatorFactory.CreatePanelIndicator(DockStyle.Top, m_dragHandler.DockPanel.Theme);
+                            m_panelTop =
+                                DragHandler.DockPanel.Theme.Extender.PanelIndicatorFactory.CreatePanelIndicator(
+                                    DockStyle.Top, DragHandler.DockPanel.Theme);
 
                         return m_panelTop;
                     }
                 }
 
-                private IPanelIndicator m_panelBottom = null;
                 private IPanelIndicator PanelBottom
                 {
                     get
                     {
                         if (m_panelBottom == null)
-                            m_panelBottom = m_dragHandler.DockPanel.Theme.Extender.PanelIndicatorFactory.CreatePanelIndicator(DockStyle.Bottom, m_dragHandler.DockPanel.Theme);
+                            m_panelBottom =
+                                DragHandler.DockPanel.Theme.Extender.PanelIndicatorFactory.CreatePanelIndicator(
+                                    DockStyle.Bottom, DragHandler.DockPanel.Theme);
 
                         return m_panelBottom;
                     }
                 }
 
-                private IPanelIndicator m_panelFill = null;
                 private IPanelIndicator PanelFill
                 {
                     get
                     {
                         if (m_panelFill == null)
-                            m_panelFill = m_dragHandler.DockPanel.Theme.Extender.PanelIndicatorFactory.CreatePanelIndicator(DockStyle.Fill, m_dragHandler.DockPanel.Theme);
+                            m_panelFill =
+                                DragHandler.DockPanel.Theme.Extender.PanelIndicatorFactory.CreatePanelIndicator(
+                                    DockStyle.Fill, DragHandler.DockPanel.Theme);
 
                         return m_panelFill;
                     }
                 }
 
-                private bool m_fullPanelEdge = false;
                 public bool FullPanelEdge
                 {
-                    get { return m_fullPanelEdge; }
+                    get => m_fullPanelEdge;
                     set
                     {
                         if (m_fullPanelEdge == value)
@@ -176,36 +285,28 @@ namespace Atiran.Utility.Docking2
                     }
                 }
 
-                public DockDragHandler DragHandler
-                {
-                    get { return m_dragHandler; }
-                }
+                public DockDragHandler DragHandler { get; }
 
-                public DockPanel DockPanel
-                {
-                    get { return DragHandler.DockPanel; }
-                }
+                public DockPanel DockPanel => DragHandler.DockPanel;
 
-                private DockPane m_dockPane = null;
                 public DockPane DockPane
                 {
-                    get { return m_dockPane; }
+                    get => m_dockPane;
                     internal set
                     {
                         if (m_dockPane == value)
                             return;
 
-                        DockPane oldDisplayingPane = DisplayingPane;
+                        var oldDisplayingPane = DisplayingPane;
                         m_dockPane = value;
                         if (oldDisplayingPane != DisplayingPane)
                             RefreshChanges();
                     }
                 }
 
-                private IHitTest m_hitTest = null;
                 private IHitTest HitTestResult
                 {
-                    get { return m_hitTest; }
+                    get => m_hitTest;
                     set
                     {
                         if (m_hitTest == value)
@@ -218,77 +319,93 @@ namespace Atiran.Utility.Docking2
                     }
                 }
 
-                private DockPane DisplayingPane
-                {
-                    get { return ShouldPaneDiamondVisible() ? DockPane : null; }
-                }
+                private DockPane DisplayingPane => ShouldPaneDiamondVisible() ? DockPane : null;
 
                 private void RefreshChanges()
                 {
-                    Region region = new Region(Rectangle.Empty);
-                    Rectangle rectDockArea = FullPanelEdge ? DockPanel.DockArea : DockPanel.DocumentWindowBounds;
+                    var region = new Region(Rectangle.Empty);
+                    var rectDockArea = FullPanelEdge ? DockPanel.DockArea : DockPanel.DocumentWindowBounds;
 
                     rectDockArea = RectangleToClient(DockPanel.RectangleToScreen(rectDockArea));
                     if (ShouldPanelIndicatorVisible(DockState.DockLeft))
                     {
-                        PanelLeft.Location = new Point(rectDockArea.X + _PanelIndicatorMargin, rectDockArea.Y + (rectDockArea.Height - PanelRight.Height) / 2);
+                        PanelLeft.Location = new Point(rectDockArea.X + _PanelIndicatorMargin,
+                            rectDockArea.Y + (rectDockArea.Height - PanelRight.Height) / 2);
                         PanelLeft.Visible = true;
                         region.Union(PanelLeft.Bounds);
                     }
                     else
+                    {
                         PanelLeft.Visible = false;
+                    }
 
                     if (ShouldPanelIndicatorVisible(DockState.DockRight))
                     {
-                        PanelRight.Location = new Point(rectDockArea.X + rectDockArea.Width - PanelRight.Width - _PanelIndicatorMargin, rectDockArea.Y + (rectDockArea.Height - PanelRight.Height) / 2);
+                        PanelRight.Location =
+                            new Point(rectDockArea.X + rectDockArea.Width - PanelRight.Width - _PanelIndicatorMargin,
+                                rectDockArea.Y + (rectDockArea.Height - PanelRight.Height) / 2);
                         PanelRight.Visible = true;
                         region.Union(PanelRight.Bounds);
                     }
                     else
+                    {
                         PanelRight.Visible = false;
+                    }
 
                     if (ShouldPanelIndicatorVisible(DockState.DockTop))
                     {
-                        PanelTop.Location = new Point(rectDockArea.X + (rectDockArea.Width - PanelTop.Width) / 2, rectDockArea.Y + _PanelIndicatorMargin);
+                        PanelTop.Location = new Point(rectDockArea.X + (rectDockArea.Width - PanelTop.Width) / 2,
+                            rectDockArea.Y + _PanelIndicatorMargin);
                         PanelTop.Visible = true;
                         region.Union(PanelTop.Bounds);
                     }
                     else
+                    {
                         PanelTop.Visible = false;
+                    }
 
                     if (ShouldPanelIndicatorVisible(DockState.DockBottom))
                     {
-                        PanelBottom.Location = new Point(rectDockArea.X + (rectDockArea.Width - PanelBottom.Width) / 2, rectDockArea.Y + rectDockArea.Height - PanelBottom.Height - _PanelIndicatorMargin);
+                        PanelBottom.Location = new Point(rectDockArea.X + (rectDockArea.Width - PanelBottom.Width) / 2,
+                            rectDockArea.Y + rectDockArea.Height - PanelBottom.Height - _PanelIndicatorMargin);
                         PanelBottom.Visible = true;
                         region.Union(PanelBottom.Bounds);
                     }
                     else
+                    {
                         PanelBottom.Visible = false;
+                    }
 
                     if (ShouldPanelIndicatorVisible(DockState.Document))
                     {
-                        Rectangle rectDocumentWindow = RectangleToClient(DockPanel.RectangleToScreen(DockPanel.DocumentWindowBounds));
-                        PanelFill.Location = new Point(rectDocumentWindow.X + (rectDocumentWindow.Width - PanelFill.Width) / 2, rectDocumentWindow.Y + (rectDocumentWindow.Height - PanelFill.Height) / 2);
+                        var rectDocumentWindow =
+                            RectangleToClient(DockPanel.RectangleToScreen(DockPanel.DocumentWindowBounds));
+                        PanelFill.Location =
+                            new Point(rectDocumentWindow.X + (rectDocumentWindow.Width - PanelFill.Width) / 2,
+                                rectDocumentWindow.Y + (rectDocumentWindow.Height - PanelFill.Height) / 2);
                         PanelFill.Visible = true;
                         region.Union(PanelFill.Bounds);
                     }
                     else
+                    {
                         PanelFill.Visible = false;
+                    }
 
                     if (ShouldPaneDiamondVisible())
                     {
-                        Rectangle rect = RectangleToClient(DockPane.RectangleToScreen(DockPane.ClientRectangle));
-                        PaneDiamond.Location = new Point(rect.Left + (rect.Width - PaneDiamond.Width) / 2, rect.Top + (rect.Height - PaneDiamond.Height) / 2);
+                        var rect = RectangleToClient(DockPane.RectangleToScreen(DockPane.ClientRectangle));
+                        PaneDiamond.Location = new Point(rect.Left + (rect.Width - PaneDiamond.Width) / 2,
+                            rect.Top + (rect.Height - PaneDiamond.Height) / 2);
                         PaneDiamond.Visible = true;
-                        using (GraphicsPath graphicsPath = PaneDiamond.DisplayingGraphicsPath.Clone() as GraphicsPath)
+                        using (var graphicsPath = PaneDiamond.DisplayingGraphicsPath.Clone() as GraphicsPath)
                         {
                             Point[] pts =
-                                {
-                                    new Point(PaneDiamond.Left, PaneDiamond.Top),
-                                    new Point(PaneDiamond.Right, PaneDiamond.Top),
-                                    new Point(PaneDiamond.Left, PaneDiamond.Bottom)
-                                };
-                            using (Matrix matrix = new Matrix(PaneDiamond.ClientRectangle, pts))
+                            {
+                                new Point(PaneDiamond.Left, PaneDiamond.Top),
+                                new Point(PaneDiamond.Right, PaneDiamond.Top),
+                                new Point(PaneDiamond.Left, PaneDiamond.Bottom)
+                            };
+                            using (var matrix = new Matrix(PaneDiamond.ClientRectangle, pts))
                             {
                                 graphicsPath.Transform(matrix);
                             }
@@ -297,7 +414,9 @@ namespace Atiran.Utility.Docking2
                         }
                     }
                     else
+                    {
                         PaneDiamond.Visible = false;
+                    }
 
                     Region = region;
                 }
@@ -333,7 +452,7 @@ namespace Atiran.Utility.Docking2
 
                 public void TestDrop()
                 {
-                    Point pt = Control.MousePosition;
+                    var pt = MousePosition;
                     DockPane = DockHelper.PaneAtPoint(pt, DockPanel);
 
                     if (TestDrop(PanelLeft, pt) != DockStyle.None)
@@ -365,161 +484,55 @@ namespace Atiran.Utility.Docking2
                     return hitTest.Status = hitTest.HitTest(pt);
                 }
             }
-
-            public DockDragHandler(DockPanel panel)
-                : base(panel)
-            {
-            }
-
-            public new IDockDragSource DragSource
-            {
-                get { return base.DragSource as IDockDragSource; }
-                set { base.DragSource = value; }
-            }
-
-            private DockOutlineBase m_outline;
-            public DockOutlineBase Outline
-            {
-                get { return m_outline; }
-                private set { m_outline = value; }
-            }
-
-            private DockIndicator m_indicator;
-            private DockIndicator Indicator
-            {
-                get { return m_indicator; }
-                set { m_indicator = value; }
-            }
-
-            private Rectangle m_floatOutlineBounds;
-            private Rectangle FloatOutlineBounds
-            {
-                get { return m_floatOutlineBounds; }
-                set { m_floatOutlineBounds = value; }
-            }
-
-            public void BeginDrag(IDockDragSource dragSource)
-            {
-                DragSource = dragSource;
-
-                if (!BeginDrag())
-                {
-                    DragSource = null;
-                    return;
-                }
-
-                Outline = DockPanel.Theme.Extender.DockOutlineFactory.CreateDockOutline();
-                Indicator = DockPanel.Theme.Extender.DockIndicatorFactory.CreateDockIndicator(this);
-                Indicator.Show(false);
-
-                FloatOutlineBounds = DragSource.BeginDrag(StartMousePosition);
-            }
-
-            protected  override void OnDragging()
-            {
-                TestDrop();
-            }
-
-            protected  override void OnEndDrag(bool abort)
-            {
-                DockPanel.SuspendLayout(true);
-
-                Outline.Close();
-                Indicator.Close();
-
-                EndDrag(abort);
-
-                // Queue a request to layout all children controls
-                DockPanel.PerformMdiClientLayout();
-
-                DockPanel.ResumeLayout(true, true);
-
-                DragSource.EndDrag();
-
-                DragSource = null;
-
-                // Fire notification
-                DockPanel.OnDocumentDragged();
-            }
-
-            private void TestDrop()
-            {
-                Outline.FlagTestDrop = false;
-
-                Indicator.FullPanelEdge = ((Control.ModifierKeys & Keys.Shift) != 0);
-
-                if ((Control.ModifierKeys & Keys.Control) == 0)
-                {
-                    Indicator.TestDrop();
-
-                    if (!Outline.FlagTestDrop)
-                    {
-                        DockPane pane = DockHelper.PaneAtPoint(Control.MousePosition, DockPanel);
-                        if (pane != null && DragSource.IsDockStateValid(pane.DockState))
-                            pane.TestDrop(DragSource, Outline);
-                    }
-
-                    if (!Outline.FlagTestDrop && DragSource.IsDockStateValid(DockState.Float))
-                    {
-                        FloatWindow floatWindow = DockHelper.FloatWindowAtPoint(Control.MousePosition, DockPanel);
-                        if (floatWindow != null)
-                            floatWindow.TestDrop(DragSource, Outline);
-                    }
-                }
-                else
-                    Indicator.DockPane = DockHelper.PaneAtPoint(Control.MousePosition, DockPanel);
-
-                if (!Outline.FlagTestDrop)
-                {
-                    if (DragSource.IsDockStateValid(DockState.Float))
-                    {
-                        Rectangle rect = FloatOutlineBounds;
-                        rect.Offset(Control.MousePosition.X - StartMousePosition.X, Control.MousePosition.Y - StartMousePosition.Y);
-                        Outline.Show(rect);
-                    }
-                }
-
-                if (!Outline.FlagTestDrop)
-                {
-                    Cursor.Current = Cursors.No;
-                    Outline.Show();
-                }
-                else
-                    Cursor.Current = DragControl.Cursor;
-            }
-
-            private void EndDrag(bool abort)
-            {
-                if (abort)
-                    return;
-
-                if (!Outline.FloatWindowBounds.IsEmpty)
-                    DragSource.FloatAt(Outline.FloatWindowBounds);
-                else if (Outline.DockTo is DockPane)
-                {
-                    DockPane pane = Outline.DockTo as DockPane;
-                    DragSource.DockTo(pane, Outline.Dock, Outline.ContentIndex);
-                }
-                else if (Outline.DockTo is DockPanel)
-                {
-                    DockPanel panel = Outline.DockTo as DockPanel;
-                    panel.UpdateDockWindowZOrder(Outline.Dock, Outline.FlagFullEdge);
-                    DragSource.DockTo(panel, Outline.Dock);
-                }
-            }
         }
 
-        private DockDragHandler m_dockDragHandler = null;
-        private DockDragHandler GetDockDragHandler()
+        #region IHitTest
+
+        public interface IHitTest
         {
-            if (m_dockDragHandler == null)
-                m_dockDragHandler = new DockDragHandler(this);
-            return m_dockDragHandler;
+            DockStyle Status { get; set; }
+            DockStyle HitTest(Point pt);
         }
 
-        internal void BeginDrag(IDockDragSource dragSource)
+        public interface IPaneIndicator : IHitTest
         {
-            GetDockDragHandler().BeginDrag(dragSource);
+            Point Location { get; set; }
+            bool Visible { get; set; }
+            int Left { get; }
+            int Top { get; }
+            int Right { get; }
+            int Bottom { get; }
+            Rectangle ClientRectangle { get; }
+            int Width { get; }
+            int Height { get; }
+            GraphicsPath DisplayingGraphicsPath { get; }
         }
+
+        public interface IPanelIndicator : IHitTest
+        {
+            Point Location { get; set; }
+            bool Visible { get; set; }
+            Rectangle Bounds { get; }
+            int Width { get; }
+            int Height { get; }
+        }
+
+        public struct HotSpotIndex
+        {
+            public HotSpotIndex(int x, int y, DockStyle dockStyle)
+            {
+                X = x;
+                Y = y;
+                DockStyle = dockStyle;
+            }
+
+            public int X { get; }
+
+            public int Y { get; }
+
+            public DockStyle DockStyle { get; }
+        }
+
+        #endregion
     }
 }

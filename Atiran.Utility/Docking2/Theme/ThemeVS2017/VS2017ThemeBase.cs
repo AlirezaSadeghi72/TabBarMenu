@@ -1,15 +1,16 @@
-﻿namespace Atiran.Utility.Docking2.Theme.ThemeVS2017
+﻿using Atiran.Utility.Docking2.Theme.ThemeVS2012;
+
+namespace Atiran.Utility.Docking2.Theme.ThemeVS2017
 {
-    using Docking2;
-    using static Docking2.DockPanelExtender;
-    using Atiran.Utility.Docking2.Theme.ThemeVS2012;
+    using static DockPanelExtender;
 
     /// <summary>
-    /// Visual Studio 2012 theme base.
+    ///     Visual Studio 2012 theme base.
     /// </summary>
     public abstract class VS2017ThemeBase : ThemeBase
     {
-        public VS2017ThemeBase(byte[] resources, IDockPaneSplitterControlFactory splitterFactory, IWindowSplitterControlFactory windowsSplitterFactory)
+        public VS2017ThemeBase(byte[] resources, IDockPaneSplitterControlFactory splitterFactory,
+            IWindowSplitterControlFactory windowsSplitterFactory)
         {
             ColorPalette = new DockPanelColorPalette(new VS2012PaletteFactory(resources));
             Skin = new DockPanelSkin();

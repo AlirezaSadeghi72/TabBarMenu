@@ -6,7 +6,7 @@ namespace Atiran.Utility.Docking2
     [AttributeUsage(AttributeTargets.All)]
     internal sealed class LocalizedDescriptionAttribute : DescriptionAttribute
     {
-        private bool m_initialized = false;
+        private bool m_initialized;
 
         public LocalizedDescriptionAttribute(string key) : base(key)
         {
@@ -15,13 +15,13 @@ namespace Atiran.Utility.Docking2
         public override string Description
         {
             get
-            {    
+            {
                 if (!m_initialized)
                 {
-                    string key = base.Description;
+                    var key = base.Description;
                     DescriptionValue = ResourceHelper.GetString(key);
                     if (DescriptionValue == null)
-                        DescriptionValue = String.Empty;
+                        DescriptionValue = string.Empty;
 
                     m_initialized = true;
                 }
@@ -38,7 +38,7 @@ namespace Atiran.Utility.Docking2
         {
         }
 
-        protected  override string GetLocalizedString(string value)
+        protected override string GetLocalizedString(string value)
         {
             return ResourceHelper.GetString(value);
         }

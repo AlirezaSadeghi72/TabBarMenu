@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Runtime.InteropServices;
-using System.Windows.Forms;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Runtime.InteropServices;
+using Atiran.Utility.Docking2.Win32;
 
 namespace Atiran.Utility.Docking2
 {
@@ -18,125 +18,148 @@ namespace Atiran.Utility.Docking2
 
     partial class DockPanel
     {
+        private static readonly object ActiveDocumentChangedEvent = new object();
+
+        private static readonly object ActiveContentChangedEvent = new object();
+
+        private static readonly object DocumentDraggedEvent = new object();
+
+        private static readonly object ActivePaneChangedEvent = new object();
+
+        private IFocusManager FocusManager => m_focusManager;
+
+        internal IContentFocusManager ContentFocusManager => m_focusManager;
+
+        [Browsable(false)] public IDockContent ActiveContent => FocusManager.ActiveContent;
+
+        [Browsable(false)] public DockPane ActivePane => FocusManager.ActivePane;
+
+        [Browsable(false)] public IDockContent ActiveDocument => FocusManager.ActiveDocument;
+
+        [Browsable(false)] public DockPane ActiveDocumentPane => FocusManager.ActiveDocumentPane;
+
+        internal void SaveFocus()
+        {
+            DummyControl.Focus();
+        }
+
+        public void NextTabFocus()
+        {
+            var index = -1;
+            var allDocuments = ActiveDocumentPane.Contents;
+            for (var i = 0; i < allDocuments.Count(); i++)
+                if (allDocuments[i] == ActiveContent)
+                {
+                    index = i;
+                    break;
+                }
+
+            if (index > -1)
+                try
+                {
+                    ActiveDocumentPane.ActiveContent = allDocuments[index + 1];
+                }
+                catch (Exception)
+                {
+                    ActiveDocumentPane.ActiveContent = allDocuments[0];
+                }
+        }
+
+        [LocalizedCategory("Category_PropertyChanged")]
+        [LocalizedDescription("DockPanel_ActiveDocumentChanged_Description")]
+        public event EventHandler ActiveDocumentChanged
+        {
+            add => Events.AddHandler(ActiveDocumentChangedEvent, value);
+            remove => Events.RemoveHandler(ActiveDocumentChangedEvent, value);
+        }
+
+        protected virtual void OnActiveDocumentChanged(EventArgs e)
+        {
+            var handler = (EventHandler) Events[ActiveDocumentChangedEvent];
+            if (handler != null)
+                handler(this, e);
+        }
+
+        [LocalizedCategory("Category_PropertyChanged")]
+        [LocalizedDescription("DockPanel_ActiveContentChanged_Description")]
+        public event EventHandler ActiveContentChanged
+        {
+            add => Events.AddHandler(ActiveContentChangedEvent, value);
+            remove => Events.RemoveHandler(ActiveContentChangedEvent, value);
+        }
+
+        protected void OnActiveContentChanged(EventArgs e)
+        {
+            var handler = (EventHandler) Events[ActiveContentChangedEvent];
+            if (handler != null)
+                handler(this, e);
+        }
+
+        [LocalizedCategory("Category_PropertyChanged")]
+        [LocalizedDescription("DockPanel_ActiveContentChanged_Description")]
+        public event EventHandler DocumentDragged
+        {
+            add => Events.AddHandler(DocumentDraggedEvent, value);
+            remove => Events.RemoveHandler(DocumentDraggedEvent, value);
+        }
+
+        internal void OnDocumentDragged()
+        {
+            var handler = (EventHandler) Events[DocumentDraggedEvent];
+            if (handler != null)
+                handler(this, EventArgs.Empty);
+        }
+
+        [LocalizedCategory("Category_PropertyChanged")]
+        [LocalizedDescription("DockPanel_ActivePaneChanged_Description")]
+        public event EventHandler ActivePaneChanged
+        {
+            add => Events.AddHandler(ActivePaneChangedEvent, value);
+            remove => Events.RemoveHandler(ActivePaneChangedEvent, value);
+        }
+
+        protected virtual void OnActivePaneChanged(EventArgs e)
+        {
+            var handler = (EventHandler) Events[ActivePaneChangedEvent];
+            if (handler != null)
+                handler(this, e);
+        }
+
         private interface IFocusManager
         {
-            void SuspendFocusTracking();
-            void ResumeFocusTracking();
             bool IsFocusTrackingSuspended { get; }
             IDockContent ActiveContent { get; }
             DockPane ActivePane { get; }
             IDockContent ActiveDocument { get; }
             DockPane ActiveDocumentPane { get; }
+            void SuspendFocusTracking();
+            void ResumeFocusTracking();
         }
 
         private class FocusManagerImpl : Component, IContentFocusManager, IFocusManager
         {
-            private class HookEventArgs : EventArgs
-            {
-                [SuppressMessage("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
-                public int HookCode;
-                [SuppressMessage("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
-                public IntPtr wParam;
-                public IntPtr lParam;
-            }
-
-            private class LocalWindowsHook : IDisposable
-            {
-                // Internal properties
-                private IntPtr m_hHook = IntPtr.Zero;
-                private NativeMethods.HookProc m_filterFunc = null;
-                private Win32.HookType m_hookType;
-
-                // Event delegate
-                public delegate void HookEventHandler(object sender, HookEventArgs e);
-
-                // Event: HookInvoked 
-                public event HookEventHandler HookInvoked;
-                protected void OnHookInvoked(HookEventArgs e)
-                {
-                    if (HookInvoked != null)
-                        HookInvoked(this, e);
-                }
-
-                public LocalWindowsHook(Win32.HookType hook)
-                {
-                    m_hookType = hook;
-                    m_filterFunc = new NativeMethods.HookProc(this.CoreHookProc);
-                }
-
-                // Default filter function
-                public IntPtr CoreHookProc(int code, IntPtr wParam, IntPtr lParam)
-                {
-                    if (code < 0)
-                        return NativeMethods.CallNextHookEx(m_hHook, code, wParam, lParam);
-
-                    // Let clients determine what to do
-                    HookEventArgs e = new HookEventArgs();
-                    e.HookCode = code;
-                    e.wParam = wParam;
-                    e.lParam = lParam;
-                    OnHookInvoked(e);
-
-                    // Yield to the next hook in the chain
-                    return NativeMethods.CallNextHookEx(m_hHook, code, wParam, lParam);
-                }
-
-                // Install the hook
-                public void Install()
-                {
-                    if (m_hHook != IntPtr.Zero)
-                        Uninstall();
-
-                    int threadId = NativeMethods.GetCurrentThreadId();
-                    m_hHook = NativeMethods.SetWindowsHookEx(m_hookType, m_filterFunc, IntPtr.Zero, threadId);
-                }
-
-                // Uninstall the hook
-                public void Uninstall()
-                {
-                    if (m_hHook != IntPtr.Zero)
-                    {
-                        NativeMethods.UnhookWindowsHookEx(m_hHook);
-                        m_hHook = IntPtr.Zero;
-                    }
-                }
-
-                ~LocalWindowsHook()
-                {
-                    Dispose(false);
-                }
-
-                public void Dispose()
-                {
-                    Dispose(true);
-                    GC.SuppressFinalize(this);
-                }
-
-                protected virtual void Dispose(bool disposing)
-                {
-                    Uninstall();
-                }
-            }
-
             // Use a static instance of the windows hook to prevent stack overflows in the windows kernel.
-            [ThreadStatic]
-            private static LocalWindowsHook sm_localWindowsHook;
-            [ThreadStatic]
-            private static int _referenceCount = 0;
+            [ThreadStatic] private static LocalWindowsHook sm_localWindowsHook;
+
+            [ThreadStatic] private static int _referenceCount;
 
             private readonly LocalWindowsHook.HookEventHandler m_hookEventHandler;
 
+            private uint m_countSuspendFocusTracking;
+
+            private bool m_disposed;
+
             public FocusManagerImpl(DockPanel dockPanel)
             {
-                m_dockPanel = dockPanel;
+                DockPanel = dockPanel;
                 if (Win32Helper.IsRunningOnMono)
                     return;
-                m_hookEventHandler = new LocalWindowsHook.HookEventHandler(HookEventHandler);
+                m_hookEventHandler = HookEventHandler;
 
                 // Ensure the windows hook has been created for this thread
                 if (sm_localWindowsHook == null)
                 {
-                    sm_localWindowsHook = new LocalWindowsHook(Win32.HookType.WH_CALLWNDPROCRET);
+                    sm_localWindowsHook = new LocalWindowsHook(HookType.WH_CALLWNDPROCRET);
                     sm_localWindowsHook.Install();
                 }
 
@@ -144,42 +167,15 @@ namespace Atiran.Utility.Docking2
                 ++_referenceCount;
             }
 
-            private DockPanel m_dockPanel;
-            public DockPanel DockPanel
-            {
-                get { return m_dockPanel; }
-            }
+            public DockPanel DockPanel { get; }
 
-            private bool m_disposed = false;
-            protected  override void Dispose(bool disposing)
-            {
-                if (!m_disposed && disposing)
-                {
-                    if (!Win32Helper.IsRunningOnMono)
-                    {
-                        sm_localWindowsHook.HookInvoked -= m_hookEventHandler;
-                    }
+            private IDockContent ContentActivating { get; set; }
 
-                    --_referenceCount;
+            private List<IDockContent> ListContent { get; } = new List<IDockContent>();
 
-                    if (_referenceCount == 0 && sm_localWindowsHook != null)
-                    {
-                        sm_localWindowsHook.Dispose();
-                        sm_localWindowsHook = null;
-                    }
-					
-                    m_disposed = true;
-                }
+            private IDockContent LastActiveContent { get; set; }
 
-                base.Dispose(disposing);
-            }
-
-            private IDockContent m_contentActivating = null;
-            private IDockContent ContentActivating
-            {
-                get { return m_contentActivating; }
-                set { m_contentActivating = value; }
-            }
+            private bool InRefreshActiveWindow { get; set; }
 
             public void Activate(IDockContent content)
             {
@@ -191,16 +187,12 @@ namespace Atiran.Utility.Docking2
 
                 if (content == null)
                     return;
-                DockContentHandler handler = content.DockHandler;
+                var handler = content.DockHandler;
                 if (handler.Form.IsDisposed)
                     return; // Should not reach here, but better than throwing an exception
                 if (ContentContains(content, handler.ActiveWindowHandle))
-                {
                     if (!Win32Helper.IsRunningOnMono)
-                    {
                         NativeMethods.SetFocus(handler.ActiveWindowHandle);
-                    }
-                }
 
                 if (handler.Form.ContainsFocus)
                     return;
@@ -215,11 +207,6 @@ namespace Atiran.Utility.Docking2
                 NativeMethods.SetFocus(handler.Form.Handle);
             }
 
-            private List<IDockContent> m_listContent = new List<IDockContent>();
-            private List<IDockContent> ListContent
-            {
-                get { return m_listContent; }
-            }
             public void AddToList(IDockContent content)
             {
                 if (ListContent.Contains(content) || IsInActiveList(content))
@@ -236,55 +223,9 @@ namespace Atiran.Utility.Docking2
                     ListContent.Remove(content);
             }
 
-            private IDockContent m_lastActiveContent = null;
-            private IDockContent LastActiveContent
-            {
-                get { return m_lastActiveContent; }
-                set { m_lastActiveContent = value; }
-            }
-
-            private bool IsInActiveList(IDockContent content)
-            {
-                return !(content.DockHandler.NextActive == null && LastActiveContent != content);
-            }
-
-            private void AddLastToActiveList(IDockContent content)
-            {
-                IDockContent last = LastActiveContent;
-                if (last == content)
-                    return;
-
-                DockContentHandler handler = content.DockHandler;
-
-                if (IsInActiveList(content))
-                    RemoveFromActiveList(content);
-
-                handler.PreviousActive = last;
-                handler.NextActive = null;
-                LastActiveContent = content;
-                if (last != null)
-                    last.DockHandler.NextActive = LastActiveContent;
-            }
-
-            private void RemoveFromActiveList(IDockContent content)
-            {
-                if (LastActiveContent == content)
-                    LastActiveContent = content.DockHandler.PreviousActive;
-
-                IDockContent prev = content.DockHandler.PreviousActive;
-                IDockContent next = content.DockHandler.NextActive;
-                if (prev != null)
-                    prev.DockHandler.NextActive = next;
-                if (next != null)
-                    next.DockHandler.PreviousActive = prev;
-
-                content.DockHandler.PreviousActive = null;
-                content.DockHandler.NextActive = null;
-            }
-
             public void GiveUpFocus(IDockContent content)
             {
-                DockContentHandler handler = content.DockHandler;
+                var handler = content.DockHandler;
                 if (!handler.Form.ContainsFocus)
                     return;
 
@@ -293,39 +234,30 @@ namespace Atiran.Utility.Docking2
 
                 if (LastActiveContent == content)
                 {
-                    IDockContent prev = handler.PreviousActive;
+                    var prev = handler.PreviousActive;
                     if (prev != null)
                         Activate(prev);
                     else if (ListContent.Count > 0)
                         Activate(ListContent[ListContent.Count - 1]);
                 }
                 else if (LastActiveContent != null)
+                {
                     Activate(LastActiveContent);
+                }
                 else if (ListContent.Count > 0)
+                {
                     Activate(ListContent[ListContent.Count - 1]);
+                }
             }
 
-            private static bool ContentContains(IDockContent content, IntPtr hWnd)
-            {
-                Control control = Control.FromChildHandle(hWnd);
-                for (Control parent = control; parent != null; parent = parent.Parent)
-                    if (parent == content.DockHandler.Form)
-                        return true;
-
-                return false;
-            }
-
-            private uint m_countSuspendFocusTracking = 0;
             public void SuspendFocusTracking()
             {
                 if (m_disposed)
                     return;
 
                 if (m_countSuspendFocusTracking++ == 0)
-                {
                     if (!Win32Helper.IsRunningOnMono)
                         sm_localWindowsHook.HookInvoked -= m_hookEventHandler;
-                }
             }
 
             public void ResumeFocusTracking()
@@ -349,30 +281,106 @@ namespace Atiran.Utility.Docking2
                 }
             }
 
-            public bool IsFocusTrackingSuspended
+            public bool IsFocusTrackingSuspended => m_countSuspendFocusTracking != 0;
+
+            public DockPane ActivePane { get; private set; }
+
+            public IDockContent ActiveContent { get; private set; }
+
+            public DockPane ActiveDocumentPane { get; private set; }
+
+            public IDockContent ActiveDocument { get; private set; }
+
+            protected override void Dispose(bool disposing)
             {
-                get { return m_countSuspendFocusTracking != 0; }
+                if (!m_disposed && disposing)
+                {
+                    if (!Win32Helper.IsRunningOnMono) sm_localWindowsHook.HookInvoked -= m_hookEventHandler;
+
+                    --_referenceCount;
+
+                    if (_referenceCount == 0 && sm_localWindowsHook != null)
+                    {
+                        sm_localWindowsHook.Dispose();
+                        sm_localWindowsHook = null;
+                    }
+
+                    m_disposed = true;
+                }
+
+                base.Dispose(disposing);
+            }
+
+            private bool IsInActiveList(IDockContent content)
+            {
+                return !(content.DockHandler.NextActive == null && LastActiveContent != content);
+            }
+
+            private void AddLastToActiveList(IDockContent content)
+            {
+                var last = LastActiveContent;
+                if (last == content)
+                    return;
+
+                var handler = content.DockHandler;
+
+                if (IsInActiveList(content))
+                    RemoveFromActiveList(content);
+
+                handler.PreviousActive = last;
+                handler.NextActive = null;
+                LastActiveContent = content;
+                if (last != null)
+                    last.DockHandler.NextActive = LastActiveContent;
+            }
+
+            private void RemoveFromActiveList(IDockContent content)
+            {
+                if (LastActiveContent == content)
+                    LastActiveContent = content.DockHandler.PreviousActive;
+
+                var prev = content.DockHandler.PreviousActive;
+                var next = content.DockHandler.NextActive;
+                if (prev != null)
+                    prev.DockHandler.NextActive = next;
+                if (next != null)
+                    next.DockHandler.PreviousActive = prev;
+
+                content.DockHandler.PreviousActive = null;
+                content.DockHandler.NextActive = null;
+            }
+
+            private static bool ContentContains(IDockContent content, IntPtr hWnd)
+            {
+                var control = FromChildHandle(hWnd);
+                for (var parent = control; parent != null; parent = parent.Parent)
+                    if (parent == content.DockHandler.Form)
+                        return true;
+
+                return false;
             }
 
             // Windows hook event handler
             private void HookEventHandler(object sender, HookEventArgs e)
             {
-                Win32.Msgs msg = (Win32.Msgs)Marshal.ReadInt32(e.lParam, IntPtr.Size * 3);
+                var msg = (Msgs) Marshal.ReadInt32(e.lParam, IntPtr.Size * 3);
 
-                if (msg == Win32.Msgs.WM_KILLFOCUS)
+                if (msg == Msgs.WM_KILLFOCUS)
                 {
-                    IntPtr wParam = Marshal.ReadIntPtr(e.lParam, IntPtr.Size * 2);
-                    DockPane pane = GetPaneFromHandle(wParam);
+                    var wParam = Marshal.ReadIntPtr(e.lParam, IntPtr.Size * 2);
+                    var pane = GetPaneFromHandle(wParam);
                     if (pane == null)
                         RefreshActiveWindow();
                 }
-                else if (msg == Win32.Msgs.WM_SETFOCUS || msg == Win32.Msgs.WM_MDIACTIVATE)
+                else if (msg == Msgs.WM_SETFOCUS || msg == Msgs.WM_MDIACTIVATE)
+                {
                     RefreshActiveWindow();
+                }
             }
 
             private DockPane GetPaneFromHandle(IntPtr hWnd)
             {
-                Control control = Control.FromChildHandle(hWnd);
+                var control = FromChildHandle(hWnd);
 
                 IDockContent content = null;
                 DockPane pane = null;
@@ -393,25 +401,16 @@ namespace Atiran.Utility.Docking2
                 return pane;
             }
 
-            private bool m_inRefreshActiveWindow = false;
-            private bool InRefreshActiveWindow
-            {
-                get { return m_inRefreshActiveWindow; }
-            }
-
             private void RefreshActiveWindow()
             {
-                if (DockPanel.Theme == null)
-                {
-                    return;
-                }
+                if (DockPanel.Theme == null) return;
 
                 SuspendFocusTracking();
-                m_inRefreshActiveWindow = true;
+                InRefreshActiveWindow = true;
 
-                DockPane oldActivePane = ActivePane;
-                IDockContent oldActiveContent = ActiveContent;
-                IDockContent oldActiveDocument = ActiveDocument;
+                var oldActivePane = ActivePane;
+                var oldActiveContent = ActiveContent;
+                var oldActiveDocument = ActiveDocument;
 
                 SetActivePane();
                 SetActiveContent();
@@ -420,7 +419,7 @@ namespace Atiran.Utility.Docking2
                 DockPanel.AutoHideWindow.RefreshActivePane();
 
                 ResumeFocusTracking();
-                m_inRefreshActiveWindow = false;
+                InRefreshActiveWindow = false;
 
                 if (oldActiveContent != ActiveContent)
                     DockPanel.OnActiveContentChanged(EventArgs.Empty);
@@ -430,57 +429,39 @@ namespace Atiran.Utility.Docking2
                     DockPanel.OnActivePaneChanged(EventArgs.Empty);
             }
 
-            private DockPane m_activePane = null;
-            public DockPane ActivePane
-            {
-                get { return m_activePane; }
-            }
-
             private void SetActivePane()
             {
-                DockPane value = Win32Helper.IsRunningOnMono ? null : GetPaneFromHandle(NativeMethods.GetFocus());
-                if (m_activePane == value)
+                var value = Win32Helper.IsRunningOnMono ? null : GetPaneFromHandle(NativeMethods.GetFocus());
+                if (ActivePane == value)
                     return;
 
-                if (m_activePane != null)
-                    m_activePane.SetIsActivated(false);
+                if (ActivePane != null)
+                    ActivePane.SetIsActivated(false);
 
-                m_activePane = value;
+                ActivePane = value;
 
-                if (m_activePane != null)
-                    m_activePane.SetIsActivated(true);
-            }
-
-            private IDockContent m_activeContent = null;
-            public IDockContent ActiveContent
-            {
-                get { return m_activeContent; }
+                if (ActivePane != null)
+                    ActivePane.SetIsActivated(true);
             }
 
             internal void SetActiveContent()
             {
-                IDockContent value = ActivePane == null ? null : ActivePane.ActiveContent;
+                var value = ActivePane == null ? null : ActivePane.ActiveContent;
 
-                if (m_activeContent == value)
+                if (ActiveContent == value)
                     return;
 
-                if (m_activeContent != null)
-                    m_activeContent.DockHandler.IsActivated = false;
+                if (ActiveContent != null)
+                    ActiveContent.DockHandler.IsActivated = false;
 
-                m_activeContent = value;
+                ActiveContent = value;
 
-                if (m_activeContent != null)
+                if (ActiveContent != null)
                 {
-                    m_activeContent.DockHandler.IsActivated = true;
-                    if (!DockHelper.IsDockStateAutoHide((m_activeContent.DockHandler.DockState)))
-                        AddLastToActiveList(m_activeContent);
+                    ActiveContent.DockHandler.IsActivated = true;
+                    if (!DockHelper.IsDockStateAutoHide(ActiveContent.DockHandler.DockState))
+                        AddLastToActiveList(ActiveContent);
                 }
-            }
-
-            private DockPane m_activeDocumentPane = null;
-            public DockPane ActiveDocumentPane
-            {
-                get { return m_activeDocumentPane; }
             }
 
             private void SetActiveDocumentPane()
@@ -494,167 +475,125 @@ namespace Atiran.Utility.Docking2
                 {
                     if (ActiveDocumentPane == null)
                         value = DockPanel.DockWindows[DockState.Document].DefaultPane;
-                    else if (ActiveDocumentPane.DockPanel != DockPanel || ActiveDocumentPane.DockState != DockState.Document)
+                    else if (ActiveDocumentPane.DockPanel != DockPanel ||
+                             ActiveDocumentPane.DockState != DockState.Document)
                         value = DockPanel.DockWindows[DockState.Document].DefaultPane;
                     else
                         value = ActiveDocumentPane;
                 }
 
-                if (m_activeDocumentPane == value)
+                if (ActiveDocumentPane == value)
                     return;
 
-                if (m_activeDocumentPane != null)
-                    m_activeDocumentPane.SetIsActiveDocumentPane(false);
+                if (ActiveDocumentPane != null)
+                    ActiveDocumentPane.SetIsActiveDocumentPane(false);
 
-                m_activeDocumentPane = value;
+                ActiveDocumentPane = value;
 
-                if (m_activeDocumentPane != null)
-                    m_activeDocumentPane.SetIsActiveDocumentPane(true);
-            }
-
-            private IDockContent m_activeDocument = null;
-            public IDockContent ActiveDocument
-            {
-                get { return m_activeDocument; }
+                if (ActiveDocumentPane != null)
+                    ActiveDocumentPane.SetIsActiveDocumentPane(true);
             }
 
             private void SetActiveDocument()
             {
-                IDockContent value = ActiveDocumentPane == null ? null : ActiveDocumentPane.ActiveContent;
+                var value = ActiveDocumentPane == null ? null : ActiveDocumentPane.ActiveContent;
 
-                if (m_activeDocument == value)
+                if (ActiveDocument == value)
                     return;
 
-                m_activeDocument = value;
+                ActiveDocument = value;
             }
-        }
 
-        private IFocusManager FocusManager
-        {
-            get { return m_focusManager; }
-        }
-
-        internal IContentFocusManager ContentFocusManager
-        {
-            get { return m_focusManager; }
-        }
-
-        internal void SaveFocus()
-        {
-            DummyControl.Focus();
-        }
-
-        [Browsable(false)]
-        public IDockContent ActiveContent
-        {
-            get { return FocusManager.ActiveContent; }
-        }
-
-        [Browsable(false)]
-        public DockPane ActivePane
-        {
-            get { return FocusManager.ActivePane; }
-        }
-
-        [Browsable(false)]
-        public IDockContent ActiveDocument
-        {
-            get { return FocusManager.ActiveDocument; }
-        }
-
-        [Browsable(false)]
-        public DockPane ActiveDocumentPane
-        {
-            get { return FocusManager.ActiveDocumentPane; }
-        }
-
-        public void NextTabFocus()
-        {
-            int index = -1;
-            var allDocuments = ActiveDocumentPane.Contents;
-            for (int i =0 ; i< allDocuments.Count();i++)
+            private class HookEventArgs : EventArgs
             {
-                if (allDocuments[i] == ActiveContent)
-                {
-                    index = i;
-                    break;
-                }
+                [SuppressMessage("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
+                public int HookCode;
+
+                public IntPtr lParam;
+
+                [SuppressMessage("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
+                public IntPtr wParam;
             }
 
-            if (index > -1)
+            private class LocalWindowsHook : IDisposable
             {
-                try
+                // Event delegate
+                public delegate void HookEventHandler(object sender, HookEventArgs e);
+
+                private NativeMethods.HookProc m_filterFunc;
+
+                // Internal properties
+                private IntPtr m_hHook = IntPtr.Zero;
+                private HookType m_hookType;
+
+                public LocalWindowsHook(HookType hook)
                 {
-                    ActiveDocumentPane.ActiveContent = allDocuments[index+1];
+                    m_hookType = hook;
+                    m_filterFunc = CoreHookProc;
                 }
-                catch (Exception)
+
+                public void Dispose()
                 {
-                    ActiveDocumentPane.ActiveContent = allDocuments[0];
+                    Dispose(true);
+                    GC.SuppressFinalize(this);
+                }
+
+                // Event: HookInvoked 
+                public event HookEventHandler HookInvoked;
+
+                protected void OnHookInvoked(HookEventArgs e)
+                {
+                    if (HookInvoked != null)
+                        HookInvoked(this, e);
+                }
+
+                // Default filter function
+                public IntPtr CoreHookProc(int code, IntPtr wParam, IntPtr lParam)
+                {
+                    if (code < 0)
+                        return NativeMethods.CallNextHookEx(m_hHook, code, wParam, lParam);
+
+                    // Let clients determine what to do
+                    var e = new HookEventArgs();
+                    e.HookCode = code;
+                    e.wParam = wParam;
+                    e.lParam = lParam;
+                    OnHookInvoked(e);
+
+                    // Yield to the next hook in the chain
+                    return NativeMethods.CallNextHookEx(m_hHook, code, wParam, lParam);
+                }
+
+                // Install the hook
+                public void Install()
+                {
+                    if (m_hHook != IntPtr.Zero)
+                        Uninstall();
+
+                    var threadId = NativeMethods.GetCurrentThreadId();
+                    m_hHook = NativeMethods.SetWindowsHookEx(m_hookType, m_filterFunc, IntPtr.Zero, threadId);
+                }
+
+                // Uninstall the hook
+                public void Uninstall()
+                {
+                    if (m_hHook != IntPtr.Zero)
+                    {
+                        NativeMethods.UnhookWindowsHookEx(m_hHook);
+                        m_hHook = IntPtr.Zero;
+                    }
+                }
+
+                ~LocalWindowsHook()
+                {
+                    Dispose(false);
+                }
+
+                protected virtual void Dispose(bool disposing)
+                {
+                    Uninstall();
                 }
             }
-
-        }
-
-        private static readonly object ActiveDocumentChangedEvent = new object();
-        [LocalizedCategory("Category_PropertyChanged")]
-        [LocalizedDescription("DockPanel_ActiveDocumentChanged_Description")]
-        public event EventHandler ActiveDocumentChanged
-        {
-            add { Events.AddHandler(ActiveDocumentChangedEvent, value); }
-            remove { Events.RemoveHandler(ActiveDocumentChangedEvent, value); }
-        }
-        protected virtual void OnActiveDocumentChanged(EventArgs e)
-        {
-            EventHandler handler = (EventHandler)Events[ActiveDocumentChangedEvent];
-            if (handler != null)
-                handler(this, e);
-        }
-
-        private static readonly object ActiveContentChangedEvent = new object();
-        [LocalizedCategory("Category_PropertyChanged")]
-        [LocalizedDescription("DockPanel_ActiveContentChanged_Description")]
-        public event EventHandler ActiveContentChanged
-        {
-            add { Events.AddHandler(ActiveContentChangedEvent, value); }
-            remove { Events.RemoveHandler(ActiveContentChangedEvent, value); }
-        }
-
-        protected void OnActiveContentChanged(EventArgs e)
-        {
-            EventHandler handler = (EventHandler)Events[ActiveContentChangedEvent];
-            if (handler != null)
-                handler(this, e);
-        }
-
-        private static readonly object DocumentDraggedEvent = new object();
-        [LocalizedCategory("Category_PropertyChanged")]
-        [LocalizedDescription("DockPanel_ActiveContentChanged_Description")]
-        public event EventHandler DocumentDragged
-        {
-            add { Events.AddHandler(DocumentDraggedEvent, value); }
-            remove { Events.RemoveHandler(DocumentDraggedEvent, value); }
-        }
-
-        internal void OnDocumentDragged()
-        {
-            EventHandler handler = (EventHandler)Events[DocumentDraggedEvent];
-            if (handler != null)
-                handler(this, EventArgs.Empty);
-        }
-
-        private static readonly object ActivePaneChangedEvent = new object();
-        [LocalizedCategory("Category_PropertyChanged")]
-        [LocalizedDescription("DockPanel_ActivePaneChanged_Description")]
-        public event EventHandler ActivePaneChanged
-        {
-            add { Events.AddHandler(ActivePaneChangedEvent, value); }
-            remove { Events.RemoveHandler(ActivePaneChangedEvent, value); }
-        }
-        protected virtual void OnActivePaneChanged(EventArgs e)
-        {
-            EventHandler handler = (EventHandler)Events[ActivePaneChangedEvent];
-            if (handler != null)
-                handler(this, e);
         }
     }
 }

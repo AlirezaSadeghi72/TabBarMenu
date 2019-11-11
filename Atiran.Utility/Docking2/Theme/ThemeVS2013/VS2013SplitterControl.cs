@@ -9,20 +9,23 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2013
     internal class VS2013SplitterControl : DockPane.SplitterControlBase
     {
         private readonly SolidBrush _horizontalBrush;
-        private int SplitterSize { get; }
 
         public VS2013SplitterControl(DockPane pane)
             : base(pane)
         {
-            _horizontalBrush = pane.DockPanel.Theme.PaintingService.GetBrush(pane.DockPanel.Theme.ColorPalette.MainWindowActive.Background);
+            _horizontalBrush =
+                pane.DockPanel.Theme.PaintingService.GetBrush(pane.DockPanel.Theme.ColorPalette.MainWindowActive
+                    .Background);
             SplitterSize = pane.DockPanel.Theme.Measures.SplitterSize;
         }
 
-        protected  override void OnPaint(PaintEventArgs e)
+        private int SplitterSize { get; }
+
+        protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
 
-            Rectangle rect = ClientRectangle;
+            var rect = ClientRectangle;
             if (rect.Width <= 0 || rect.Height <= 0)
                 return;
 
@@ -30,17 +33,17 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2013
             {
                 case DockAlignment.Right:
                 case DockAlignment.Left:
-                    {
-                        Debug.Assert(SplitterSize == rect.Width);
-                        e.Graphics.FillRectangle(_horizontalBrush, rect);
-                    }
+                {
+                    Debug.Assert(SplitterSize == rect.Width);
+                    e.Graphics.FillRectangle(_horizontalBrush, rect);
+                }
                     break;
                 case DockAlignment.Bottom:
                 case DockAlignment.Top:
-                    {
-                        Debug.Assert(SplitterSize == rect.Height);
-                        e.Graphics.FillRectangle(_horizontalBrush, rect);
-                    }
+                {
+                    Debug.Assert(SplitterSize == rect.Height);
+                    e.Graphics.FillRectangle(_horizontalBrush, rect);
+                }
                     break;
             }
         }

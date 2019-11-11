@@ -12,7 +12,12 @@ namespace Atiran.Utility.Docking2
     public abstract class ThemeBase : Component
     {
         private Color _dockBackColor;
+
+        private KeyValuePair<ToolStripManagerRenderMode, ToolStripRenderer> _managerBefore;
         private bool _showAutoHideContentOnHover;
+
+        private Dictionary<ToolStrip, KeyValuePair<ToolStripRenderMode, ToolStripRenderer>> _stripBefore
+            = new Dictionary<ToolStrip, KeyValuePair<ToolStripRenderMode, ToolStripRenderer>>();
 
         protected ThemeBase()
         {
@@ -27,27 +32,27 @@ namespace Atiran.Utility.Docking2
 
         public IPaintingService PaintingService { get; protected set; }
 
-        protected ToolStripRenderer ToolStripRenderer { get; set;}
+        protected ToolStripRenderer ToolStripRenderer { get; set; }
 
-        private Dictionary<ToolStrip, KeyValuePair<ToolStripRenderMode, ToolStripRenderer>> _stripBefore
-            = new Dictionary<ToolStrip, KeyValuePair<ToolStripRenderMode, ToolStripRenderer>>();
+        public Measures Measures { get; } = new Measures();
+
+        public bool ShowAutoHideContentOnHover { get; protected set; } = true;
+
+        public DockPanelExtender Extender { get; }
 
         public void ApplyTo(ToolStrip toolStrip)
         {
             if (toolStrip == null)
                 return;
 
-            _stripBefore[toolStrip] = new KeyValuePair<ToolStripRenderMode, ToolStripRenderer>(toolStrip.RenderMode, toolStrip.Renderer);
-            if(ToolStripRenderer != null)
+            _stripBefore[toolStrip] =
+                new KeyValuePair<ToolStripRenderMode, ToolStripRenderer>(toolStrip.RenderMode, toolStrip.Renderer);
+            if (ToolStripRenderer != null)
                 toolStrip.Renderer = ToolStripRenderer;
 
             if (Win32Helper.IsRunningOnMono)
-            {
                 foreach (var item in toolStrip.Items.OfType<ToolStripDropDownItem>())
-                {
                     ItemResetOwnerHack(item);
-                }
-            }
         }
 
         private void ItemResetOwnerHack(ToolStripDropDownItem item)
@@ -56,22 +61,15 @@ namespace Atiran.Utility.Docking2
             item.DropDown.OwnerItem = null;
             item.DropDown.OwnerItem = oldOwner;
 
-            foreach (var child in item.DropDownItems.OfType<ToolStripDropDownItem>())
-            {
-                ItemResetOwnerHack(child);
-            }
+            foreach (var child in item.DropDownItems.OfType<ToolStripDropDownItem>()) ItemResetOwnerHack(child);
         }
-
-        private KeyValuePair<ToolStripManagerRenderMode, ToolStripRenderer> _managerBefore;
 
         public void ApplyToToolStripManager()
         {
-            _managerBefore = new KeyValuePair<ToolStripManagerRenderMode, ToolStripRenderer>(ToolStripManager.RenderMode, ToolStripManager.Renderer);
+            _managerBefore =
+                new KeyValuePair<ToolStripManagerRenderMode, ToolStripRenderer>(ToolStripManager.RenderMode,
+                    ToolStripManager.Renderer);
         }
-
-        public Measures Measures { get; } = new Measures();
-
-        public bool ShowAutoHideContentOnHover { get; protected set; } = true;
 
         public void ApplyTo(DockPanel dockPanel)
         {
@@ -88,9 +86,7 @@ namespace Atiran.Utility.Docking2
                 || Extender.PaneIndicatorFactory == null
                 || Extender.PanelIndicatorFactory == null
                 || Extender.WindowSplitterControlFactory == null)
-            {
                 throw new InvalidOperationException(Strings.Theme_MissingFactory);
-            }
 
             if (dockPanel.Panes.Count > 0)
                 throw new InvalidOperationException(Strings.Theme_PaneNotClosed);
@@ -127,10 +123,7 @@ namespace Atiran.Utility.Docking2
         {
             if (dockPanel != null)
             {
-                if (ColorPalette != null)
-                {
-                    dockPanel.DockBackColor = _dockBackColor;
-                }
+                if (ColorPalette != null) dockPanel.DockBackColor = _dockBackColor;
 
                 dockPanel.ShowAutoHideContentOnHover = _showAutoHideContentOnHover;
             }
@@ -162,23 +155,19 @@ namespace Atiran.Utility.Docking2
             }
         }
 
-        public DockPanelExtender Extender { get; private set; }
-
         public static byte[] Decompress(byte[] fileToDecompress)
         {
-            using (MemoryStream originalFileStream = new MemoryStream(fileToDecompress))
+            using (var originalFileStream = new MemoryStream(fileToDecompress))
             {
-                using (MemoryStream decompressedFileStream = new MemoryStream())
+                using (var decompressedFileStream = new MemoryStream())
                 {
-                    using (GZipStream decompressionStream = new GZipStream(originalFileStream, CompressionMode.Decompress))
+                    using (var decompressionStream = new GZipStream(originalFileStream, CompressionMode.Decompress))
                     {
                         //Copy the decompression stream into the output file.
-                        byte[] buffer = new byte[4096];
+                        var buffer = new byte[4096];
                         int numRead;
                         while ((numRead = decompressionStream.Read(buffer, 0, buffer.Length)) != 0)
-                        {
                             decompressedFileStream.Write(buffer, 0, numRead);
-                        }
 
                         return decompressedFileStream.ToArray();
                     }

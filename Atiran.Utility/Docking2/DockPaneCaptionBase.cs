@@ -1,6 +1,7 @@
 using System.Drawing;
 using System.Security.Permissions;
 using System.Windows.Forms;
+using Atiran.Utility.Docking2.Win32;
 
 namespace Atiran.Utility.Docking2
 {
@@ -8,37 +9,33 @@ namespace Atiran.Utility.Docking2
     {
         protected internal DockPaneCaptionBase(DockPane pane)
         {
-            m_dockPane = pane;
+            DockPane = pane;
 
             SetStyle(ControlStyles.OptimizedDoubleBuffer |
-                ControlStyles.ResizeRedraw |
-                ControlStyles.UserPaint |
-                ControlStyles.AllPaintingInWmPaint, true);
+                     ControlStyles.ResizeRedraw |
+                     ControlStyles.UserPaint |
+                     ControlStyles.AllPaintingInWmPaint, true);
             SetStyle(ControlStyles.Selectable, false);
         }
 
-        private DockPane m_dockPane;
-        public DockPane DockPane
-        {
-            get { return m_dockPane; }
-        }
+        public DockPane DockPane { get; }
 
-        protected DockPane.AppearanceStyle Appearance
-        {
-            get { return DockPane.Appearance; }
-        }
+        protected DockPane.AppearanceStyle Appearance => DockPane.Appearance;
 
-        protected bool HasTabPageContextMenu
-        {
-            get { return DockPane.HasTabPageContextMenu; }
-        }
+        protected bool HasTabPageContextMenu => DockPane.HasTabPageContextMenu;
+
+        /// <summary>
+        ///     Gets a value indicating whether dock panel can be dragged when in auto hide mode.
+        ///     Default is false.
+        /// </summary>
+        protected virtual bool CanDragAutoHide => false;
 
         protected void ShowTabPageContextMenu(Point position)
         {
             DockPane.ShowTabPageContextMenu(this, position);
         }
 
-        protected  override void OnMouseUp(MouseEventArgs e)
+        protected override void OnMouseUp(MouseEventArgs e)
         {
             base.OnMouseUp(e);
 
@@ -46,7 +43,7 @@ namespace Atiran.Utility.Docking2
                 ShowTabPageContextMenu(new Point(e.X, e.Y));
         }
 
-        protected  override void OnMouseDown(MouseEventArgs e)
+        protected override void OnMouseDown(MouseEventArgs e)
         {
             base.OnMouseDown(e);
 
@@ -55,15 +52,13 @@ namespace Atiran.Utility.Docking2
                 DockPane.AllowDockDragAndDrop &&
                 DockPane.ActiveContent != null &&
                 (!DockHelper.IsDockStateAutoHide(DockPane.DockState) || CanDragAutoHide))
-            {
                 DockPane.DockPanel.BeginDrag(DockPane);
-            }
         }
 
-        [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]         
-        protected  override void WndProc(ref Message m)
+        [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
+        protected override void WndProc(ref Message m)
         {
-            if (m.Msg == (int)Win32.Msgs.WM_LBUTTONDBLCLK)
+            if (m.Msg == (int) Msgs.WM_LBUTTONDBLCLK)
             {
                 if (DockHelper.IsDockStateAutoHide(DockPane.DockState))
                 {
@@ -76,6 +71,7 @@ namespace Atiran.Utility.Docking2
                 else
                     DockPane.Float();
             }
+
             base.WndProc(ref m);
         }
 
@@ -96,14 +92,5 @@ namespace Atiran.Utility.Docking2
         }
 
         protected internal abstract int MeasureHeight();
-
-        /// <summary>
-        /// Gets a value indicating whether dock panel can be dragged when in auto hide mode. 
-        /// Default is false.
-        /// </summary>
-        protected virtual bool CanDragAutoHide
-        {
-            get { return false; }
-        }
     }
 }

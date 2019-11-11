@@ -1,5 +1,5 @@
-using System.Collections.ObjectModel;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace Atiran.Utility.Docking2
 {
@@ -23,7 +23,7 @@ namespace Atiran.Utility.Docking2
         {
             if (index < 0 || index > Items.Count - 1)
                 return;
-            
+
             if (Contains(pane))
                 return;
 
@@ -34,17 +34,14 @@ namespace Atiran.Utility.Docking2
         {
             if (PatchController.EnableNestedDisposalFix == true)
             {
-                List<DockPane> collection = new List<DockPane>(Items);
-                foreach (var dockPane in collection)
-                {
-                    dockPane.Close();
-                }
+                var collection = new List<DockPane>(Items);
+                foreach (var dockPane in collection) dockPane.Close();
 
                 collection.Clear();
                 return;
             }
 
-            for (int i=Count - 1; i>=0; i--)
+            for (var i = Count - 1; i >= 0; i--)
                 this[i].Close();
         }
 

@@ -1,8 +1,7 @@
 namespace Atiran.Utility.Docking2.Theme.ThemeVS2012
 {
-
     /// <summary>
-    /// Visual Studio 2012 Light theme.
+    ///     Visual Studio 2012 Light theme.
     /// </summary>
     public class VS2012LightTheme : VS2012ThemeBase
     {

@@ -1,12 +1,16 @@
 using System;
-using System.Windows.Forms;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Windows.Forms;
 
 namespace Atiran.Utility.Docking2
 {
     public abstract class InertButtonBase : Control
     {
+        private bool m_isMouseDown;
+
+        private bool m_isMouseOver;
+
         protected InertButtonBase()
         {
             SetStyle(ControlStyles.SupportsTransparentBackColor, true);
@@ -19,10 +23,9 @@ namespace Atiran.Utility.Docking2
 
         public abstract Bitmap Image { get; }
 
-        private bool m_isMouseOver = false;
         protected bool IsMouseOver
         {
-            get { return m_isMouseOver; }
+            get => m_isMouseOver;
             private set
             {
                 if (m_isMouseOver == value)
@@ -33,10 +36,9 @@ namespace Atiran.Utility.Docking2
             }
         }
 
-        private bool m_isMouseDown = false;
         protected bool IsMouseDown
         {
-            get { return m_isMouseDown; }
+            get => m_isMouseDown;
             private set
             {
                 if (m_isMouseDown == value)
@@ -47,83 +49,74 @@ namespace Atiran.Utility.Docking2
             }
         }
 
-        protected  override Size DefaultSize
-        {
-            get { return new Size(16, 15); }
-        }
+        protected override Size DefaultSize => new Size(16, 15);
 
-        protected  override void OnMouseMove(MouseEventArgs e)
+        protected override void OnMouseMove(MouseEventArgs e)
         {
             base.OnMouseMove(e);
-            bool over = ClientRectangle.Contains(e.X, e.Y);
+            var over = ClientRectangle.Contains(e.X, e.Y);
             if (IsMouseOver != over)
                 IsMouseOver = over;
         }
 
-        protected  override void OnMouseEnter(EventArgs e)
+        protected override void OnMouseEnter(EventArgs e)
         {
             base.OnMouseEnter(e);
             if (!IsMouseOver)
                 IsMouseOver = true;
         }
 
-        protected  override void OnMouseLeave(EventArgs e)
+        protected override void OnMouseLeave(EventArgs e)
         {
             base.OnMouseLeave(e);
             if (IsMouseOver)
                 IsMouseOver = false;
         }
 
-        protected  override void OnMouseDown(MouseEventArgs e)
+        protected override void OnMouseDown(MouseEventArgs e)
         {
             base.OnMouseLeave(e);
             if (!IsMouseDown)
                 IsMouseDown = true;
         }
 
-        protected  override void OnMouseUp(MouseEventArgs e)
+        protected override void OnMouseUp(MouseEventArgs e)
         {
             base.OnMouseLeave(e);
             if (IsMouseDown)
                 IsMouseDown = false;
         }
 
-        protected  override void OnPaint(PaintEventArgs e)
+        protected override void OnPaint(PaintEventArgs e)
         {
             if (HoverImage != null)
             {
                 if (IsMouseOver && Enabled)
-                {
                     e.Graphics.DrawImage(
-                       IsMouseDown ? PressImage : HoverImage,
-                       PatchController.EnableHighDpi == true
-                           ? ClientRectangle
-                           : new Rectangle(0, 0, Image.Width, Image.Height));
-                }
+                        IsMouseDown ? PressImage : HoverImage,
+                        PatchController.EnableHighDpi == true
+                            ? ClientRectangle
+                            : new Rectangle(0, 0, Image.Width, Image.Height));
                 else
-                {
                     e.Graphics.DrawImage(
-                       Image,
-                       PatchController.EnableHighDpi == true
-                           ? ClientRectangle
-                           : new Rectangle(0, 0, Image.Width, Image.Height));
-                }
+                        Image,
+                        PatchController.EnableHighDpi == true
+                            ? ClientRectangle
+                            : new Rectangle(0, 0, Image.Width, Image.Height));
 
                 base.OnPaint(e);
                 return;
             }
 
             if (IsMouseOver && Enabled)
-            {
-                using (Pen pen = new Pen(ForeColor))
+                using (var pen = new Pen(ForeColor))
                 {
                     e.Graphics.DrawRectangle(pen, Rectangle.Inflate(ClientRectangle, -1, -1));
                 }
-            }
 
-            using (ImageAttributes imageAttributes = new ImageAttributes())
+            using (var imageAttributes = new ImageAttributes())
             {
-                ColorMap[] colorMap = new ColorMap[2];
+                var colorMap = new ColorMap[2];
                 colorMap[0] = new ColorMap();
                 colorMap[0].OldColor = Color.FromArgb(0, 0, 0);
                 colorMap[0].NewColor = ForeColor;
@@ -134,13 +127,13 @@ namespace Atiran.Utility.Docking2
                 imageAttributes.SetRemapTable(colorMap);
 
                 e.Graphics.DrawImage(
-                   Image,
-                   new Rectangle(0, 0, Image.Width, Image.Height),
-                   0, 0,
-                   Image.Width,
-                   Image.Height,
-                   GraphicsUnit.Pixel,
-                   imageAttributes);
+                    Image,
+                    new Rectangle(0, 0, Image.Width, Image.Height),
+                    0, 0,
+                    Image.Width,
+                    Image.Height,
+                    GraphicsUnit.Pixel,
+                    imageAttributes);
             }
 
             base.OnPaint(e);
@@ -151,7 +144,7 @@ namespace Atiran.Utility.Docking2
             if (IsDisposed)
                 return;
 
-            bool mouseOver = ClientRectangle.Contains(PointToClient(Control.MousePosition));
+            var mouseOver = ClientRectangle.Contains(PointToClient(MousePosition));
             if (mouseOver != IsMouseOver)
                 IsMouseOver = mouseOver;
 

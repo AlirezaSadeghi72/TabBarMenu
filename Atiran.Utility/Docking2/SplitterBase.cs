@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
+using Atiran.Utility.Docking2.Win32;
 
 namespace Atiran.Utility.Docking2
 {
@@ -14,7 +15,7 @@ namespace Atiran.Utility.Docking2
 
         public override DockStyle Dock
         {
-            get	{	return base.Dock;	}
+            get => base.Dock;
             set
             {
                 SuspendLayout();
@@ -33,17 +34,14 @@ namespace Atiran.Utility.Docking2
                     Cursor = Cursors.HSplit;
                 else
                     Cursor = Cursors.Default;
-                    
+
                 ResumeLayout();
             }
         }
 
-        protected virtual int SplitterSize
-        {
-            get	{	return 0;	}
-        }
+        protected virtual int SplitterSize => 0;
 
-        protected  override void OnMouseDown(MouseEventArgs e)
+        protected override void OnMouseDown(MouseEventArgs e)
         {
             base.OnMouseDown(e);
 
@@ -57,10 +55,10 @@ namespace Atiran.Utility.Docking2
         {
         }
 
-        protected  override void WndProc(ref Message m)
+        protected override void WndProc(ref Message m)
         {
             // eat the WM_MOUSEACTIVATE message
-            if (m.Msg == (int)Win32.Msgs.WM_MOUSEACTIVATE)
+            if (m.Msg == (int) Msgs.WM_MOUSEACTIVATE)
                 return;
 
             base.WndProc(ref m);

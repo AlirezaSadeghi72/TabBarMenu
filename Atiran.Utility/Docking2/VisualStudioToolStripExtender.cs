@@ -1,56 +1,28 @@
 ﻿using System;
-using System.Windows.Forms;
-using System.ComponentModel;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Windows.Forms;
 
 namespace Atiran.Utility.Docking2
 {
     [ProvideProperty("EnableVSStyle", typeof(ToolStrip))]
     public partial class VisualStudioToolStripExtender : Component, IExtenderProvider
     {
-        private class ToolStripProperties
+        public enum VsVersion
         {
-            private VsVersion version = VsVersion.Unknown;
-            private readonly ToolStrip strip;
-            private readonly Dictionary<ToolStripItem, string> menuText = new Dictionary<ToolStripItem, string>();
-            
-
-            public ToolStripProperties(ToolStrip toolstrip)
-            {
-                if (toolstrip == null) throw new ArgumentNullException(nameof(toolstrip));
-                strip = toolstrip;
-
-                if (strip is MenuStrip)
-                    SaveMenuStripText();
-            }
-
-            public VsVersion VsVersion 
-            {
-                get { return this.version; }
-                set
-                {
-                    this.version = value;
-                    UpdateMenuText(this.version == VsVersion.Vs2012 || this.version == VsVersion.Vs2013);
-                }
-            }
-
-            private void SaveMenuStripText()
-            {
-                foreach (ToolStripItem item in strip.Items)
-                    menuText.Add(item, item.Text);
-            }
-
-            public void UpdateMenuText(bool caps)
-            {
-                foreach (ToolStripItem item in menuText.Keys)
-                {
-                    var text = menuText[item];
-                    item.Text = caps ? text.ToUpper() : text;
-                }
-            }
+            Unknown,
+            Vs2003,
+            Vs2005,
+            Vs2008,
+            Vs2010,
+            Vs2012,
+            Vs2013,
+            Vs2015,
+            Vs2017
         }
 
-        private readonly Dictionary<ToolStrip, ToolStripProperties> strips = new Dictionary<ToolStrip, ToolStripProperties>();
+        private readonly Dictionary<ToolStrip, ToolStripProperties> strips =
+            new Dictionary<ToolStrip, ToolStripProperties>();
 
         public VisualStudioToolStripExtender()
         {
@@ -64,6 +36,8 @@ namespace Atiran.Utility.Docking2
             InitializeComponent();
         }
 
+        public ToolStripRenderer DefaultRenderer { get; set; }
+
         #region IExtenderProvider Members
 
         public bool CanExtend(object extendee)
@@ -72,8 +46,6 @@ namespace Atiran.Utility.Docking2
         }
 
         #endregion
-
-        public ToolStripRenderer DefaultRenderer { get; set; }
 
         [DefaultValue(false)]
         public VsVersion GetStyle(ToolStrip strip)
@@ -90,7 +62,7 @@ namespace Atiran.Utility.Docking2
 
             if (!strips.ContainsKey(strip))
             {
-                properties = new ToolStripProperties(strip) { VsVersion = version };
+                properties = new ToolStripProperties(strip) {VsVersion = version};
                 strips.Add(strip, properties);
             }
             else
@@ -107,20 +79,50 @@ namespace Atiran.Utility.Docking2
             {
                 theme.ApplyTo(strip);
             }
+
             properties.VsVersion = version;
         }
 
-        public enum VsVersion
+        private class ToolStripProperties
         {
-            Unknown,
-            Vs2003,
-            Vs2005,
-            Vs2008,
-            Vs2010,
-            Vs2012,
-            Vs2013,
-            Vs2015,
-            Vs2017
+            private readonly Dictionary<ToolStripItem, string> menuText = new Dictionary<ToolStripItem, string>();
+            private readonly ToolStrip strip;
+            private VsVersion version = VsVersion.Unknown;
+
+
+            public ToolStripProperties(ToolStrip toolstrip)
+            {
+                if (toolstrip == null) throw new ArgumentNullException(nameof(toolstrip));
+                strip = toolstrip;
+
+                if (strip is MenuStrip)
+                    SaveMenuStripText();
+            }
+
+            public VsVersion VsVersion
+            {
+                get => version;
+                set
+                {
+                    version = value;
+                    UpdateMenuText(version == VsVersion.Vs2012 || version == VsVersion.Vs2013);
+                }
+            }
+
+            private void SaveMenuStripText()
+            {
+                foreach (ToolStripItem item in strip.Items)
+                    menuText.Add(item, item.Text);
+            }
+
+            public void UpdateMenuText(bool caps)
+            {
+                foreach (var item in menuText.Keys)
+                {
+                    var text = menuText[item];
+                    item.Text = caps ? text.ToUpper() : text;
+                }
+            }
         }
     }
 }

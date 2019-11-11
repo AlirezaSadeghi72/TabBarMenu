@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
-using Atiran.Utility.Docking2.Theme.ThemeVS2005;
 using static Atiran.Utility.Docking2.DockPanelExtender;
 
 namespace Atiran.Utility.Docking2.Theme.ThemeVS2005
@@ -14,7 +13,7 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2005
         }
 
         /// <summary>
-        /// Dock window of Visual Studio 2005 theme.
+        ///     Dock window of Visual Studio 2005 theme.
         /// </summary>
         [ToolboxItem(false)]
         private class VS2005DockWindow : DockWindow
@@ -23,11 +22,12 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2005
             {
             }
 
-            protected  override void OnPaint(PaintEventArgs e)
+            protected override void OnPaint(PaintEventArgs e)
             {
                 // if DockWindow is document, draw the border
                 if (DockState == DockState.Document)
-                    e.Graphics.DrawRectangle(SystemPens.ControlDark, ClientRectangle.X, ClientRectangle.Y, ClientRectangle.Width - 1, ClientRectangle.Height - 1);
+                    e.Graphics.DrawRectangle(SystemPens.ControlDark, ClientRectangle.X, ClientRectangle.Y,
+                        ClientRectangle.Width - 1, ClientRectangle.Height - 1);
 
                 base.OnPaint(e);
             }

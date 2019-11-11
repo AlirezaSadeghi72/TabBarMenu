@@ -21,7 +21,7 @@ namespace Atiran.Utility.Docking2
 
         internal void Dispose()
         {
-            for (int i=Count - 1; i>=0; i--)
+            for (var i = Count - 1; i >= 0; i--)
                 this[i].Close();
         }
 

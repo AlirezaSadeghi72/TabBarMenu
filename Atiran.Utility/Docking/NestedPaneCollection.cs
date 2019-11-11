@@ -1,67 +1,51 @@
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
 
 namespace Atiran.Utility.Docking
 {
-	public sealed class NestedPaneCollection : ReadOnlyCollection<DockPane>
-	{
-		private INestedPanesContainer m_container;
-		private VisibleNestedPaneCollection m_visibleNestedPanes;
-
-		internal NestedPaneCollection(INestedPanesContainer container)
+    public sealed class NestedPaneCollection : ReadOnlyCollection<DockPane>
+    {
+        internal NestedPaneCollection(INestedPanesContainer container)
             : base(new List<DockPane>())
-		{
-			m_container = container;
-			m_visibleNestedPanes = new VisibleNestedPaneCollection(this);
-		}
+        {
+            Container = container;
+            VisibleNestedPanes = new VisibleNestedPaneCollection(this);
+        }
 
-		public INestedPanesContainer Container
-		{
-			get	{	return m_container;	}
-		}
-		
-		public VisibleNestedPaneCollection VisibleNestedPanes
-		{
-			get	{	return m_visibleNestedPanes;	}
-		}
+        public INestedPanesContainer Container { get; }
 
-		public DockState DockState
-		{
-			get	{	return Container.DockState;	}
-		}
+        public VisibleNestedPaneCollection VisibleNestedPanes { get; }
 
-		public bool IsFloat
-		{
-			get	{	return DockState == DockState.Float;	}
-		}
+        public DockState DockState => Container.DockState;
 
-		internal void Add(DockPane pane)
-		{
-			if (pane == null)
-				return;
+        public bool IsFloat => DockState == DockState.Float;
 
-			NestedPaneCollection oldNestedPanes = (pane.NestedPanesContainer == null) ? null : pane.NestedPanesContainer.NestedPanes;
-			if (oldNestedPanes != null)
-				oldNestedPanes.InternalRemove(pane);
-			Items.Add(pane);
-			if (oldNestedPanes != null)
-				oldNestedPanes.CheckFloatWindowDispose();
-		}
+        internal void Add(DockPane pane)
+        {
+            if (pane == null)
+                return;
 
-		private void CheckFloatWindowDispose()
-		{
-			if (Count == 0 && Container.DockState == DockState.Float)
-			{
-				FloatWindow floatWindow = (FloatWindow)Container;
-				if (!floatWindow.Disposing && !floatWindow.IsDisposed)
-					NativeMethods.PostMessage(((FloatWindow)Container).Handle, FloatWindow.WM_CHECKDISPOSE, 0, 0);
-			}
-		}
+            var oldNestedPanes = pane.NestedPanesContainer == null ? null : pane.NestedPanesContainer.NestedPanes;
+            if (oldNestedPanes != null)
+                oldNestedPanes.InternalRemove(pane);
+            Items.Add(pane);
+            if (oldNestedPanes != null)
+                oldNestedPanes.CheckFloatWindowDispose();
+        }
+
+        private void CheckFloatWindowDispose()
+        {
+            if (Count == 0 && Container.DockState == DockState.Float)
+            {
+                var floatWindow = (FloatWindow) Container;
+                if (!floatWindow.Disposing && !floatWindow.IsDisposed)
+                    NativeMethods.PostMessage(((FloatWindow) Container).Handle, FloatWindow.WM_CHECKDISPOSE, 0, 0);
+            }
+        }
 
         /// <summary>
-        /// Switches a pane with its first child in the pane hierarchy. (The actual hiding happens elsewhere.)
+        ///     Switches a pane with its first child in the pane hierarchy. (The actual hiding happens elsewhere.)
         /// </summary>
         /// <param name="pane">Pane to switch</param>
         internal void SwitchPaneWithFirstChild(DockPane pane)
@@ -69,23 +53,21 @@ namespace Atiran.Utility.Docking
             if (!Contains(pane))
                 return;
 
-            NestedDockingStatus statusPane = pane.NestedDockingStatus;
+            var statusPane = pane.NestedDockingStatus;
             DockPane lastNestedPane = null;
-            for (int i = Count - 1; i > IndexOf(pane); i--)
-            {
+            for (var i = Count - 1; i > IndexOf(pane); i--)
                 if (this[i].NestedDockingStatus.PreviousPane == pane)
                 {
                     lastNestedPane = this[i];
                     break;
                 }
-            }
 
             if (lastNestedPane != null)
             {
-                int indexLastNestedPane = IndexOf(lastNestedPane);
+                var indexLastNestedPane = IndexOf(lastNestedPane);
                 Items[IndexOf(pane)] = lastNestedPane;
                 Items[indexLastNestedPane] = pane;
-                NestedDockingStatus lastNestedDock = lastNestedPane.NestedDockingStatus;
+                var lastNestedDock = lastNestedPane.NestedDockingStatus;
 
                 DockAlignment newAlignment;
                 if (lastNestedDock.Alignment == DockAlignment.Left)
@@ -96,12 +78,12 @@ namespace Atiran.Utility.Docking
                     newAlignment = DockAlignment.Bottom;
                 else
                     newAlignment = DockAlignment.Top;
-                double newProportion = 1 - lastNestedDock.Proportion;
+                var newProportion = 1 - lastNestedDock.Proportion;
 
                 lastNestedDock.SetStatus(this, statusPane.PreviousPane, statusPane.Alignment, statusPane.Proportion);
-                for (int i = indexLastNestedPane - 1; i > IndexOf(lastNestedPane); i--)
+                for (var i = indexLastNestedPane - 1; i > IndexOf(lastNestedPane); i--)
                 {
-                    NestedDockingStatus status = this[i].NestedDockingStatus;
+                    var status = this[i].NestedDockingStatus;
                     if (status.PreviousPane == pane)
                         status.SetStatus(this, lastNestedPane, status.Alignment, status.Proportion);
                 }
@@ -110,57 +92,57 @@ namespace Atiran.Utility.Docking
             }
         }
 
-		internal void Remove(DockPane pane)
-		{
-			InternalRemove(pane);
-			CheckFloatWindowDispose();
-		}
+        internal void Remove(DockPane pane)
+        {
+            InternalRemove(pane);
+            CheckFloatWindowDispose();
+        }
 
-		private void InternalRemove(DockPane pane)
-		{
-			if (!Contains(pane))
-				return;
+        private void InternalRemove(DockPane pane)
+        {
+            if (!Contains(pane))
+                return;
 
-			NestedDockingStatus statusPane = pane.NestedDockingStatus;
-			DockPane lastNestedPane = null;
-			for (int i=Count - 1; i> IndexOf(pane); i--)
-			{
-				if (this[i].NestedDockingStatus.PreviousPane == pane)
-				{
-					lastNestedPane = this[i];
-					break;
-				}
-			}
+            var statusPane = pane.NestedDockingStatus;
+            DockPane lastNestedPane = null;
+            for (var i = Count - 1; i > IndexOf(pane); i--)
+                if (this[i].NestedDockingStatus.PreviousPane == pane)
+                {
+                    lastNestedPane = this[i];
+                    break;
+                }
 
-			if (lastNestedPane != null)
-			{
-				int indexLastNestedPane = IndexOf(lastNestedPane);
-				Items.Remove(lastNestedPane);
-				Items[IndexOf(pane)] = lastNestedPane;
-				NestedDockingStatus lastNestedDock = lastNestedPane.NestedDockingStatus;
-				lastNestedDock.SetStatus(this, statusPane.PreviousPane, statusPane.Alignment, statusPane.Proportion);
-				for (int i=indexLastNestedPane - 1; i>IndexOf(lastNestedPane); i--)
-				{
-					NestedDockingStatus status = this[i].NestedDockingStatus;
-					if (status.PreviousPane == pane)
-						status.SetStatus(this, lastNestedPane, status.Alignment, status.Proportion);
-				}
-			}
-			else
-				Items.Remove(pane);
+            if (lastNestedPane != null)
+            {
+                var indexLastNestedPane = IndexOf(lastNestedPane);
+                Items.Remove(lastNestedPane);
+                Items[IndexOf(pane)] = lastNestedPane;
+                var lastNestedDock = lastNestedPane.NestedDockingStatus;
+                lastNestedDock.SetStatus(this, statusPane.PreviousPane, statusPane.Alignment, statusPane.Proportion);
+                for (var i = indexLastNestedPane - 1; i > IndexOf(lastNestedPane); i--)
+                {
+                    var status = this[i].NestedDockingStatus;
+                    if (status.PreviousPane == pane)
+                        status.SetStatus(this, lastNestedPane, status.Alignment, status.Proportion);
+                }
+            }
+            else
+            {
+                Items.Remove(pane);
+            }
 
-			statusPane.SetStatus(null, null, DockAlignment.Left, 0.5);
-			statusPane.SetDisplayingStatus(false, null, DockAlignment.Left, 0.5);
-			statusPane.SetDisplayingBounds(Rectangle.Empty, Rectangle.Empty, Rectangle.Empty);
-		}
+            statusPane.SetStatus(null, null, DockAlignment.Left, 0.5);
+            statusPane.SetDisplayingStatus(false, null, DockAlignment.Left, 0.5);
+            statusPane.SetDisplayingBounds(Rectangle.Empty, Rectangle.Empty, Rectangle.Empty);
+        }
 
-		public DockPane GetDefaultPreviousPane(DockPane pane)
-		{
-			for (int i=Count-1; i>=0; i--)
-				if (this[i] != pane)
-					return this[i];
+        public DockPane GetDefaultPreviousPane(DockPane pane)
+        {
+            for (var i = Count - 1; i >= 0; i--)
+                if (this[i] != pane)
+                    return this[i];
 
-			return null;
-		}
-	}
+            return null;
+        }
+    }
 }

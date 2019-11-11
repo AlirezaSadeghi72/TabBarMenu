@@ -29,8 +29,10 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2012
             palette.CommandBarMenuDefault.Text = ColorTranslatorFromHtml("CommandBarTextActive");
 
             palette.CommandBarMenuPopupDefault.Arrow = ColorTranslatorFromHtml("CommandBarMenuSubmenuGlyph");
-            palette.CommandBarMenuPopupDefault.BackgroundBottom = ColorTranslatorFromHtml("CommandBarMenuBackgroundGradientEnd");
-            palette.CommandBarMenuPopupDefault.BackgroundTop = ColorTranslatorFromHtml("CommandBarMenuBackgroundGradientBegin");
+            palette.CommandBarMenuPopupDefault.BackgroundBottom =
+                ColorTranslatorFromHtml("CommandBarMenuBackgroundGradientEnd");
+            palette.CommandBarMenuPopupDefault.BackgroundTop =
+                ColorTranslatorFromHtml("CommandBarMenuBackgroundGradientBegin");
             palette.CommandBarMenuPopupDefault.Border = ColorTranslatorFromHtml("CommandBarMenuBorder");
             palette.CommandBarMenuPopupDefault.Checkmark = ColorTranslatorFromHtml("CommandBarCheckBox");
             palette.CommandBarMenuPopupDefault.CheckmarkBackground = ColorTranslatorFromHtml("CommandBarSelectedIcon");
@@ -38,57 +40,70 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2012
             palette.CommandBarMenuPopupDefault.Separator = ColorTranslatorFromHtml("CommandBarMenuSeparator");
 
             palette.CommandBarMenuPopupDisabled.Checkmark = ColorTranslatorFromHtml("CommandBarCheckBoxDisabled");
-            palette.CommandBarMenuPopupDisabled.CheckmarkBackground = ColorTranslatorFromHtml("CommandBarSelectedIconDisabled");
+            palette.CommandBarMenuPopupDisabled.CheckmarkBackground =
+                ColorTranslatorFromHtml("CommandBarSelectedIconDisabled");
             palette.CommandBarMenuPopupDisabled.Text = ColorTranslatorFromHtml("CommandBarTextInactive");
 
             palette.CommandBarMenuPopupHovered.Arrow = ColorTranslatorFromHtml("CommandBarMenuMouseOverSubmenuGlyph");
             palette.CommandBarMenuPopupHovered.Checkmark = ColorTranslatorFromHtml("CommandBarCheckBoxMouseOver");
-            palette.CommandBarMenuPopupHovered.CheckmarkBackground = ColorTranslatorFromHtml("CommandBarHoverOverSelectedIcon");
+            palette.CommandBarMenuPopupHovered.CheckmarkBackground =
+                ColorTranslatorFromHtml("CommandBarHoverOverSelectedIcon");
             palette.CommandBarMenuPopupHovered.ItemBackground = ColorTranslatorFromHtml("CommandBarMenuItemMouseOver");
             palette.CommandBarMenuPopupHovered.Text = ColorTranslatorFromHtml("CommandBarMenuItemMouseOver", true);
 
-            palette.CommandBarMenuTopLevelHeaderHovered.Background = ColorTranslatorFromHtml("CommandBarMouseOverBackgroundBegin");
+            palette.CommandBarMenuTopLevelHeaderHovered.Background =
+                ColorTranslatorFromHtml("CommandBarMouseOverBackgroundBegin");
             palette.CommandBarMenuTopLevelHeaderHovered.Border = ColorTranslatorFromHtml("CommandBarBorder");
             palette.CommandBarMenuTopLevelHeaderHovered.Text = ColorTranslatorFromHtml("CommandBarTextHover");
 
             palette.CommandBarToolbarDefault.Background = ColorTranslatorFromHtml("CommandBarGradientBegin");
             palette.CommandBarToolbarDefault.Border = ColorTranslatorFromHtml("CommandBarToolBarBorder");
             palette.CommandBarToolbarDefault.Grip = ColorTranslatorFromHtml("CommandBarDragHandle");
-            palette.CommandBarToolbarDefault.OverflowButtonBackground = ColorTranslatorFromHtml("CommandBarOptionsBackground");
+            palette.CommandBarToolbarDefault.OverflowButtonBackground =
+                ColorTranslatorFromHtml("CommandBarOptionsBackground");
             palette.CommandBarToolbarDefault.OverflowButtonGlyph = ColorTranslatorFromHtml("CommandBarOptionsGlyph");
             palette.CommandBarToolbarDefault.Separator = ColorTranslatorFromHtml("CommandBarToolBarSeparator");
-            palette.CommandBarToolbarDefault.SeparatorAccent = ColorTranslatorFromHtml("CommandBarToolBarSeparatorHighlight");
+            palette.CommandBarToolbarDefault.SeparatorAccent =
+                ColorTranslatorFromHtml("CommandBarToolBarSeparatorHighlight");
             palette.CommandBarToolbarDefault.Tray = ColorTranslatorFromHtml("CommandShelfBackgroundGradientBegin");
 
             palette.CommandBarToolbarButtonChecked.Background = ColorTranslatorFromHtml("CommandBarSelected");
             palette.CommandBarToolbarButtonChecked.Border = ColorTranslatorFromHtml("CommandBarSelectedBorder");
             palette.CommandBarToolbarButtonChecked.Text = ColorTranslatorFromHtml("CommandBarTextSelected");
 
-            palette.CommandBarToolbarButtonCheckedHovered.Border = ColorTranslatorFromHtml("CommandBarHoverOverSelectedIconBorder");
-            palette.CommandBarToolbarButtonCheckedHovered.Text = ColorTranslatorFromHtml("CommandBarTextHoverOverSelected");
+            palette.CommandBarToolbarButtonCheckedHovered.Border =
+                ColorTranslatorFromHtml("CommandBarHoverOverSelectedIconBorder");
+            palette.CommandBarToolbarButtonCheckedHovered.Text =
+                ColorTranslatorFromHtml("CommandBarTextHoverOverSelected");
 
             palette.CommandBarToolbarButtonDefault.Arrow = ColorTranslatorFromHtml("DropDownGlyph");
 
             palette.CommandBarToolbarButtonHovered.Arrow = ColorTranslatorFromHtml("DropDownMouseOverGlyph");
-            palette.CommandBarToolbarButtonHovered.Separator = ColorTranslatorFromHtml("CommandBarSplitButtonSeparator");
+            palette.CommandBarToolbarButtonHovered.Separator =
+                ColorTranslatorFromHtml("CommandBarSplitButtonSeparator");
 
             palette.CommandBarToolbarButtonPressed.Arrow = ColorTranslatorFromHtml("DropDownMouseDownGlyph");
-            palette.CommandBarToolbarButtonPressed.Background = ColorTranslatorFromHtml("CommandBarMouseDownBackgroundBegin");
+            palette.CommandBarToolbarButtonPressed.Background =
+                ColorTranslatorFromHtml("CommandBarMouseDownBackgroundBegin");
             palette.CommandBarToolbarButtonPressed.Text = ColorTranslatorFromHtml("CommandBarTextMouseDown");
 
-            palette.CommandBarToolbarOverflowHovered.Background = ColorTranslatorFromHtml("CommandBarOptionsMouseOverBackgroundBegin");
+            palette.CommandBarToolbarOverflowHovered.Background =
+                ColorTranslatorFromHtml("CommandBarOptionsMouseOverBackgroundBegin");
             palette.CommandBarToolbarOverflowHovered.Glyph = ColorTranslatorFromHtml("CommandBarOptionsMouseOverGlyph");
 
-            palette.CommandBarToolbarOverflowPressed.Background = ColorTranslatorFromHtml("CommandBarOptionsMouseDownBackgroundBegin");
+            palette.CommandBarToolbarOverflowPressed.Background =
+                ColorTranslatorFromHtml("CommandBarOptionsMouseDownBackgroundBegin");
             palette.CommandBarToolbarOverflowPressed.Glyph = ColorTranslatorFromHtml("CommandBarOptionsMouseDownGlyph");
 
             palette.OverflowButtonDefault.Glyph = ColorTranslatorFromHtml("DocWellOverflowButtonGlyph");
 
-            palette.OverflowButtonHovered.Background = ColorTranslatorFromHtml("DocWellOverflowButtonMouseOverBackground");
+            palette.OverflowButtonHovered.Background =
+                ColorTranslatorFromHtml("DocWellOverflowButtonMouseOverBackground");
             palette.OverflowButtonHovered.Border = ColorTranslatorFromHtml("DocWellOverflowButtonMouseOverBorder");
             palette.OverflowButtonHovered.Glyph = ColorTranslatorFromHtml("DocWellOverflowButtonMouseOverGlyph");
 
-            palette.OverflowButtonPressed.Background = ColorTranslatorFromHtml("DocWellOverflowButtonMouseDownBackground");
+            palette.OverflowButtonPressed.Background =
+                ColorTranslatorFromHtml("DocWellOverflowButtonMouseDownBackground");
             palette.OverflowButtonPressed.Border = ColorTranslatorFromHtml("DocWellOverflowButtonMouseDownBorder");
             palette.OverflowButtonPressed.Glyph = ColorTranslatorFromHtml("DocWellOverflowButtonMouseDownGlyph");
 
@@ -107,36 +122,55 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2012
             palette.TabUnselectedHovered.Button = ColorTranslatorFromHtml("FileTabHotGlyph");
             palette.TabUnselectedHovered.Text = ColorTranslatorFromHtml("FileTabHotText");
 
-            palette.TabButtonSelectedActiveHovered.Background = ColorTranslatorFromHtml("FileTabButtonHoverSelectedActive");
-            palette.TabButtonSelectedActiveHovered.Border = ColorTranslatorFromHtml("FileTabButtonHoverSelectedActiveBorder");
-            palette.TabButtonSelectedActiveHovered.Glyph = ColorTranslatorFromHtml("FileTabButtonHoverSelectedActiveGlyph");
+            palette.TabButtonSelectedActiveHovered.Background =
+                ColorTranslatorFromHtml("FileTabButtonHoverSelectedActive");
+            palette.TabButtonSelectedActiveHovered.Border =
+                ColorTranslatorFromHtml("FileTabButtonHoverSelectedActiveBorder");
+            palette.TabButtonSelectedActiveHovered.Glyph =
+                ColorTranslatorFromHtml("FileTabButtonHoverSelectedActiveGlyph");
 
-            palette.TabButtonSelectedActivePressed.Background = ColorTranslatorFromHtml("FileTabButtonDownSelectedActive");
-            palette.TabButtonSelectedActivePressed.Border = ColorTranslatorFromHtml("FileTabButtonDownSelectedActiveBorder");
-            palette.TabButtonSelectedActivePressed.Glyph = ColorTranslatorFromHtml("FileTabButtonDownSelectedActiveGlyph");
+            palette.TabButtonSelectedActivePressed.Background =
+                ColorTranslatorFromHtml("FileTabButtonDownSelectedActive");
+            palette.TabButtonSelectedActivePressed.Border =
+                ColorTranslatorFromHtml("FileTabButtonDownSelectedActiveBorder");
+            palette.TabButtonSelectedActivePressed.Glyph =
+                ColorTranslatorFromHtml("FileTabButtonDownSelectedActiveGlyph");
 
-            palette.TabButtonSelectedInactiveHovered.Background = ColorTranslatorFromHtml("FileTabButtonHoverSelectedInactive");
-            palette.TabButtonSelectedInactiveHovered.Border = ColorTranslatorFromHtml("FileTabButtonHoverSelectedInactiveBorder");
-            palette.TabButtonSelectedInactiveHovered.Glyph = ColorTranslatorFromHtml("FileTabButtonHoverSelectedInactiveGlyph");
+            palette.TabButtonSelectedInactiveHovered.Background =
+                ColorTranslatorFromHtml("FileTabButtonHoverSelectedInactive");
+            palette.TabButtonSelectedInactiveHovered.Border =
+                ColorTranslatorFromHtml("FileTabButtonHoverSelectedInactiveBorder");
+            palette.TabButtonSelectedInactiveHovered.Glyph =
+                ColorTranslatorFromHtml("FileTabButtonHoverSelectedInactiveGlyph");
 
-            palette.TabButtonSelectedInactivePressed.Background = ColorTranslatorFromHtml("FileTabButtonDownSelectedInactive");
-            palette.TabButtonSelectedInactivePressed.Border = ColorTranslatorFromHtml("FileTabButtonDownSelectedInactiveBorder");
-            palette.TabButtonSelectedInactivePressed.Glyph = ColorTranslatorFromHtml("FileTabButtonDownSelectedInactiveGlyph");
+            palette.TabButtonSelectedInactivePressed.Background =
+                ColorTranslatorFromHtml("FileTabButtonDownSelectedInactive");
+            palette.TabButtonSelectedInactivePressed.Border =
+                ColorTranslatorFromHtml("FileTabButtonDownSelectedInactiveBorder");
+            palette.TabButtonSelectedInactivePressed.Glyph =
+                ColorTranslatorFromHtml("FileTabButtonDownSelectedInactiveGlyph");
 
-            palette.TabButtonUnselectedTabHoveredButtonHovered.Background = ColorTranslatorFromHtml("FileTabButtonHoverInactive");
-            palette.TabButtonUnselectedTabHoveredButtonHovered.Border = ColorTranslatorFromHtml("FileTabButtonHoverInactiveBorder");
-            palette.TabButtonUnselectedTabHoveredButtonHovered.Glyph = ColorTranslatorFromHtml("FileTabButtonHoverInactiveGlyph");
+            palette.TabButtonUnselectedTabHoveredButtonHovered.Background =
+                ColorTranslatorFromHtml("FileTabButtonHoverInactive");
+            palette.TabButtonUnselectedTabHoveredButtonHovered.Border =
+                ColorTranslatorFromHtml("FileTabButtonHoverInactiveBorder");
+            palette.TabButtonUnselectedTabHoveredButtonHovered.Glyph =
+                ColorTranslatorFromHtml("FileTabButtonHoverInactiveGlyph");
 
-            palette.TabButtonUnselectedTabHoveredButtonPressed.Background = ColorTranslatorFromHtml("FileTabButtonDownInactive");
-            palette.TabButtonUnselectedTabHoveredButtonPressed.Border = ColorTranslatorFromHtml("FileTabButtonDownInactiveBorder");
-            palette.TabButtonUnselectedTabHoveredButtonPressed.Glyph = ColorTranslatorFromHtml("FileTabButtonDownInactiveGlyph");
+            palette.TabButtonUnselectedTabHoveredButtonPressed.Background =
+                ColorTranslatorFromHtml("FileTabButtonDownInactive");
+            palette.TabButtonUnselectedTabHoveredButtonPressed.Border =
+                ColorTranslatorFromHtml("FileTabButtonDownInactiveBorder");
+            palette.TabButtonUnselectedTabHoveredButtonPressed.Glyph =
+                ColorTranslatorFromHtml("FileTabButtonDownInactiveGlyph");
 
             palette.MainWindowActive.Background = ColorTranslatorFromHtml("EnvironmentBackground");
             palette.MainWindowStatusBarDefault.Background = ColorTranslatorFromHtml("StatusBarDefault");
             palette.MainWindowStatusBarDefault.Highlight = ColorTranslatorFromHtml("StatusBarHighlight");
             palette.MainWindowStatusBarDefault.HighlightText = ColorTranslatorFromHtml("StatusBarHighlight", true);
             palette.MainWindowStatusBarDefault.ResizeGrip = ColorTranslatorFromHtml("MainWindowResizeGripTexture1");
-            palette.MainWindowStatusBarDefault.ResizeGripAccent = ColorTranslatorFromHtml("MainWindowResizeGripTexture2");
+            palette.MainWindowStatusBarDefault.ResizeGripAccent =
+                ColorTranslatorFromHtml("MainWindowResizeGripTexture2");
             palette.MainWindowStatusBarDefault.Text = ColorTranslatorFromHtml("StatusBarText");
 
             palette.ToolWindowCaptionActive.Background = ColorTranslatorFromHtml("TitleBarActiveBorder");
@@ -149,17 +183,23 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2012
             palette.ToolWindowCaptionInactive.Grip = ColorTranslatorFromHtml("TitleBarDragHandle");
             palette.ToolWindowCaptionInactive.Text = ColorTranslatorFromHtml("TitleBarInactiveText");
 
-            palette.ToolWindowCaptionButtonActiveHovered.Background = ColorTranslatorFromHtml("ToolWindowButtonHoverActive");
-            palette.ToolWindowCaptionButtonActiveHovered.Border = ColorTranslatorFromHtml("ToolWindowButtonHoverActiveBorder");
-            palette.ToolWindowCaptionButtonActiveHovered.Glyph = ColorTranslatorFromHtml("ToolWindowButtonHoverActiveGlyph");
+            palette.ToolWindowCaptionButtonActiveHovered.Background =
+                ColorTranslatorFromHtml("ToolWindowButtonHoverActive");
+            palette.ToolWindowCaptionButtonActiveHovered.Border =
+                ColorTranslatorFromHtml("ToolWindowButtonHoverActiveBorder");
+            palette.ToolWindowCaptionButtonActiveHovered.Glyph =
+                ColorTranslatorFromHtml("ToolWindowButtonHoverActiveGlyph");
 
             palette.ToolWindowCaptionButtonPressed.Background = ColorTranslatorFromHtml("ToolWindowButtonDown");
             palette.ToolWindowCaptionButtonPressed.Border = ColorTranslatorFromHtml("ToolWindowButtonDownBorder");
             palette.ToolWindowCaptionButtonPressed.Glyph = ColorTranslatorFromHtml("ToolWindowButtonDownActiveGlyph");
 
-            palette.ToolWindowCaptionButtonInactiveHovered.Background = ColorTranslatorFromHtml("ToolWindowButtonHoverInactive");
-            palette.ToolWindowCaptionButtonInactiveHovered.Border = ColorTranslatorFromHtml("ToolWindowButtonHoverInactiveBorder");
-            palette.ToolWindowCaptionButtonInactiveHovered.Glyph = ColorTranslatorFromHtml("ToolWindowButtonHoverInactiveGlyph");
+            palette.ToolWindowCaptionButtonInactiveHovered.Background =
+                ColorTranslatorFromHtml("ToolWindowButtonHoverInactive");
+            palette.ToolWindowCaptionButtonInactiveHovered.Border =
+                ColorTranslatorFromHtml("ToolWindowButtonHoverInactiveBorder");
+            palette.ToolWindowCaptionButtonInactiveHovered.Glyph =
+                ColorTranslatorFromHtml("ToolWindowButtonHoverInactiveGlyph");
 
             palette.ToolWindowTabSelectedActive.Background = ColorTranslatorFromHtml("ToolWindowTabSelectedTab");
             palette.ToolWindowTabSelectedActive.Text = ColorTranslatorFromHtml("ToolWindowTabSelectedActiveText");
@@ -170,7 +210,8 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2012
             palette.ToolWindowTabUnselected.Text = ColorTranslatorFromHtml("ToolWindowTabText");
             palette.ToolWindowTabUnselected.Background = ColorTranslatorFromHtml("ToolWindowTabGradientBegin");
 
-            palette.ToolWindowTabUnselectedHovered.Background = ColorTranslatorFromHtml("ToolWindowTabMouseOverBackgroundBegin");
+            palette.ToolWindowTabUnselectedHovered.Background =
+                ColorTranslatorFromHtml("ToolWindowTabMouseOverBackgroundBegin");
             palette.ToolWindowTabUnselectedHovered.Text = ColorTranslatorFromHtml("ToolWindowTabMouseOverText");
 
             palette.ToolWindowSeparator = ColorTranslatorFromHtml("ToolWindowTabSeparator");
@@ -191,10 +232,7 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2012
                 .Elements("Category").FirstOrDefault(item => item.Attribute("Name").Value == Env)?
                 .Elements("Color").FirstOrDefault(item => item.Attribute("Name").Value == name)?
                 .Element(foreground ? "Foreground" : "Background").Attribute("Source").Value;
-            if (color == null)
-            {
-                return Color.Transparent;
-            }
+            if (color == null) return Color.Transparent;
 
             return ColorTranslator.FromHtml($"#{color}");
         }

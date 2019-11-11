@@ -1,46 +1,35 @@
-using System;
-using System.Windows.Forms;
 using System.Drawing;
-using System.Runtime.InteropServices;
 using System.Security.Permissions;
+using System.Windows.Forms;
+using Atiran.Utility.Docking.Win32;
 
 namespace Atiran.Utility.Docking
 {
-	public abstract class DockPaneCaptionBase : Control
-	{
-		protected internal DockPaneCaptionBase(DockPane pane)
-		{
-			m_dockPane = pane;
-
-			SetStyle(ControlStyles.OptimizedDoubleBuffer |
-                ControlStyles.ResizeRedraw |
-                ControlStyles.UserPaint |
-                ControlStyles.AllPaintingInWmPaint, true);
-			SetStyle(ControlStyles.Selectable, false);
-		}
-
-		private DockPane m_dockPane;
-		protected DockPane DockPane
-		{
-			get	{	return m_dockPane;	}
-		}
-
-		protected DockPane.AppearanceStyle Appearance
-		{
-			get	{	return DockPane.Appearance;	}
-		}
-
-        protected bool HasTabPageContextMenu
+    public abstract class DockPaneCaptionBase : Control
+    {
+        protected internal DockPaneCaptionBase(DockPane pane)
         {
-            get { return DockPane.HasTabPageContextMenu; }
+            DockPane = pane;
+
+            SetStyle(ControlStyles.OptimizedDoubleBuffer |
+                     ControlStyles.ResizeRedraw |
+                     ControlStyles.UserPaint |
+                     ControlStyles.AllPaintingInWmPaint, true);
+            SetStyle(ControlStyles.Selectable, false);
         }
+
+        protected DockPane DockPane { get; }
+
+        protected DockPane.AppearanceStyle Appearance => DockPane.Appearance;
+
+        protected bool HasTabPageContextMenu => DockPane.HasTabPageContextMenu;
 
         protected void ShowTabPageContextMenu(Point position)
         {
             DockPane.ShowTabPageContextMenu(this, position);
         }
 
-        protected  override void OnMouseUp(MouseEventArgs e)
+        protected override void OnMouseUp(MouseEventArgs e)
         {
             base.OnMouseUp(e);
 
@@ -48,22 +37,22 @@ namespace Atiran.Utility.Docking
                 ShowTabPageContextMenu(new Point(e.X, e.Y));
         }
 
-        protected  override void OnMouseDown(MouseEventArgs e)
+        protected override void OnMouseDown(MouseEventArgs e)
         {
             base.OnMouseDown(e);
 
             if (e.Button == MouseButtons.Left &&
-			    DockPane.DockPanel.AllowEndUserDocking &&
+                DockPane.DockPanel.AllowEndUserDocking &&
                 DockPane.AllowDockDragAndDrop &&
-				!DockHelper.IsDockStateAutoHide(DockPane.DockState) &&
+                !DockHelper.IsDockStateAutoHide(DockPane.DockState) &&
                 DockPane.ActiveContent != null)
-				DockPane.DockPanel.BeginDrag(DockPane);
+                DockPane.DockPanel.BeginDrag(DockPane);
         }
 
-        [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]         
-        protected  override void WndProc(ref Message m)
+        [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
+        protected override void WndProc(ref Message m)
         {
-            if (m.Msg == (int)Win32.Msgs.WM_LBUTTONDBLCLK)
+            if (m.Msg == (int) Msgs.WM_LBUTTONDBLCLK)
             {
                 if (DockHelper.IsDockStateAutoHide(DockPane.DockState))
                 {
@@ -76,25 +65,26 @@ namespace Atiran.Utility.Docking
                 else
                     DockPane.Float();
             }
+
             base.WndProc(ref m);
         }
 
-		internal void RefreshChanges()
-		{
+        internal void RefreshChanges()
+        {
             if (IsDisposed)
                 return;
 
-			OnRefreshChanges();
-		}
+            OnRefreshChanges();
+        }
 
         protected virtual void OnRightToLeftLayoutChanged()
         {
         }
 
-		protected virtual void OnRefreshChanges()
-		{
-		}
+        protected virtual void OnRefreshChanges()
+        {
+        }
 
-		protected internal abstract int MeasureHeight();
-	}
+        protected internal abstract int MeasureHeight();
+    }
 }

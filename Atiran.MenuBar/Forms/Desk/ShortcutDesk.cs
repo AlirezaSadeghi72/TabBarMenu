@@ -1,31 +1,28 @@
-﻿using Atiran.Utility.Docking2;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.Design.Data;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Atiran.DataLayer.Context;
 using Atiran.DataLayer.Services;
-using Atiran.MenuBar.Class;
 using Atiran.Reporting.BankAndChek.ChekPardakhti;
+using Atiran.Utility.Docking2;
 using Atiran.Utility.Docking2.Desk;
 
 namespace Atiran.MenuBar.Forms
 {
     public class ShortcutDesk : DockContent
     {
-        private TextBox txtSearch;
-        private List<UserShortcut> shortcuts;
-        private DockPanel MainTab1;
-        private DataGridView dataGridView1;
-        private ContextMenuStrip contextMenuStrip1;
-        private System.ComponentModel.IContainer components;
-        private ToolStripMenuItem miAddEdit;
         private int _userID;
+        private IContainer components;
+        private ContextMenuStrip contextMenuStrip1;
+        private DataGridView dataGridView1;
+        private DockPanel MainTab1;
+        private ToolStripMenuItem miAddEdit;
+        private List<UserShortcut> shortcuts;
+        private TextBox txtSearch;
 
         public ShortcutDesk(ref DockPanel dockPanel, int UserID = 1)
         {
@@ -36,108 +33,108 @@ namespace Atiran.MenuBar.Forms
             shortcuts = Connection.GetUserShortcuts(UserID);
             dataGridView1.DataSource = shortcuts;
             SetGrid();
-
         }
 
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
-            this.txtSearch = new System.Windows.Forms.TextBox();
-            this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.miAddEdit = new System.Windows.Forms.ToolStripMenuItem();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
-            this.contextMenuStrip1.SuspendLayout();
-            this.SuspendLayout();
+            components = new Container();
+            var dataGridViewCellStyle4 = new DataGridViewCellStyle();
+            var dataGridViewCellStyle5 = new DataGridViewCellStyle();
+            var dataGridViewCellStyle6 = new DataGridViewCellStyle();
+            txtSearch = new TextBox();
+            dataGridView1 = new DataGridView();
+            contextMenuStrip1 = new ContextMenuStrip(components);
+            miAddEdit = new ToolStripMenuItem();
+            ((ISupportInitialize) dataGridView1).BeginInit();
+            contextMenuStrip1.SuspendLayout();
+            SuspendLayout();
             // 
             // txtSearch
             // 
-            this.txtSearch.Dock = System.Windows.Forms.DockStyle.Top;
-            this.txtSearch.Location = new System.Drawing.Point(0, 0);
-            this.txtSearch.Name = "txtSearch";
-            this.txtSearch.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.txtSearch.Size = new System.Drawing.Size(603, 28);
-            this.txtSearch.TabIndex = 0;
-            this.txtSearch.TextChanged += new System.EventHandler(this.txtSearch_TextChanged);
-            this.txtSearch.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtSearch_KeyDown);
+            txtSearch.Dock = DockStyle.Top;
+            txtSearch.Location = new Point(0, 0);
+            txtSearch.Name = "txtSearch";
+            txtSearch.RightToLeft = RightToLeft.Yes;
+            txtSearch.Size = new Size(603, 28);
+            txtSearch.TabIndex = 0;
+            txtSearch.TextChanged += txtSearch_TextChanged;
+            txtSearch.KeyDown += txtSearch_KeyDown;
             // 
             // dataGridView1
             // 
-            this.dataGridView1.AllowUserToAddRows = false;
-            this.dataGridView1.AllowUserToDeleteRows = false;
-            this.dataGridView1.BackgroundColor = System.Drawing.Color.White;
-            this.dataGridView1.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.dataGridView1.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("IRANSans(FaNum)", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle4.ForeColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.HotTrack;
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridView1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
-            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.ColumnHeadersVisible = false;
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle5.Font = new System.Drawing.Font("IRANSans(FaNum)", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.Color.DodgerBlue;
-            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridView1.DefaultCellStyle = dataGridViewCellStyle5;
-            this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dataGridView1.EnableHeadersVisualStyles = false;
-            this.dataGridView1.Location = new System.Drawing.Point(0, 28);
-            this.dataGridView1.MultiSelect = false;
-            this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.ReadOnly = true;
-            this.dataGridView1.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.dataGridView1.RowHeadersVisible = false;
-            dataGridViewCellStyle6.BackColor = System.Drawing.Color.White;
-            dataGridViewCellStyle6.ForeColor = System.Drawing.Color.Black;
-            this.dataGridView1.RowsDefaultCellStyle = dataGridViewCellStyle6;
-            this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridView1.Size = new System.Drawing.Size(603, 244);
-            this.dataGridView1.TabIndex = 6;
-            this.dataGridView1.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellDoubleClick);
+            dataGridView1.AllowUserToAddRows = false;
+            dataGridView1.AllowUserToDeleteRows = false;
+            dataGridView1.BackgroundColor = Color.White;
+            dataGridView1.BorderStyle = BorderStyle.None;
+            dataGridView1.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
+            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle4.BackColor = Color.FromArgb(224, 224, 224);
+            dataGridViewCellStyle4.Font = new Font("IRANSans(FaNum)", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle4.ForeColor = Color.Black;
+            dataGridViewCellStyle4.SelectionBackColor = SystemColors.HotTrack;
+            dataGridViewCellStyle4.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = DataGridViewTriState.True;
+            dataGridView1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
+            dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridView1.ColumnHeadersVisible = false;
+            dataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle5.BackColor = SystemColors.Window;
+            dataGridViewCellStyle5.Font = new Font("IRANSans(FaNum)", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle5.ForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle5.SelectionBackColor = Color.DodgerBlue;
+            dataGridViewCellStyle5.SelectionForeColor = Color.White;
+            dataGridViewCellStyle5.WrapMode = DataGridViewTriState.False;
+            dataGridView1.DefaultCellStyle = dataGridViewCellStyle5;
+            dataGridView1.Dock = DockStyle.Fill;
+            dataGridView1.EnableHeadersVisualStyles = false;
+            dataGridView1.Location = new Point(0, 28);
+            dataGridView1.MultiSelect = false;
+            dataGridView1.Name = "dataGridView1";
+            dataGridView1.ReadOnly = true;
+            dataGridView1.RightToLeft = RightToLeft.Yes;
+            dataGridView1.RowHeadersVisible = false;
+            dataGridViewCellStyle6.BackColor = Color.White;
+            dataGridViewCellStyle6.ForeColor = Color.Black;
+            dataGridView1.RowsDefaultCellStyle = dataGridViewCellStyle6;
+            dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dataGridView1.Size = new Size(603, 244);
+            dataGridView1.TabIndex = 6;
+            dataGridView1.CellDoubleClick += dataGridView1_CellDoubleClick;
             // 
             // contextMenuStrip1
             // 
-            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.miAddEdit});
-            this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(155, 26);
+            contextMenuStrip1.Items.AddRange(new ToolStripItem[]
+            {
+                miAddEdit
+            });
+            contextMenuStrip1.Name = "contextMenuStrip1";
+            contextMenuStrip1.Size = new Size(155, 26);
             // 
             // miAddEdit
             // 
-            this.miAddEdit.Name = "miAddEdit";
-            this.miAddEdit.Size = new System.Drawing.Size(154, 22);
-            this.miAddEdit.Text = "ويرايش / افزودن";
-            this.miAddEdit.Click += new System.EventHandler(this.miAddEdit_Click);
+            miAddEdit.Name = "miAddEdit";
+            miAddEdit.Size = new Size(154, 22);
+            miAddEdit.Text = "ويرايش / افزودن";
+            miAddEdit.Click += miAddEdit_Click;
             // 
             // ShortcutDesk
             // 
-            this.ClientSize = new System.Drawing.Size(603, 272);
-            this.Controls.Add(this.dataGridView1);
-            this.Controls.Add(this.txtSearch);
-            this.DockAreas = ((Atiran.Utility.Docking2.DockAreas)((Atiran.Utility.Docking2.DockAreas.DockLeft | Atiran.Utility.Docking2.DockAreas.DockRight)));
-            this.Font = new System.Drawing.Font("IRANSans(FaNum)", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.HideOnClose = true;
-            this.Name = "ShortcutDesk";
-            this.ShowHint = Atiran.Utility.Docking2.DockState.DockLeft;
-            this.ShowInTaskbar = false;
-            this.TabPageContextMenuStrip = this.contextMenuStrip1;
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
-            this.contextMenuStrip1.ResumeLayout(false);
-            this.ResumeLayout(false);
-            this.PerformLayout();
-
+            ClientSize = new Size(603, 272);
+            Controls.Add(dataGridView1);
+            Controls.Add(txtSearch);
+            DockAreas = DockAreas.DockLeft | DockAreas.DockRight;
+            Font = new Font("IRANSans(FaNum)", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            HideOnClose = true;
+            Name = "ShortcutDesk";
+            ShowHint = DockState.DockLeft;
+            ShowInTaskbar = false;
+            TabPageContextMenuStrip = contextMenuStrip1;
+            ((ISupportInitialize) dataGridView1).EndInit();
+            contextMenuStrip1.ResumeLayout(false);
+            ResumeLayout(false);
+            PerformLayout();
         }
-        
+
         private void txtSearch_TextChanged(object sender, EventArgs e)
         {
             dataGridView1.DataSource = shortcuts.Where(s => s.Text.Contains(txtSearch.Text)).ToList();
@@ -145,44 +142,34 @@ namespace Atiran.MenuBar.Forms
 
         private void txtSearch_KeyDown(object sender, KeyEventArgs e)
         {
-            int countRowGrid = dataGridView1.Rows.Count;
+            var countRowGrid = dataGridView1.Rows.Count;
             if (countRowGrid > 0)
             {
-                int rowIndexSelected = dataGridView1.SelectedRows[0].Index;
+                var rowIndexSelected = dataGridView1.SelectedRows[0].Index;
                 switch (e.KeyCode)
                 {
                     case Keys.Up:
-                        {
+                    {
+                        if (rowIndexSelected - 1 >= 0)
+                            dataGridView1.Rows[rowIndexSelected - 1].Cells["Text"].Selected = true;
+                        else
+                            dataGridView1.Rows[countRowGrid - 1].Cells["Text"].Selected = true;
 
-                            if (rowIndexSelected - 1 >= 0)
-                            {
-                                dataGridView1.Rows[rowIndexSelected - 1].Cells["Text"].Selected = true;
-                            }
-                            else
-                            {
-                                dataGridView1.Rows[countRowGrid - 1].Cells["Text"].Selected = true;
-                            }
-
-                            break;
-                        }
+                        break;
+                    }
                     case Keys.Down:
-                        {
+                    {
+                        if (rowIndexSelected + 1 == countRowGrid)
+                            dataGridView1.Rows[0].Cells["Text"].Selected = true;
+                        else
+                            dataGridView1.Rows[rowIndexSelected + 1].Cells["Text"].Selected = true;
 
-                            if (rowIndexSelected + 1 == countRowGrid)
-                            {
-                                dataGridView1.Rows[0].Cells["Text"].Selected = true;
-                            }
-                            else
-                            {
-                                dataGridView1.Rows[rowIndexSelected + 1].Cells["Text"].Selected = true;
-                            }
-
-                            break;
-                        }
+                        break;
+                    }
                 }
             }
         }
-        
+
         private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             OpenTab();
@@ -190,7 +177,6 @@ namespace Atiran.MenuBar.Forms
 
         private void miAddEdit_Click(object sender, EventArgs e)
         {
-
         }
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
@@ -198,12 +184,13 @@ namespace Atiran.MenuBar.Forms
             switch (keyData)
             {
                 case Keys.Enter:
-                    {
-                        if (dataGridView1.Rows.Count > 0)
-                            OpenTab();
-                        return true;
-                    }
+                {
+                    if (dataGridView1.Rows.Count > 0)
+                        OpenTab();
+                    return true;
+                }
             }
+
             return base.ProcessCmdKey(ref msg, keyData);
         }
 
@@ -223,26 +210,24 @@ namespace Atiran.MenuBar.Forms
             dataGridView1.Columns["Ico"].Width = 30;
             dataGridView1.Columns["Ico"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             dataGridView1.Columns["Ico"].HeaderText = "ايكون";
-
         }
 
         private void OpenTab()
         {
-            //(int)dataGridView1.SelectedRows[0].Cells["FormId"].Value
-            string Namespace = "Atiran.Reporting.BankAndChek.ChekPardakhti";
-            string Class = "ReportChekhayePardakhti";
-            string typeName = Namespace + "." + Class;
-            AddTab(dataGridView1.SelectedRows[0].Cells["Text"].Value.ToString(), typeName,true);
+            var Namespace = "Atiran.Reporting.BankAndChek.ChekPardakhti";
+            var Class = "ReportChekhayePardakhti";
+            var typeName = Namespace + "." + Class;
+            AddTab(dataGridView1.SelectedRows[0].Cells["Text"].Value.ToString(), typeName, true);
             //AddTab(dataGridView1.SelectedRows[0].Cells["Text"].Value.ToString(), typeName,false);
         }
 
         private void AddTab(string text, string typeName, bool ShowQuestionClose)
         {
-            var control = (ReportChekhayePardakhti)GetObjectFromString(typeName);
+            var control = (ReportChekhayePardakhti) GetObjectFromString(typeName);
             control.Dock = DockStyle.Fill;
             control.label1.Text = "لود كردن usercontrol مربوط به " + text;
 
-            DeskTab sh = new DeskTab();
+            var sh = new DeskTab();
             sh.Text = text;
             sh.Controls.Add(control);
             sh.ShowQuestionClose = ShowQuestionClose;
@@ -252,11 +237,8 @@ namespace Atiran.MenuBar.Forms
         private object GetObjectFromString(string str)
         {
             var arrStr = str.Split('.');
-            Assembly assembly = Assembly.Load(arrStr[0] + "." + arrStr[1]);
-            if (assembly != null)
-            {
-                return assembly.CreateInstance(str);
-            }
+            var assembly = Assembly.Load(arrStr[0] + "." + arrStr[1]);
+            if (assembly != null) return assembly.CreateInstance(str);
 
             return new Control();
         }
@@ -268,8 +250,6 @@ namespace Atiran.MenuBar.Forms
             SetGrid();
         }
 
-
         #endregion
-
     }
 }

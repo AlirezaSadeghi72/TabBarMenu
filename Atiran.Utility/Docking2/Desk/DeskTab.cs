@@ -1,116 +1,114 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using Atiran.Utility.Docking2;
 using Atiran.Utility.MassageBox;
 
 namespace Atiran.Utility.Docking2.Desk
 {
     public class DeskTab : DockContent
     {
+        private IContainer components;
+        private ContextMenuStrip contextMenuStrip1;
+        private List<Form> deskTabs;
+        private bool isCanselCLoseAll;
+        private bool isCLoseAll;
+        private string m_fileName = string.Empty;
+
+        private bool m_resetText = true;
+        private ToolStripMenuItem miClose;
+        private ToolStripMenuItem miCloseAll;
+        private ToolStripMenuItem miCloseAllButThis;
+
+        public bool ShowQuestionClose = false;
+
         public DeskTab()
         {
             InitializeComponent();
-            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            AutoScaleMode = AutoScaleMode.Dpi;
             DockAreas = DockAreas.Document;
         }
 
-        private void InitializeComponent()
-        {
-            this.components = new System.ComponentModel.Container();
-            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.miClose = new System.Windows.Forms.ToolStripMenuItem();
-            this.miCloseAllButThis = new System.Windows.Forms.ToolStripMenuItem();
-            this.miCloseAll = new System.Windows.Forms.ToolStripMenuItem();
-            this.contextMenuStrip1.SuspendLayout();
-            this.SuspendLayout();
-            // 
-            // contextMenuStrip1
-            // 
-            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[]
-            {
-                this.miClose,
-                this.miCloseAllButThis,
-                this.miCloseAll
-            });
-            this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(161, 70);
-            // 
-            // miClose
-            // 
-            this.miClose.Name = "miClose";
-            this.miClose.Size = new System.Drawing.Size(160, 22);
-            this.miClose.Text = "بستن";
-            this.miClose.Click += new System.EventHandler(this.miClose_Click);
-            // 
-            // miCloseAllButThis
-            // 
-            this.miCloseAllButThis.Name = "miCloseAllButThis";
-            this.miCloseAllButThis.Size = new System.Drawing.Size(160, 22);
-            this.miCloseAllButThis.Text = "بستن  ساير تب ها";
-            this.miCloseAllButThis.Click += new System.EventHandler(this.miCloseAllButThis_Click);
-            // 
-            // miCloseAll
-            // 
-            this.miCloseAll.Name = "miCloseAll";
-            this.miCloseAll.Size = new System.Drawing.Size(160, 22);
-            this.miCloseAll.Text = "بستن همه";
-            this.miCloseAll.Click += new System.EventHandler(this.miCloseAll_Click);
-            // 
-            // DeskTab
-            // 
-            this.AutoScroll = true;
-            this.ClientSize = new System.Drawing.Size(519, 280);
-            this.DockAreas = Atiran.Utility.Docking2.DockAreas.Document;
-            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular,
-                System.Drawing.GraphicsUnit.Point, ((byte) (0)));
-            this.Name = "DeskTab";
-            this.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.RightToLeftLayout = true;
-            this.TabPageContextMenuStrip = this.contextMenuStrip1;
-            //this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.DeskTab_FormClosing);
-            this.contextMenuStrip1.ResumeLayout(false);
-            this.ResumeLayout(false);
-
-        }
-
-        public bool ShowQuestionClose = false;
-        private string m_fileName = string.Empty;
-        private ContextMenuStrip contextMenuStrip1;
-        private System.ComponentModel.IContainer components;
-        private ToolStripMenuItem miClose;
-        private ToolStripMenuItem miCloseAllButThis;
-        private ToolStripMenuItem miCloseAll;
-        private bool isCLoseAll = false;
-        private bool isCanselCLoseAll = false;
-        private List<Form> deskTabs;
-
         public string FileName
         {
-            get { return m_fileName; }
+            get => m_fileName;
             set
             {
                 if (value != string.Empty)
                 {
                     Stream s = new FileStream(value, FileMode.Open);
 
-                    FileInfo efInfo = new FileInfo(value);
+                    var efInfo = new FileInfo(value);
 
-                    string fext = efInfo.Extension.ToUpper();
+                    var fext = efInfo.Extension.ToUpper();
 
                     s.Close();
                 }
 
                 m_fileName = value;
-                this.ToolTipText = value;
+                ToolTipText = value;
             }
         }
 
-        private bool m_resetText = true;
+        private void InitializeComponent()
+        {
+            components = new Container();
+            contextMenuStrip1 = new ContextMenuStrip(components);
+            miClose = new ToolStripMenuItem();
+            miCloseAllButThis = new ToolStripMenuItem();
+            miCloseAll = new ToolStripMenuItem();
+            contextMenuStrip1.SuspendLayout();
+            SuspendLayout();
+            // 
+            // contextMenuStrip1
+            // 
+            contextMenuStrip1.Items.AddRange(new ToolStripItem[]
+            {
+                miClose,
+                miCloseAllButThis,
+                miCloseAll
+            });
+            contextMenuStrip1.Name = "contextMenuStrip1";
+            contextMenuStrip1.Size = new Size(161, 70);
+            // 
+            // miClose
+            // 
+            miClose.Name = "miClose";
+            miClose.Size = new Size(160, 22);
+            miClose.Text = "بستن";
+            miClose.Click += miClose_Click;
+            // 
+            // miCloseAllButThis
+            // 
+            miCloseAllButThis.Name = "miCloseAllButThis";
+            miCloseAllButThis.Size = new Size(160, 22);
+            miCloseAllButThis.Text = "بستن  ساير تب ها";
+            miCloseAllButThis.Click += miCloseAllButThis_Click;
+            // 
+            // miCloseAll
+            // 
+            miCloseAll.Name = "miCloseAll";
+            miCloseAll.Size = new Size(160, 22);
+            miCloseAll.Text = "بستن همه";
+            miCloseAll.Click += miCloseAll_Click;
+            // 
+            // DeskTab
+            // 
+            AutoScroll = true;
+            ClientSize = new Size(519, 280);
+            DockAreas = DockAreas.Document;
+            Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Regular,
+                GraphicsUnit.Point, 0);
+            Name = "DeskTab";
+            RightToLeft = RightToLeft.Yes;
+            RightToLeftLayout = true;
+            TabPageContextMenuStrip = contextMenuStrip1;
+            contextMenuStrip1.ResumeLayout(false);
+            ResumeLayout(false);
+        }
 
         protected override void OnPaint(PaintEventArgs e)
         {
@@ -127,7 +125,7 @@ namespace Atiran.Utility.Docking2.Desk
         {
             // Add extra information into the persist string for this document
             // so that it is available when deserialized.
-            return GetType().ToString() + "," + FileName + "," + Text;
+            return GetType() + "," + FileName + "," + Text;
         }
 
         private void miClose_Click(object sender, EventArgs e)
@@ -136,9 +134,7 @@ namespace Atiran.Utility.Docking2.Desk
             {
                 if (ShowPersianMessageBox.ShowMessge("پيغام", "آيا تب " + Text + " بسته شود",
                         MessageBoxButtons.YesNo, false, false) == DialogResult.Yes)
-                {
                     Close();
-                }
             }
             else
             {
@@ -148,12 +144,10 @@ namespace Atiran.Utility.Docking2.Desk
 
         private void miCloseAllButThis_Click(object sender, EventArgs e)
         {
-            deskTabs = ((Form)TopLevelControl).MdiChildren.ToList();
+            deskTabs = ((Form) TopLevelControl).MdiChildren.ToList();
             foreach (DeskTab form in ((Form) TopLevelControl).MdiChildren)
-            {
                 if (form != this && !isCanselCLoseAll)
-                    TryClose(form, deskTabs.Where(f => f != form && f!=this).ToArray());
-            }
+                    TryClose(form, deskTabs.Where(f => f != form && f != this).ToArray());
 
             isCLoseAll = false;
             isCanselCLoseAll = false;
@@ -163,25 +157,20 @@ namespace Atiran.Utility.Docking2.Desk
         {
             deskTabs = ((Form) TopLevelControl).MdiChildren.ToList();
             foreach (DeskTab form in ((Form) TopLevelControl).MdiChildren)
-            {
                 if (!isCanselCLoseAll)
                     TryClose(form, deskTabs.Where(f => f != form).ToArray());
-            }
             isCLoseAll = false;
             isCanselCLoseAll = false;
         }
 
-        private void TryClose(Atiran.Utility.Docking2.Desk.DeskTab form, Form[] forms)
+        private void TryClose(DeskTab form, Form[] forms)
         {
             if (form.ShowQuestionClose)
             {
                 if (!isCLoseAll)
                 {
-                    string TextTabs = form.Text;
-                    foreach (Form tab in forms)
-                    {
-                        TextTabs += "\n" + tab.Text;
-                    }
+                    var TextTabs = form.Text;
+                    foreach (var tab in forms) TextTabs += "\n" + tab.Text;
                     var result = ShowPersianMessageBox.ShowMessge("آيا تب ها بسته شوند؟", TextTabs,
                         MessageBoxButtons.YesNo, false);
                     if (result == DialogResult.Yes)

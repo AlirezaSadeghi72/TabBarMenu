@@ -1,11 +1,10 @@
+using Atiran.Utility.Docking2.Theme.ThemeVS2012;
+using Atiran.Utility.Docking2.Theme.ThemeVS2013;
+
 namespace Atiran.Utility.Docking2.Theme.ThemeVS2015
 {
-    using ThemeVS2012;
-    using ThemeVS2013;
-    using Docking2;
-
     /// <summary>
-    /// Visual Studio 2015 theme base.
+    ///     Visual Studio 2015 theme base.
     /// </summary>
     public abstract class VS2015ThemeBase : ThemeBase
     {
@@ -17,7 +16,7 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2015
             ImageService = new ImageService(this);
             ToolStripRenderer = new VisualStudioToolStripRenderer(ColorPalette)
             {
-                UseGlassOnMenuStrip = false,
+                UseGlassOnMenuStrip = false
             };
             Measures.SplitterSize = 6;
             Measures.AutoHideSplitterSize = 3;

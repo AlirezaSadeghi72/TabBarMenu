@@ -1,36 +1,22 @@
 using System;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Atiran.Utility.Docking2
 {
     public class DockContent : Form, IDockContent
     {
+        private string m_tabText;
+
         public DockContent()
         {
-            m_dockHandler = new DockContentHandler(this, new GetPersistStringCallback(GetPersistString));
-            m_dockHandler.DockStateChanged += new EventHandler(DockHandler_DockStateChanged);
+            DockHandler = new DockContentHandler(this, GetPersistString);
+            DockHandler.DockStateChanged += DockHandler_DockStateChanged;
             if (PatchController.EnableFontInheritanceFix != true)
-            {
                 //Suggested as a fix by bensty regarding form resize
-                this.ParentChanged += new EventHandler(DockContent_ParentChanged);
-            }
-        }
-
-        //Suggested as a fix by bensty regarding form resize
-        private void DockContent_ParentChanged(object Sender, EventArgs e)
-        {
-            if (this.Parent != null)
-                this.Font = this.Parent.Font;
-        }
-
-        private DockContentHandler m_dockHandler = null;
-        [Browsable(false)]
-        public DockContentHandler DockHandler
-        {
-            get { return m_dockHandler; }
+                ParentChanged += DockContent_ParentChanged;
         }
 
         [LocalizedCategory("Category_Docking")]
@@ -38,17 +24,18 @@ namespace Atiran.Utility.Docking2
         [DefaultValue(true)]
         public bool AllowEndUserDocking
         {
-            get { return DockHandler.AllowEndUserDocking; }
-            set { DockHandler.AllowEndUserDocking = value; }
+            get => DockHandler.AllowEndUserDocking;
+            set => DockHandler.AllowEndUserDocking = value;
         }
 
         [LocalizedCategory("Category_Docking")]
         [LocalizedDescription("DockContent_DockAreas_Description")]
-        [DefaultValue(DockAreas.DockLeft | DockAreas.DockRight | DockAreas.DockTop | DockAreas.DockBottom | DockAreas.Document | DockAreas.Float)]
+        [DefaultValue(DockAreas.DockLeft | DockAreas.DockRight | DockAreas.DockTop | DockAreas.DockBottom |
+                      DockAreas.Document | DockAreas.Float)]
         public DockAreas DockAreas
         {
-            get { return DockHandler.DockAreas; }
-            set { DockHandler.DockAreas = value; }
+            get => DockHandler.DockAreas;
+            set => DockHandler.DockAreas = value;
         }
 
         [LocalizedCategory("Category_Docking")]
@@ -56,24 +43,18 @@ namespace Atiran.Utility.Docking2
         [DefaultValue(0.25)]
         public double AutoHidePortion
         {
-            get { return DockHandler.AutoHidePortion; }
-            set { DockHandler.AutoHidePortion = value; }
+            get => DockHandler.AutoHidePortion;
+            set => DockHandler.AutoHidePortion = value;
         }
 
-        private string m_tabText = null;
         [Localizable(true)]
         [LocalizedCategory("Category_Docking")]
         [LocalizedDescription("DockContent_TabText_Description")]
         [DefaultValue(null)]
         public string TabText
         {
-            get { return m_tabText; }
-            set { DockHandler.TabText = m_tabText = value; }
-        }
-
-        private bool ShouldSerializeTabText()
-        {
-            return (m_tabText != null);
+            get => m_tabText;
+            set => DockHandler.TabText = m_tabText = value;
         }
 
         [LocalizedCategory("Category_Docking")]
@@ -81,8 +62,8 @@ namespace Atiran.Utility.Docking2
         [DefaultValue(true)]
         public bool CloseButton
         {
-            get { return DockHandler.CloseButton; }
-            set { DockHandler.CloseButton = value; }
+            get => DockHandler.CloseButton;
+            set => DockHandler.CloseButton = value;
         }
 
         [LocalizedCategory("Category_Docking")]
@@ -90,78 +71,72 @@ namespace Atiran.Utility.Docking2
         [DefaultValue(true)]
         public bool CloseButtonVisible
         {
-            get { return DockHandler.CloseButtonVisible; }
-            set { DockHandler.CloseButtonVisible = value; }
+            get => DockHandler.CloseButtonVisible;
+            set => DockHandler.CloseButtonVisible = value;
         }
 
         [Browsable(false)]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public DockPanel DockPanel
         {
-            get { return DockHandler.DockPanel; }
-            set { DockHandler.DockPanel = value; }
+            get => DockHandler.DockPanel;
+            set => DockHandler.DockPanel = value;
         }
 
         [Browsable(false)]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public DockState DockState
         {
-            get { return DockHandler.DockState; }
-            set { DockHandler.DockState = value; }
+            get => DockHandler.DockState;
+            set => DockHandler.DockState = value;
         }
 
         [Browsable(false)]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public DockPane Pane
         {
-            get { return DockHandler.Pane; }
-            set { DockHandler.Pane = value; }
+            get => DockHandler.Pane;
+            set => DockHandler.Pane = value;
         }
 
         [Browsable(false)]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public bool IsHidden
         {
-            get { return DockHandler.IsHidden; }
-            set { DockHandler.IsHidden = value; }
+            get => DockHandler.IsHidden;
+            set => DockHandler.IsHidden = value;
         }
 
         [Browsable(false)]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public DockState VisibleState
         {
-            get { return DockHandler.VisibleState; }
-            set { DockHandler.VisibleState = value; }
+            get => DockHandler.VisibleState;
+            set => DockHandler.VisibleState = value;
         }
 
         [Browsable(false)]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public bool IsFloat
         {
-            get { return DockHandler.IsFloat; }
-            set { DockHandler.IsFloat = value; }
+            get => DockHandler.IsFloat;
+            set => DockHandler.IsFloat = value;
         }
 
         [Browsable(false)]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public DockPane PanelPane
         {
-            get { return DockHandler.PanelPane; }
-            set { DockHandler.PanelPane = value; }
+            get => DockHandler.PanelPane;
+            set => DockHandler.PanelPane = value;
         }
 
         [Browsable(false)]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public DockPane FloatPane
         {
-            get { return DockHandler.FloatPane; }
-            set { DockHandler.FloatPane = value; }
-        }
-
-        [SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
-        protected virtual string GetPersistString()
-        {
-            return GetType().ToString();
+            get => DockHandler.FloatPane;
+            set => DockHandler.FloatPane = value;
         }
 
         [LocalizedCategory("Category_Docking")]
@@ -169,8 +144,8 @@ namespace Atiran.Utility.Docking2
         [DefaultValue(false)]
         public bool HideOnClose
         {
-            get { return DockHandler.HideOnClose; }
-            set { DockHandler.HideOnClose = value; }
+            get => DockHandler.HideOnClose;
+            set => DockHandler.HideOnClose = value;
         }
 
         [LocalizedCategory("Category_Docking")]
@@ -178,47 +153,51 @@ namespace Atiran.Utility.Docking2
         [DefaultValue(DockState.Unknown)]
         public DockState ShowHint
         {
-            get { return DockHandler.ShowHint; }
-            set { DockHandler.ShowHint = value; }
+            get => DockHandler.ShowHint;
+            set => DockHandler.ShowHint = value;
         }
 
-        [Browsable(false)]
-        public bool IsActivated
-        {
-            get { return DockHandler.IsActivated; }
-        }
-
-        public bool IsDockStateValid(DockState dockState)
-        {
-            return DockHandler.IsDockStateValid(dockState);
-        }
+        [Browsable(false)] public bool IsActivated => DockHandler.IsActivated;
 
         /// <summary>
-        /// Context menu.
+        ///     Context menu.
         /// </summary>
         /// <remarks>
-        /// This property should be obsolete as it does not support theming. Please use <see cref="TabPageContextMenuStrip"/> instead.
+        ///     This property should be obsolete as it does not support theming. Please use <see cref="TabPageContextMenuStrip" />
+        ///     instead.
         /// </remarks>
         [LocalizedCategory("Category_Docking")]
         [LocalizedDescription("DockContent_TabPageContextMenu_Description")]
         [DefaultValue(null)]
         public ContextMenu TabPageContextMenu
         {
-            get { return DockHandler.TabPageContextMenu; }
-            set { DockHandler.TabPageContextMenu = value; }
+            get => DockHandler.TabPageContextMenu;
+            set => DockHandler.TabPageContextMenu = value;
         }
 
         /// <summary>
-        /// Context menu strip.
+        ///     Context menu strip.
         /// </summary>
         [LocalizedCategory("Category_Docking")]
         [LocalizedDescription("DockContent_TabPageContextMenuStrip_Description")]
         [DefaultValue(null)]
         public ContextMenuStrip TabPageContextMenuStrip
         {
-            get { return DockHandler.TabPageContextMenuStrip; }
-            set { DockHandler.TabPageContextMenuStrip = value; }
+            get => DockHandler.TabPageContextMenuStrip;
+            set => DockHandler.TabPageContextMenuStrip = value;
         }
+
+        [Localizable(true)]
+        [Category("Appearance")]
+        [LocalizedDescription("DockContent_ToolTipText_Description")]
+        [DefaultValue(null)]
+        public string ToolTipText
+        {
+            get => DockHandler.ToolTipText;
+            set => DockHandler.ToolTipText = value;
+        }
+
+        [Browsable(false)] public DockContentHandler DockHandler { get; }
 
         void IContextMenuStripHost.ApplyTheme()
         {
@@ -233,14 +212,27 @@ namespace Atiran.Utility.Docking2
             }
         }
 
-        [Localizable(true)]
-        [Category("Appearance")]
-        [LocalizedDescription("DockContent_ToolTipText_Description")]
-        [DefaultValue(null)]
-        public string ToolTipText
+        //Suggested as a fix by bensty regarding form resize
+        private void DockContent_ParentChanged(object Sender, EventArgs e)
         {
-            get { return DockHandler.ToolTipText; }
-            set { DockHandler.ToolTipText = value; }
+            if (Parent != null)
+                Font = Parent.Font;
+        }
+
+        private bool ShouldSerializeTabText()
+        {
+            return m_tabText != null;
+        }
+
+        [SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
+        protected virtual string GetPersistString()
+        {
+            return GetType().ToString();
+        }
+
+        public bool IsDockStateValid(DockState dockState)
+        {
+            return DockHandler.IsDockStateValid(dockState);
         }
 
         public new void Activate()
@@ -300,58 +292,57 @@ namespace Atiran.Utility.Docking2
             DockHandler.DockTo(panel, dockStyle);
         }
 
+        /// <summary>
+        ///     Overridden to avoid resize issues with nested controls
+        /// </summary>
+        /// <remarks>
+        ///     http://blogs.msdn.com/b/alejacma/archive/2008/11/20/controls-won-t-get-resized-once-the-nesting-hierarchy-of-windows-exceeds-a-certain-depth-x64.aspx
+        ///     http://support.microsoft.com/kb/953934
+        /// </remarks>
+        protected override void OnSizeChanged(EventArgs e)
+        {
+            if (DockPanel != null && DockPanel.SupportDeeplyNestedContent && IsHandleCreated)
+                BeginInvoke((MethodInvoker) delegate { base.OnSizeChanged(e); });
+            else
+                base.OnSizeChanged(e);
+        }
+
         #region IDockContent Members
+
         void IDockContent.OnActivated(EventArgs e)
         {
-            this.OnActivated(e);
+            OnActivated(e);
         }
 
         void IDockContent.OnDeactivate(EventArgs e)
         {
-            this.OnDeactivate(e);
+            OnDeactivate(e);
         }
+
         #endregion
 
         #region Events
+
         private void DockHandler_DockStateChanged(object sender, EventArgs e)
         {
             OnDockStateChanged(e);
         }
 
         private static readonly object DockStateChangedEvent = new object();
+
         [LocalizedCategory("Category_PropertyChanged")]
         [LocalizedDescription("Pane_DockStateChanged_Description")]
         public event EventHandler DockStateChanged
         {
-            add { Events.AddHandler(DockStateChangedEvent, value); }
-            remove { Events.RemoveHandler(DockStateChangedEvent, value); }
+            add => Events.AddHandler(DockStateChangedEvent, value);
+            remove => Events.RemoveHandler(DockStateChangedEvent, value);
         }
+
         protected virtual void OnDockStateChanged(EventArgs e)
         {
-            ((EventHandler)Events[DockStateChangedEvent])?.Invoke(this, e);
+            ((EventHandler) Events[DockStateChangedEvent])?.Invoke(this, e);
         }
-        #endregion
 
-        /// <summary>
-        /// Overridden to avoid resize issues with nested controls
-        /// </summary>
-        /// <remarks>
-        /// http://blogs.msdn.com/b/alejacma/archive/2008/11/20/controls-won-t-get-resized-once-the-nesting-hierarchy-of-windows-exceeds-a-certain-depth-x64.aspx
-        /// http://support.microsoft.com/kb/953934
-        /// </remarks>
-        protected  override void OnSizeChanged(EventArgs e)
-        {
-            if (DockPanel != null && DockPanel.SupportDeeplyNestedContent && IsHandleCreated)
-            {
-                BeginInvoke((MethodInvoker)delegate
-                {
-                    base.OnSizeChanged(e);
-                });
-            }
-            else
-            {
-                base.OnSizeChanged(e);
-            }
-        }
+        #endregion
     }
 }

@@ -1,10 +1,9 @@
+using Atiran.Utility.Docking2.Theme.ThemeVS2012;
+
 namespace Atiran.Utility.Docking2.Theme.ThemeVS2013
 {
-    using ThemeVS2012;
-    using Docking2;
-
     /// <summary>
-    /// Visual Studio 2013 theme base.
+    ///     Visual Studio 2013 theme base.
     /// </summary>
     public abstract class VS2013ThemeBase : ThemeBase
     {

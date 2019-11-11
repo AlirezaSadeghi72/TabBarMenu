@@ -1,327 +1,234 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
+using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Drawing.Design;
-using System.Windows.Forms.Design;
-using System.ComponentModel;
+using System.Globalization;
 
 namespace Atiran.Utility.Docking
 {
     #region DockPanelSkin classes
+
     /// <summary>
-    /// The skin to use when displaying the DockPanel.
-    /// The skin allows custom gradient color schemes to be used when drawing the
-    /// DockStrips and Tabs.
+    ///     The skin to use when displaying the DockPanel.
+    ///     The skin allows custom gradient color schemes to be used when drawing the
+    ///     DockStrips and Tabs.
     /// </summary>
     [TypeConverter(typeof(DockPanelSkinConverter))]
     public class DockPanelSkin
     {
-        private AutoHideStripSkin m_autoHideStripSkin;
-        private DockPaneStripSkin m_dockPaneStripSkin;
-
         public DockPanelSkin()
         {
-            m_autoHideStripSkin = new AutoHideStripSkin();
-            m_dockPaneStripSkin = new DockPaneStripSkin();
+            AutoHideStripSkin = new AutoHideStripSkin();
+            DockPaneStripSkin = new DockPaneStripSkin();
         }
 
         /// <summary>
-        /// The skin used to display the auto hide strips and tabs.
+        ///     The skin used to display the auto hide strips and tabs.
         /// </summary>
-        public AutoHideStripSkin AutoHideStripSkin
-        {
-            get { return m_autoHideStripSkin; }
-            set { m_autoHideStripSkin = value; }
-        }
+        public AutoHideStripSkin AutoHideStripSkin { get; set; }
 
         /// <summary>
-        /// The skin used to display the Document and ToolWindow style DockStrips and Tabs.
+        ///     The skin used to display the Document and ToolWindow style DockStrips and Tabs.
         /// </summary>
-        public DockPaneStripSkin DockPaneStripSkin
-        {
-            get { return m_dockPaneStripSkin; }
-            set { m_dockPaneStripSkin = value; }
-        }
+        public DockPaneStripSkin DockPaneStripSkin { get; set; }
     }
 
     /// <summary>
-    /// The skin used to display the auto hide strip and tabs.
+    ///     The skin used to display the auto hide strip and tabs.
     /// </summary>
     [TypeConverter(typeof(AutoHideStripConverter))]
     public class AutoHideStripSkin
     {
-        private DockPanelGradient m_dockStripGradient;
-        private TabGradient m_TabGradient;
-        private Font m_textFont;
-
         public AutoHideStripSkin()
         {
-            m_dockStripGradient = new DockPanelGradient();
-            m_dockStripGradient.StartColor = SystemColors.ControlLight;
-            m_dockStripGradient.EndColor = SystemColors.ControlLight;
+            DockStripGradient = new DockPanelGradient();
+            DockStripGradient.StartColor = SystemColors.ControlLight;
+            DockStripGradient.EndColor = SystemColors.ControlLight;
 
-            m_TabGradient = new TabGradient();
-            m_TabGradient.TextColor = SystemColors.ControlDarkDark;
+            TabGradient = new TabGradient();
+            TabGradient.TextColor = SystemColors.ControlDarkDark;
 
-            m_textFont = SystemFonts.MenuFont;
+            TextFont = SystemFonts.MenuFont;
         }
 
         /// <summary>
-        /// The gradient color skin for the DockStrips.
+        ///     The gradient color skin for the DockStrips.
         /// </summary>
-        public DockPanelGradient DockStripGradient
-        {
-            get { return m_dockStripGradient; }
-            set { m_dockStripGradient = value; }
-        }
+        public DockPanelGradient DockStripGradient { get; set; }
 
         /// <summary>
-        /// The gradient color skin for the Tabs.
+        ///     The gradient color skin for the Tabs.
         /// </summary>
-        public TabGradient TabGradient
-        {
-            get { return m_TabGradient; }
-            set { m_TabGradient = value; }
-        }
+        public TabGradient TabGradient { get; set; }
 
         /// <summary>
-        /// Font used in AutoHideStrip elements.
+        ///     Font used in AutoHideStrip elements.
         /// </summary>
-        public Font TextFont
-        {
-            get { return m_textFont; }
-            set { m_textFont = value; }
-        }
+        public Font TextFont { get; set; }
     }
 
     /// <summary>
-    /// The skin used to display the document and tool strips and tabs.
+    ///     The skin used to display the document and tool strips and tabs.
     /// </summary>
     [TypeConverter(typeof(DockPaneStripConverter))]
     public class DockPaneStripSkin
     {
-        private DockPaneStripGradient m_DocumentGradient;
-        private DockPaneStripToolWindowGradient m_ToolWindowGradient;
-        private Font m_textFont;
-
         public DockPaneStripSkin()
         {
-            m_DocumentGradient = new DockPaneStripGradient();
-            m_DocumentGradient.DockStripGradient.StartColor = SystemColors.Control;
-            m_DocumentGradient.DockStripGradient.EndColor = SystemColors.Control;
-            m_DocumentGradient.ActiveTabGradient.StartColor = SystemColors.ControlLightLight;
-            m_DocumentGradient.ActiveTabGradient.EndColor = SystemColors.ControlLightLight;
-            m_DocumentGradient.InactiveTabGradient.StartColor = SystemColors.ControlLight;
-            m_DocumentGradient.InactiveTabGradient.EndColor = SystemColors.ControlLight;
+            DocumentGradient = new DockPaneStripGradient();
+            DocumentGradient.DockStripGradient.StartColor = SystemColors.Control;
+            DocumentGradient.DockStripGradient.EndColor = SystemColors.Control;
+            DocumentGradient.ActiveTabGradient.StartColor = SystemColors.ControlLightLight;
+            DocumentGradient.ActiveTabGradient.EndColor = SystemColors.ControlLightLight;
+            DocumentGradient.InactiveTabGradient.StartColor = SystemColors.ControlLight;
+            DocumentGradient.InactiveTabGradient.EndColor = SystemColors.ControlLight;
 
-            m_ToolWindowGradient = new DockPaneStripToolWindowGradient();
-            m_ToolWindowGradient.DockStripGradient.StartColor = SystemColors.ControlLight;
-            m_ToolWindowGradient.DockStripGradient.EndColor = SystemColors.ControlLight;
+            ToolWindowGradient = new DockPaneStripToolWindowGradient();
+            ToolWindowGradient.DockStripGradient.StartColor = SystemColors.ControlLight;
+            ToolWindowGradient.DockStripGradient.EndColor = SystemColors.ControlLight;
 
-            m_ToolWindowGradient.ActiveTabGradient.StartColor = SystemColors.Control;
-            m_ToolWindowGradient.ActiveTabGradient.EndColor = SystemColors.Control;
+            ToolWindowGradient.ActiveTabGradient.StartColor = SystemColors.Control;
+            ToolWindowGradient.ActiveTabGradient.EndColor = SystemColors.Control;
 
-            m_ToolWindowGradient.InactiveTabGradient.StartColor = Color.Transparent;
-            m_ToolWindowGradient.InactiveTabGradient.EndColor = Color.Transparent;
-            m_ToolWindowGradient.InactiveTabGradient.TextColor = SystemColors.ControlDarkDark;
+            ToolWindowGradient.InactiveTabGradient.StartColor = Color.Transparent;
+            ToolWindowGradient.InactiveTabGradient.EndColor = Color.Transparent;
+            ToolWindowGradient.InactiveTabGradient.TextColor = SystemColors.ControlDarkDark;
 
-            m_ToolWindowGradient.ActiveCaptionGradient.StartColor = SystemColors.GradientActiveCaption;
-            m_ToolWindowGradient.ActiveCaptionGradient.EndColor = SystemColors.ActiveCaption;
-            m_ToolWindowGradient.ActiveCaptionGradient.LinearGradientMode = LinearGradientMode.Vertical;
-            m_ToolWindowGradient.ActiveCaptionGradient.TextColor = SystemColors.ActiveCaptionText;
+            ToolWindowGradient.ActiveCaptionGradient.StartColor = SystemColors.GradientActiveCaption;
+            ToolWindowGradient.ActiveCaptionGradient.EndColor = SystemColors.ActiveCaption;
+            ToolWindowGradient.ActiveCaptionGradient.LinearGradientMode = LinearGradientMode.Vertical;
+            ToolWindowGradient.ActiveCaptionGradient.TextColor = SystemColors.ActiveCaptionText;
 
-            m_ToolWindowGradient.InactiveCaptionGradient.StartColor = SystemColors.GradientInactiveCaption;
-            m_ToolWindowGradient.InactiveCaptionGradient.EndColor = SystemColors.InactiveCaption;
-            m_ToolWindowGradient.InactiveCaptionGradient.LinearGradientMode = LinearGradientMode.Vertical;
-            m_ToolWindowGradient.InactiveCaptionGradient.TextColor = SystemColors.InactiveCaptionText;
+            ToolWindowGradient.InactiveCaptionGradient.StartColor = SystemColors.GradientInactiveCaption;
+            ToolWindowGradient.InactiveCaptionGradient.EndColor = SystemColors.InactiveCaption;
+            ToolWindowGradient.InactiveCaptionGradient.LinearGradientMode = LinearGradientMode.Vertical;
+            ToolWindowGradient.InactiveCaptionGradient.TextColor = SystemColors.InactiveCaptionText;
 
-            m_textFont = SystemFonts.MenuFont;
+            TextFont = SystemFonts.MenuFont;
         }
 
         /// <summary>
-        /// The skin used to display the Document style DockPane strip and tab.
+        ///     The skin used to display the Document style DockPane strip and tab.
         /// </summary>
-        public DockPaneStripGradient DocumentGradient
-        {
-            get { return m_DocumentGradient; }
-            set { m_DocumentGradient = value; }
-        }
+        public DockPaneStripGradient DocumentGradient { get; set; }
 
         /// <summary>
-        /// The skin used to display the ToolWindow style DockPane strip and tab.
+        ///     The skin used to display the ToolWindow style DockPane strip and tab.
         /// </summary>
-        public DockPaneStripToolWindowGradient ToolWindowGradient
-        {
-            get { return m_ToolWindowGradient; }
-            set { m_ToolWindowGradient = value; }
-        }
+        public DockPaneStripToolWindowGradient ToolWindowGradient { get; set; }
 
         /// <summary>
-        /// Font used in DockPaneStrip elements.
+        ///     Font used in DockPaneStrip elements.
         /// </summary>
-        public Font TextFont
-        {
-            get { return m_textFont; }
-            set { m_textFont = value; }
-        }
+        public Font TextFont { get; set; }
     }
 
     /// <summary>
-    /// The skin used to display the DockPane ToolWindow strip and tab.
+    ///     The skin used to display the DockPane ToolWindow strip and tab.
     /// </summary>
     [TypeConverter(typeof(DockPaneStripGradientConverter))]
     public class DockPaneStripToolWindowGradient : DockPaneStripGradient
     {
-        private TabGradient m_activeCaptionGradient;
-        private TabGradient m_inactiveCaptionGradient;
-
         public DockPaneStripToolWindowGradient()
         {
-            m_activeCaptionGradient = new TabGradient();
-            m_inactiveCaptionGradient = new TabGradient();
+            ActiveCaptionGradient = new TabGradient();
+            InactiveCaptionGradient = new TabGradient();
         }
 
         /// <summary>
-        /// The skin used to display the active ToolWindow caption.
+        ///     The skin used to display the active ToolWindow caption.
         /// </summary>
-        public TabGradient ActiveCaptionGradient
-        {
-            get { return m_activeCaptionGradient; }
-            set { m_activeCaptionGradient = value; }
-        }
+        public TabGradient ActiveCaptionGradient { get; set; }
 
         /// <summary>
-        /// The skin used to display the inactive ToolWindow caption.
+        ///     The skin used to display the inactive ToolWindow caption.
         /// </summary>
-        public TabGradient InactiveCaptionGradient
-        {
-            get { return m_inactiveCaptionGradient; }
-            set { m_inactiveCaptionGradient = value; }
-        }
+        public TabGradient InactiveCaptionGradient { get; set; }
     }
 
     /// <summary>
-    /// The skin used to display the DockPane strip and tab.
+    ///     The skin used to display the DockPane strip and tab.
     /// </summary>
     [TypeConverter(typeof(DockPaneStripGradientConverter))]
     public class DockPaneStripGradient
     {
-        private DockPanelGradient m_dockStripGradient;
-        private TabGradient m_activeTabGradient;
-        private TabGradient m_inactiveTabGradient;
-
         public DockPaneStripGradient()
         {
-            m_dockStripGradient = new DockPanelGradient();
-            m_activeTabGradient = new TabGradient();
-            m_inactiveTabGradient = new TabGradient();
+            DockStripGradient = new DockPanelGradient();
+            ActiveTabGradient = new TabGradient();
+            InactiveTabGradient = new TabGradient();
         }
 
         /// <summary>
-        /// The gradient color skin for the DockStrip.
+        ///     The gradient color skin for the DockStrip.
         /// </summary>
-        public DockPanelGradient DockStripGradient
-        {
-            get { return m_dockStripGradient; }
-            set { m_dockStripGradient = value; }
-        }
+        public DockPanelGradient DockStripGradient { get; set; }
 
         /// <summary>
-        /// The skin used to display the active DockPane tabs.
+        ///     The skin used to display the active DockPane tabs.
         /// </summary>
-        public TabGradient ActiveTabGradient
-        {
-            get { return m_activeTabGradient; }
-            set { m_activeTabGradient = value; }
-        }
+        public TabGradient ActiveTabGradient { get; set; }
 
         /// <summary>
-        /// The skin used to display the inactive DockPane tabs.
+        ///     The skin used to display the inactive DockPane tabs.
         /// </summary>
-        public TabGradient InactiveTabGradient
-        {
-            get { return m_inactiveTabGradient; }
-            set { m_inactiveTabGradient = value; }
-        }
+        public TabGradient InactiveTabGradient { get; set; }
     }
 
     /// <summary>
-    /// The skin used to display the dock pane tab
+    ///     The skin used to display the dock pane tab
     /// </summary>
     [TypeConverter(typeof(DockPaneTabGradientConverter))]
     public class TabGradient : DockPanelGradient
     {
-        private Color m_textColor;
-
         public TabGradient()
         {
-            m_textColor = SystemColors.ControlText;
+            TextColor = SystemColors.ControlText;
         }
 
         /// <summary>
-        /// The text color.
+        ///     The text color.
         /// </summary>
         [DefaultValue(typeof(SystemColors), "ControlText")]
-        public Color TextColor
-        {
-            get { return m_textColor; }
-            set { m_textColor = value; }
-        }
+        public Color TextColor { get; set; }
     }
 
     /// <summary>
-    /// The gradient color skin.
+    ///     The gradient color skin.
     /// </summary>
     [TypeConverter(typeof(DockPanelGradientConverter))]
     public class DockPanelGradient
     {
-        private Color m_startColor;
-        private Color m_endColor;
-        private LinearGradientMode m_linearGradientMode;
-
         public DockPanelGradient()
         {
-            m_startColor = SystemColors.Control;
-            m_endColor = SystemColors.Control;
-            m_linearGradientMode = LinearGradientMode.Horizontal;
+            StartColor = SystemColors.Control;
+            EndColor = SystemColors.Control;
+            LinearGradientMode = LinearGradientMode.Horizontal;
         }
 
         /// <summary>
-        /// The beginning gradient color.
+        ///     The beginning gradient color.
         /// </summary>
         [DefaultValue(typeof(SystemColors), "Control")]
-        public Color StartColor
-        {
-            get { return m_startColor; }
-            set { m_startColor = value; }
-        }
+        public Color StartColor { get; set; }
 
         /// <summary>
-        /// The ending gradient color.
+        ///     The ending gradient color.
         /// </summary>
         [DefaultValue(typeof(SystemColors), "Control")]
-        public Color EndColor
-        {
-            get { return m_endColor; }
-            set { m_endColor = value; }
-        }
+        public Color EndColor { get; set; }
 
         /// <summary>
-        /// The gradient mode to display the colors.
+        ///     The gradient mode to display the colors.
         /// </summary>
         [DefaultValue(LinearGradientMode.Horizontal)]
-        public LinearGradientMode LinearGradientMode
-        {
-            get { return m_linearGradientMode; }
-            set { m_linearGradientMode = value; }
-        }
+        public LinearGradientMode LinearGradientMode { get; set; }
     }
 
     #endregion
 
     #region Converters
+
     public class DockPanelSkinConverter : ExpandableObjectConverter
     {
         public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
@@ -332,12 +239,10 @@ namespace Atiran.Utility.Docking
             return base.CanConvertTo(context, destinationType);
         }
 
-        public override object ConvertTo(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, Type destinationType)
+        public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value,
+            Type destinationType)
         {
-            if (destinationType == typeof(String) && value is DockPanelSkin)
-            {
-                return "DockPanelSkin";
-            }
+            if (destinationType == typeof(string) && value is DockPanelSkin) return "DockPanelSkin";
             return base.ConvertTo(context, culture, value, destinationType);
         }
     }
@@ -352,12 +257,10 @@ namespace Atiran.Utility.Docking
             return base.CanConvertTo(context, destinationType);
         }
 
-        public override object ConvertTo(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, Type destinationType)
+        public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value,
+            Type destinationType)
         {
-            if (destinationType == typeof(String) && value is DockPanelGradient)
-            {
-                return "DockPanelGradient";
-            }
+            if (destinationType == typeof(string) && value is DockPanelGradient) return "DockPanelGradient";
             return base.ConvertTo(context, culture, value, destinationType);
         }
     }
@@ -372,12 +275,10 @@ namespace Atiran.Utility.Docking
             return base.CanConvertTo(context, destinationType);
         }
 
-        public override object ConvertTo(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, Type destinationType)
+        public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value,
+            Type destinationType)
         {
-            if (destinationType == typeof(String) && value is AutoHideStripSkin)
-            {
-                return "AutoHideStripSkin";
-            }
+            if (destinationType == typeof(string) && value is AutoHideStripSkin) return "AutoHideStripSkin";
             return base.ConvertTo(context, culture, value, destinationType);
         }
     }
@@ -392,12 +293,10 @@ namespace Atiran.Utility.Docking
             return base.CanConvertTo(context, destinationType);
         }
 
-        public override object ConvertTo(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, Type destinationType)
+        public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value,
+            Type destinationType)
         {
-            if (destinationType == typeof(String) && value is DockPaneStripSkin)
-            {
-                return "DockPaneStripSkin";
-            }
+            if (destinationType == typeof(string) && value is DockPaneStripSkin) return "DockPaneStripSkin";
             return base.ConvertTo(context, culture, value, destinationType);
         }
     }
@@ -412,12 +311,10 @@ namespace Atiran.Utility.Docking
             return base.CanConvertTo(context, destinationType);
         }
 
-        public override object ConvertTo(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, Type destinationType)
+        public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value,
+            Type destinationType)
         {
-            if (destinationType == typeof(String) && value is DockPaneStripGradient)
-            {
-                return "DockPaneStripGradient";
-            }
+            if (destinationType == typeof(string) && value is DockPaneStripGradient) return "DockPaneStripGradient";
             return base.ConvertTo(context, culture, value, destinationType);
         }
     }
@@ -432,14 +329,13 @@ namespace Atiran.Utility.Docking
             return base.CanConvertTo(context, destinationType);
         }
 
-        public override object ConvertTo(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, Type destinationType)
+        public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value,
+            Type destinationType)
         {
-            if (destinationType == typeof(String) && value is TabGradient)
-            {
-                return "DockPaneTabGradient";
-            }
+            if (destinationType == typeof(string) && value is TabGradient) return "DockPaneTabGradient";
             return base.ConvertTo(context, culture, value, destinationType);
         }
     }
+
     #endregion
 }

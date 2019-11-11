@@ -1,29 +1,44 @@
 using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
-using System.ComponentModel;
+using Atiran.Utility.Docking2.Theme.ThemeVS2012;
 
 namespace Atiran.Utility.Docking2.Theme.ThemeVS2013
 {
-    using ThemeVS2012;
-
     [ToolboxItem(false)]
     internal class VS2013DockPaneCaption : DockPaneCaptionBase
     {
-        #region consts
-        private const int TextGapTop = 3;
-        private const int TextGapBottom = 2;
-        private const int TextGapLeft = 2;
-        private const int TextGapRight = 3;
-        private const int ButtonGapTop = 4;
-        private const int ButtonGapBottom = 3;
-        private const int ButtonGapBetween = 1;
-        private const int ButtonGapLeft = 1;
-        private const int ButtonGapRight = 5;
-        #endregion
+        private static string _toolTipClose;
+
+        private static string _toolTipOptions;
+
+        private static string _toolTipAutoHide;
+
+        private static TextFormatFlags _textFormat =
+            TextFormatFlags.SingleLine |
+            TextFormatFlags.EndEllipsis |
+            TextFormatFlags.VerticalCenter;
+
+        private InertButtonBase m_buttonAutoHide;
 
         private InertButtonBase m_buttonClose;
+
+        private InertButtonBase m_buttonOptions;
+
+        private ToolTip m_toolTip;
+
+        public VS2013DockPaneCaption(DockPane pane) : base(pane)
+        {
+            SuspendLayout();
+
+            Components = new Container();
+            m_toolTip = new ToolTip(Components);
+
+            ResumeLayout();
+        }
+
         private InertButtonBase ButtonClose
         {
             get
@@ -37,7 +52,7 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2013
                         DockPane.DockPanel.Theme.ImageService.DockPaneActiveHover_Close,
                         DockPane.DockPanel.Theme.ImageService.DockPaneActive_Close);
                     m_toolTip.SetToolTip(m_buttonClose, ToolTipClose);
-                    m_buttonClose.Click += new EventHandler(Close_Click);
+                    m_buttonClose.Click += Close_Click;
                     Controls.Add(m_buttonClose);
                 }
 
@@ -45,7 +60,6 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2013
             }
         }
 
-        private InertButtonBase m_buttonAutoHide;
         private InertButtonBase ButtonAutoHide
         {
             get
@@ -62,7 +76,7 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2013
                         DockPane.DockPanel.Theme.ImageService.DockPaneActive_AutoHide,
                         DockPane.DockPanel.Theme.ImageService.DockPanePress_AutoHide);
                     m_toolTip.SetToolTip(m_buttonAutoHide, ToolTipAutoHide);
-                    m_buttonAutoHide.Click += new EventHandler(AutoHide_Click);
+                    m_buttonAutoHide.Click += AutoHide_Click;
                     Controls.Add(m_buttonAutoHide);
                 }
 
@@ -70,7 +84,6 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2013
             }
         }
 
-        private InertButtonBase m_buttonOptions;
         private InertButtonBase ButtonOptions
         {
             get
@@ -84,73 +97,45 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2013
                         DockPane.DockPanel.Theme.ImageService.DockPaneActiveHover_Option,
                         DockPane.DockPanel.Theme.ImageService.DockPaneActive_Option);
                     m_toolTip.SetToolTip(m_buttonOptions, ToolTipOptions);
-                    m_buttonOptions.Click += new EventHandler(Options_Click);
+                    m_buttonOptions.Click += Options_Click;
                     Controls.Add(m_buttonOptions);
                 }
+
                 return m_buttonOptions;
             }
         }
 
-        private IContainer m_components;
-        private IContainer Components
-        {
-            get { return m_components; }
-        }
+        private IContainer Components { get; }
 
-        private ToolTip m_toolTip;
+        public Font TextFont => DockPane.DockPanel.Theme.Skin.DockPaneStripSkin.TextFont;
 
-        public VS2013DockPaneCaption(DockPane pane) : base(pane)
-        {
-            SuspendLayout();
-
-            m_components = new Container();
-            m_toolTip = new ToolTip(Components);
-
-            ResumeLayout();
-        }
-
-        protected  override void Dispose(bool disposing)
-        {
-            if (disposing)
-                Components.Dispose();
-            base.Dispose(disposing);
-        }
-
-        public Font TextFont
-        {
-            get { return DockPane.DockPanel.Theme.Skin.DockPaneStripSkin.TextFont; }
-        }
-
-        private static string _toolTipClose;
         private static string ToolTipClose
         {
             get
-            {	
+            {
                 if (_toolTipClose == null)
-                    _toolTipClose = Strings.DockPaneCaption_ToolTipClose;
+                    _toolTipClose = ThemeVS2012.Strings.DockPaneCaption_ToolTipClose;
                 return _toolTipClose;
             }
         }
 
-        private static string _toolTipOptions;
         private static string ToolTipOptions
         {
             get
             {
                 if (_toolTipOptions == null)
-                    _toolTipOptions = Strings.DockPaneCaption_ToolTipOptions;
+                    _toolTipOptions = ThemeVS2012.Strings.DockPaneCaption_ToolTipOptions;
 
                 return _toolTipOptions;
             }
         }
 
-        private static string _toolTipAutoHide;
         private static string ToolTipAutoHide
         {
             get
-            {	
+            {
                 if (_toolTipAutoHide == null)
-                    _toolTipAutoHide = Strings.DockPaneCaption_ToolTipAutoHide;
+                    _toolTipAutoHide = ThemeVS2012.Strings.DockPaneCaption_ToolTipAutoHide;
                 return _toolTipAutoHide;
             }
         }
@@ -161,29 +146,44 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2013
             {
                 if (DockPane.IsActivePane)
                     return DockPane.DockPanel.Theme.ColorPalette.ToolWindowCaptionActive.Text;
-                else
-                    return DockPane.DockPanel.Theme.ColorPalette.ToolWindowCaptionInactive.Text;
+                return DockPane.DockPanel.Theme.ColorPalette.ToolWindowCaptionInactive.Text;
             }
         }
 
-        private static TextFormatFlags _textFormat =
-            TextFormatFlags.SingleLine |
-            TextFormatFlags.EndEllipsis |
-            TextFormatFlags.VerticalCenter;
         private TextFormatFlags TextFormat
         {
             get
             {
                 if (RightToLeft == RightToLeft.No)
                     return _textFormat;
-                else
-                    return _textFormat | TextFormatFlags.RightToLeft | TextFormatFlags.Right;
+                return _textFormat | TextFormatFlags.RightToLeft | TextFormatFlags.Right;
             }
+        }
+
+        private bool CloseButtonEnabled =>
+            DockPane.ActiveContent != null ? DockPane.ActiveContent.DockHandler.CloseButton : false;
+
+        /// <summary>
+        ///     Determines whether the close button is visible on the content
+        /// </summary>
+        private bool CloseButtonVisible => DockPane.ActiveContent != null
+            ? DockPane.ActiveContent.DockHandler.CloseButtonVisible
+            : false;
+
+        private bool ShouldShowAutoHideButton => !DockPane.IsFloat;
+
+        protected override bool CanDragAutoHide => true;
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+                Components.Dispose();
+            base.Dispose(disposing);
         }
 
         protected internal override int MeasureHeight()
         {
-            int height = TextFont.Height + TextGapTop + TextGapBottom;
+            var height = TextFont.Height + TextGapTop + TextGapBottom;
 
             if (height < ButtonClose.Image.Height + ButtonGapTop + ButtonGapBottom)
                 height = ButtonClose.Image.Height + ButtonGapTop + ButtonGapBottom;
@@ -191,9 +191,9 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2013
             return height;
         }
 
-        protected  override void OnPaint(PaintEventArgs e)
+        protected override void OnPaint(PaintEventArgs e)
         {
-            base.OnPaint (e);
+            base.OnPaint(e);
             DrawCaption(e.Graphics);
         }
 
@@ -202,19 +202,15 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2013
             if (ClientRectangle.Width == 0 || ClientRectangle.Height == 0)
                 return;
 
-            Rectangle rect = ClientRectangle;
+            var rect = ClientRectangle;
             var border = DockPane.DockPanel.Theme.ColorPalette.ToolWindowBorder;
             ToolWindowCaptionPalette palette;
             if (DockPane.IsActivePane)
-            {
                 palette = DockPane.DockPanel.Theme.ColorPalette.ToolWindowCaptionActive;
-            }
             else
-            {
                 palette = DockPane.DockPanel.Theme.ColorPalette.ToolWindowCaptionInactive;
-            }
 
-            SolidBrush captionBrush = DockPane.DockPanel.Theme.PaintingService.GetBrush(palette.Background);
+            var captionBrush = DockPane.DockPanel.Theme.PaintingService.GetBrush(palette.Background);
             g.FillRectangle(captionBrush, rect);
 
             g.DrawLine(DockPane.DockPanel.Theme.PaintingService.GetPen(border), rect.Left, rect.Top,
@@ -224,9 +220,9 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2013
             g.DrawLine(DockPane.DockPanel.Theme.PaintingService.GetPen(border), rect.Right - 1, rect.Top,
                 rect.Right - 1, rect.Bottom);
 
-            Rectangle rectCaption = rect;
+            var rectCaption = rect;
 
-            Rectangle rectCaptionText = rectCaption;
+            var rectCaptionText = rectCaption;
             rectCaptionText.X += TextGapLeft;
             rectCaptionText.Width -= TextGapLeft + TextGapRight;
             rectCaptionText.Width -= ButtonGapLeft + ButtonClose.Width + ButtonGapRight;
@@ -237,10 +233,11 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2013
             rectCaptionText.Y += TextGapTop;
             rectCaptionText.Height -= TextGapTop + TextGapBottom;
 
-            TextRenderer.DrawText(g, DockPane.CaptionText, TextFont, DrawHelper.RtlTransform(this, rectCaptionText), palette.Text, TextFormat);
+            TextRenderer.DrawText(g, DockPane.CaptionText, TextFont, DrawHelper.RtlTransform(this, rectCaptionText),
+                palette.Text, TextFormat);
 
-            Rectangle rectDotsStrip = rectCaptionText;
-            int textLength = (int)g.MeasureString(DockPane.CaptionText, TextFont).Width + TextGapLeft;
+            var rectDotsStrip = rectCaptionText;
+            var textLength = (int) g.MeasureString(DockPane.CaptionText, TextFont).Width + TextGapLeft;
             rectDotsStrip.X += textLength;
             rectDotsStrip.Width -= textLength;
             rectDotsStrip.Height = ClientRectangle.Height;
@@ -253,10 +250,10 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2013
             if (rectStrip.Width <= 0 || rectStrip.Height <= 0)
                 return;
 
-            var penDots = DockPane.DockPanel.Theme.PaintingService.GetPen(colorDots, 1);
+            var penDots = DockPane.DockPanel.Theme.PaintingService.GetPen(colorDots);
             penDots.DashStyle = DashStyle.Custom;
-            penDots.DashPattern = new float[] { 1, 3 };
-            int positionY = rectStrip.Height / 2;
+            penDots.DashPattern = new float[] {1, 3};
+            var positionY = rectStrip.Height / 2;
 
             g.DrawLine(penDots, rectStrip.X + 2, positionY, rectStrip.X + rectStrip.Width - 2, positionY);
 
@@ -264,34 +261,16 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2013
             g.DrawLine(penDots, rectStrip.X, positionY + 2, rectStrip.X + rectStrip.Width, positionY + 2);
         }
 
-        protected  override void OnLayout(LayoutEventArgs levent)
+        protected override void OnLayout(LayoutEventArgs levent)
         {
             SetButtonsPosition();
-            base.OnLayout (levent);
+            base.OnLayout(levent);
         }
 
-        protected  override void OnRefreshChanges()
+        protected override void OnRefreshChanges()
         {
             SetButtons();
             Invalidate();
-        }
-
-        private bool CloseButtonEnabled
-        {
-            get	{	return (DockPane.ActiveContent != null)? DockPane.ActiveContent.DockHandler.CloseButton : false;	}
-        }
-
-        /// <summary>
-        /// Determines whether the close button is visible on the content
-        /// </summary>
-        private bool CloseButtonVisible
-        {
-            get { return (DockPane.ActiveContent != null) ? DockPane.ActiveContent.DockHandler.CloseButtonVisible : false; }
-        }
-
-        private bool ShouldShowAutoHideButton
-        {
-            get	{	return !DockPane.IsFloat;	}
         }
 
         private void SetButtons()
@@ -303,28 +282,28 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2013
             ButtonClose.RefreshChanges();
             ButtonAutoHide.RefreshChanges();
             ButtonOptions.RefreshChanges();
-            
+
             SetButtonsPosition();
         }
 
         private void SetButtonsPosition()
         {
             // set the size and location for close and auto-hide buttons
-            Rectangle rectCaption = ClientRectangle;
-            int buttonWidth = ButtonClose.Image.Width;
-            int buttonHeight = ButtonClose.Image.Height;
+            var rectCaption = ClientRectangle;
+            var buttonWidth = ButtonClose.Image.Width;
+            var buttonHeight = ButtonClose.Image.Height;
 
-            Size buttonSize = new Size(buttonWidth, buttonHeight);
-            int x = rectCaption.X + rectCaption.Width - ButtonGapRight - m_buttonClose.Width;
-            int y = rectCaption.Y + ButtonGapTop;
-            Point point = new Point(x, y);
+            var buttonSize = new Size(buttonWidth, buttonHeight);
+            var x = rectCaption.X + rectCaption.Width - ButtonGapRight - m_buttonClose.Width;
+            var y = rectCaption.Y + ButtonGapTop;
+            var point = new Point(x, y);
             ButtonClose.Bounds = DrawHelper.RtlTransform(this, new Rectangle(point, buttonSize));
 
             // If the close button is not visible draw the auto hide button overtop.
             // Otherwise it is drawn to the left of the close button.
             if (CloseButtonVisible)
                 point.Offset(-(buttonWidth + ButtonGapBetween), 0);
-            
+
             ButtonAutoHide.Bounds = DrawHelper.RtlTransform(this, new Rectangle(point, buttonSize));
             if (ShouldShowAutoHideButton)
                 point.Offset(-(buttonWidth + ButtonGapBetween), 0);
@@ -348,18 +327,27 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2013
 
         private void Options_Click(object sender, EventArgs e)
         {
-            ShowTabPageContextMenu(PointToClient(Control.MousePosition));
+            ShowTabPageContextMenu(PointToClient(MousePosition));
         }
 
-        protected  override void OnRightToLeftChanged(EventArgs e)
+        protected override void OnRightToLeftChanged(EventArgs e)
         {
             base.OnRightToLeftChanged(e);
             PerformLayout();
         }
 
-        protected  override bool CanDragAutoHide
-        {
-            get { return true; }
-        }
+        #region consts
+
+        private const int TextGapTop = 3;
+        private const int TextGapBottom = 2;
+        private const int TextGapLeft = 2;
+        private const int TextGapRight = 3;
+        private const int ButtonGapTop = 4;
+        private const int ButtonGapBottom = 3;
+        private const int ButtonGapBetween = 1;
+        private const int ButtonGapLeft = 1;
+        private const int ButtonGapRight = 5;
+
+        #endregion
     }
 }

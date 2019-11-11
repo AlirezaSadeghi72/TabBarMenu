@@ -1,5 +1,5 @@
-using System.Drawing;
 using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
 using System.Windows.Forms;
 using static Atiran.Utility.Docking2.DockPanel;
 using static Atiran.Utility.Docking2.DockPanel.DockDragHandler;
@@ -8,6 +8,76 @@ namespace Atiran.Utility.Docking2
 {
     public sealed class DockPanelExtender
     {
+        private IAutoHideStripFactory m_autoHideStripFactory;
+
+        private IAutoHideWindowFactory m_autoHideWindowFactory;
+
+        private IDockPaneFactory m_dockPaneFactory;
+
+        private IFloatWindowFactory m_floatWindowFactory;
+
+        public IDockPaneFactory DockPaneFactory
+        {
+            get
+            {
+                if (m_dockPaneFactory == null) m_dockPaneFactory = new DefaultDockPaneFactory();
+
+                return m_dockPaneFactory;
+            }
+            set => m_dockPaneFactory = value;
+        }
+
+        public IDockPaneSplitterControlFactory DockPaneSplitterControlFactory { get; set; }
+
+        public IWindowSplitterControlFactory WindowSplitterControlFactory { get; set; }
+
+        public IFloatWindowFactory FloatWindowFactory
+        {
+            get
+            {
+                if (m_floatWindowFactory == null) m_floatWindowFactory = new DefaultFloatWindowFactory();
+
+                return m_floatWindowFactory;
+            }
+            set => m_floatWindowFactory = value;
+        }
+
+        public IDockWindowFactory DockWindowFactory { get; set; }
+
+        public IDockPaneCaptionFactory DockPaneCaptionFactory { get; set; }
+
+        public IDockPaneStripFactory DockPaneStripFactory { get; set; }
+
+        public IAutoHideStripFactory AutoHideStripFactory
+        {
+            get => m_autoHideStripFactory;
+            set
+            {
+                if (m_autoHideStripFactory == value) return;
+
+                m_autoHideStripFactory = value;
+            }
+        }
+
+        public IAutoHideWindowFactory AutoHideWindowFactory
+        {
+            get => m_autoHideWindowFactory;
+            set
+            {
+                if (m_autoHideWindowFactory == value) return;
+
+                m_autoHideWindowFactory = value;
+            }
+        }
+
+        public IPaneIndicatorFactory PaneIndicatorFactory { get; set; }
+
+        public IPanelIndicatorFactory PanelIndicatorFactory { get; set; }
+
+        public IDockOutlineFactory DockOutlineFactory { get; set; }
+
+        public IDockIndicatorFactory DockIndicatorFactory { get; set; }
+
         [SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible")]
         public interface IDockPaneFactory
         {
@@ -17,7 +87,7 @@ namespace Atiran.Utility.Docking2
             DockPane CreateDockPane(IDockContent content, FloatWindow floatWindow, bool show);
 
             DockPane CreateDockPane(IDockContent content, DockPane previousPane, DockAlignment alignment,
-                                    double proportion, bool show);
+                double proportion, bool show);
 
             [SuppressMessage("Microsoft.Naming", "CA1720:AvoidTypeNamesInParameters", MessageId = "1#")]
             DockPane CreateDockPane(IDockContent content, Rectangle floatWindowBounds, bool show);
@@ -27,7 +97,7 @@ namespace Atiran.Utility.Docking2
         {
             DockPane.SplitterControlBase CreateSplitterControl(DockPane pane);
         }
-        
+
         public interface IWindowSplitterControlFactory
         {
             SplitterBase CreateSplitterControl(ISplitterHost host);
@@ -103,7 +173,7 @@ namespace Atiran.Utility.Docking2
             }
 
             public DockPane CreateDockPane(IDockContent content, DockPane prevPane, DockAlignment alignment,
-                                           double proportion, bool show)
+                double proportion, bool show)
             {
                 return new DockPane(content, prevPane, alignment, proportion, show);
             }
@@ -132,96 +202,5 @@ namespace Atiran.Utility.Docking2
         }
 
         #endregion
-
-        private IDockPaneFactory m_dockPaneFactory = null;
-
-        public IDockPaneFactory DockPaneFactory
-        {
-            get
-            {
-                if (m_dockPaneFactory == null)
-                {
-                    m_dockPaneFactory = new DefaultDockPaneFactory();
-                }
-
-                return m_dockPaneFactory;
-            }
-            set
-            {
-                m_dockPaneFactory = value;
-            }
-        }
-
-        public IDockPaneSplitterControlFactory DockPaneSplitterControlFactory { get; set; }
-
-        public IWindowSplitterControlFactory WindowSplitterControlFactory { get; set; }
-
-        private IFloatWindowFactory m_floatWindowFactory = null;
-
-        public IFloatWindowFactory FloatWindowFactory
-        {
-            get
-            {
-                if (m_floatWindowFactory == null)
-                {
-                    m_floatWindowFactory = new DefaultFloatWindowFactory();
-                }
-
-                return m_floatWindowFactory;
-            }
-            set
-            {
-                m_floatWindowFactory = value;
-            }
-        }
-
-        public IDockWindowFactory DockWindowFactory { get; set; }
-
-        public IDockPaneCaptionFactory DockPaneCaptionFactory { get; set; }
-
-        public IDockPaneStripFactory DockPaneStripFactory { get; set; }
-
-        private IAutoHideStripFactory m_autoHideStripFactory = null;
-
-        public IAutoHideStripFactory AutoHideStripFactory
-        {
-            get
-            {
-                return m_autoHideStripFactory;
-            }
-            set
-            {
-                if (m_autoHideStripFactory == value)
-                {
-                    return;
-                }
-
-                m_autoHideStripFactory = value;
-            }
-        }
-
-        private IAutoHideWindowFactory m_autoHideWindowFactory;
-        
-        public IAutoHideWindowFactory AutoHideWindowFactory
-        {
-            get { return m_autoHideWindowFactory; }
-            set
-            {
-                if (m_autoHideWindowFactory == value)
-                {
-                    return;
-                }
-
-                m_autoHideWindowFactory = value;
-            }
-        }
-
-        public IPaneIndicatorFactory PaneIndicatorFactory { get; set; }
-
-        public IPanelIndicatorFactory PanelIndicatorFactory { get; set; }
-
-        public IDockOutlineFactory DockOutlineFactory { get; set; }
-
-        public IDockIndicatorFactory DockIndicatorFactory { get; set; }
     }
 }

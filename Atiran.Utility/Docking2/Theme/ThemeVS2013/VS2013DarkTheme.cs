@@ -1,8 +1,7 @@
 namespace Atiran.Utility.Docking2.Theme.ThemeVS2013
 {
-
     /// <summary>
-    /// Visual Studio 2013 Light theme.
+    ///     Visual Studio 2013 Light theme.
     /// </summary>
     public class VS2013DarkTheme : VS2013ThemeBase
     {

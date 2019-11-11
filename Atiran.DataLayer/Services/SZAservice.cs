@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Atiran.DataLayer.Services
+﻿namespace Atiran.DataLayer.Services
 {
     public class SZAservice
     {
@@ -38,12 +32,12 @@ namespace Atiran.DataLayer.Services
         public string Zbed_bes_Befor { get; set; }
         public decimal ZMan_All { get; set; }
         public string Zbed_bes_All { get; set; }
-        public Nullable<bool> ZActive { get; set; }
+        public bool? ZActive { get; set; }
 
         public int Arow { get; set; }
         public string Adate { get; set; }
         public string Auser { get; set; }
-        public Nullable<int> Asanadno { get; set; }
+        public int? Asanadno { get; set; }
         public int AID { get; set; }
         public int AZirSarfaslID { get; set; }
         public string Adescription { get; set; }
@@ -52,7 +46,7 @@ namespace Atiran.DataLayer.Services
         public string Abed_bes { get; set; }
         public decimal AMan { get; set; }
         public string AManbed_bes { get; set; }
-        public Nullable<int> Akind { get; set; }
+        public int? Akind { get; set; }
         public string AkindName { get; set; }
     }
 }

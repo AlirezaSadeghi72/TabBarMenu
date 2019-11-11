@@ -1,14 +1,13 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using Atiran.Utility.Docking2;
 using static Atiran.Utility.Docking2.DockPanelExtender;
 
 namespace Atiran.Utility.Docking2.Theme.ThemeVS2005
 {
     /// <summary>
-    /// Visual Studio 2005 theme.
+    ///     Visual Studio 2005 theme.
     /// </summary>
-    public partial class VS2005Theme : ThemeBase
+    public class VS2005Theme : ThemeBase
     {
         public VS2005Theme()
         {
@@ -29,7 +28,7 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2005
 
         internal static DockPanelSkin CreateVisualStudio2005()
         {
-            DockPanelSkin skin = new DockPanelSkin();
+            var skin = new DockPanelSkin();
 
             skin.AutoHideStripSkin.DockStripGradient.StartColor = SystemColors.ControlLight;
             skin.AutoHideStripSkin.DockStripGradient.EndColor = SystemColors.ControlLight;
@@ -52,15 +51,20 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2005
             skin.DockPaneStripSkin.ToolWindowGradient.InactiveTabGradient.EndColor = Color.Transparent;
             skin.DockPaneStripSkin.ToolWindowGradient.InactiveTabGradient.TextColor = SystemColors.ControlDarkDark;
 
-            skin.DockPaneStripSkin.ToolWindowGradient.ActiveCaptionGradient.StartColor = SystemColors.GradientActiveCaption;
+            skin.DockPaneStripSkin.ToolWindowGradient.ActiveCaptionGradient.StartColor =
+                SystemColors.GradientActiveCaption;
             skin.DockPaneStripSkin.ToolWindowGradient.ActiveCaptionGradient.EndColor = SystemColors.ActiveCaption;
-            skin.DockPaneStripSkin.ToolWindowGradient.ActiveCaptionGradient.LinearGradientMode = LinearGradientMode.Vertical;
+            skin.DockPaneStripSkin.ToolWindowGradient.ActiveCaptionGradient.LinearGradientMode =
+                LinearGradientMode.Vertical;
             skin.DockPaneStripSkin.ToolWindowGradient.ActiveCaptionGradient.TextColor = SystemColors.ActiveCaptionText;
 
-            skin.DockPaneStripSkin.ToolWindowGradient.InactiveCaptionGradient.StartColor = SystemColors.GradientInactiveCaption;
+            skin.DockPaneStripSkin.ToolWindowGradient.InactiveCaptionGradient.StartColor =
+                SystemColors.GradientInactiveCaption;
             skin.DockPaneStripSkin.ToolWindowGradient.InactiveCaptionGradient.EndColor = SystemColors.InactiveCaption;
-            skin.DockPaneStripSkin.ToolWindowGradient.InactiveCaptionGradient.LinearGradientMode = LinearGradientMode.Vertical;
-            skin.DockPaneStripSkin.ToolWindowGradient.InactiveCaptionGradient.TextColor = SystemColors.InactiveCaptionText;
+            skin.DockPaneStripSkin.ToolWindowGradient.InactiveCaptionGradient.LinearGradientMode =
+                LinearGradientMode.Vertical;
+            skin.DockPaneStripSkin.ToolWindowGradient.InactiveCaptionGradient.TextColor =
+                SystemColors.InactiveCaptionText;
 
             return skin;
         }
@@ -98,6 +102,7 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2005
                 return new VS2005DockPaneStrip(pane);
             }
         }
+
         #endregion
     }
 }

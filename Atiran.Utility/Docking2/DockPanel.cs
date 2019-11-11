@@ -1,9 +1,9 @@
 using System;
-using System.Drawing;
-using System.Windows.Forms;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
-using System.Collections.Generic;
+using System.Drawing;
+using System.Windows.Forms;
 
 // To simplify the process of finding the toolbox bitmap resource:
 // #1 Create an internal class called "resfinder" outside of the root namespace.
@@ -17,15 +17,16 @@ namespace Atiran.Utility.Docking2
     internal class resfinder
     {
     }
+
     /// <summary>
-    /// Deserialization handler of layout file/stream.
+    ///     Deserialization handler of layout file/stream.
     /// </summary>
     /// <param name="persistString">Strings stored in layout file/stream.</param>
     /// <returns>Dock content deserialized from layout/stream.</returns>
     /// <remarks>
-    /// The deserialization handler method should handle all possible exceptions.
-    /// 
-    /// If any exception happens during deserialization and is not handled, the program might crash or experience other issues.
+    ///     The deserialization handler method should handle all possible exceptions.
+    ///     If any exception happens during deserialization and is not handled, the program might crash or experience other
+    ///     issues.
     /// </remarks>
     [SuppressMessage("Microsoft.Naming", "CA1720:AvoidTypeNamesInParameters", MessageId = "0#")]
     public delegate IDockContent DeserializeDockContent(string persistString);
@@ -37,30 +38,477 @@ namespace Atiran.Utility.Docking2
     [DefaultEvent("ActiveContentChanged")]
     public partial class DockPanel : Panel, ISupportInitialize
     {
+        private static readonly object ActiveAutoHideContentChangedEvent = new object();
+
+
+        private static readonly object ContentAddedEvent = new object();
+
+        private static readonly object ContentRemovedEvent = new object();
         private readonly FocusManagerImpl m_focusManager;
-        private readonly DockPaneCollection m_panes;
-        private readonly FloatWindowCollection m_floatWindows;
-        private AutoHideWindowControl m_autoHideWindow;
-        private DockWindowCollection m_dockWindows;
-        private readonly DockContent m_dummyContent; 
-        private readonly Control m_dummyControl;
-        
+
+        private bool initializing;
+
+        private bool m_allowEndUserDocking = !Win32Helper.IsRunningOnMono;
+
+        private bool m_allowEndUserNestedDocking = !Win32Helper.IsRunningOnMono;
+
+        private AutoHideStripBase m_autoHideStripControl;
+
+        private Color m_BackColor;
+
+        private Rectangle[] m_clipRects;
+
+        private bool m_disposed;
+
+        private double m_dockBottomPortion = 0.25;
+
+        private double m_dockLeftPortion = 0.25;
+
+        private double m_dockRightPortion = 0.25;
+
+        private double m_dockTopPortion = 0.25;
+
+        private DocumentStyle m_documentStyle = DocumentStyle.DockingMdi;
+
+        private PaintEventHandler m_dummyControlPaintEventHandler;
+
+        private bool m_rightToLeftLayout;
+
+        private bool m_showDocumentIcon;
+
         public DockPanel()
         {
             ShowAutoHideContentOnHover = true;
 
             m_focusManager = new FocusManagerImpl(this);
-            m_panes = new DockPaneCollection();
-            m_floatWindows = new FloatWindowCollection();
+            Panes = new DockPaneCollection();
+            FloatWindows = new FloatWindowCollection();
 
             SuspendLayout();
 
-            m_dummyControl = new DummyControl();
-            m_dummyControl.Bounds = new Rectangle(0, 0, 1, 1);
-            Controls.Add(m_dummyControl);
+            DummyControl = new DummyControl();
+            DummyControl.Bounds = new Rectangle(0, 0, 1, 1);
+            Controls.Add(DummyControl);
 
-            m_dummyContent = new DockContent();
+            DummyContent = new DockContent();
             ResumeLayout();
+        }
+
+        /// <summary>
+        ///     Determines the color with which the client rectangle will be drawn.
+        ///     If this property is used instead of the BackColor it will not have any influence on the borders to the surrounding
+        ///     controls (DockPane).
+        ///     The BackColor property changes the borders of surrounding controls (DockPane).
+        ///     Alternatively both properties may be used (BackColor to draw and define the color of the borders and DockBackColor
+        ///     to define the color of the client rectangle).
+        ///     For Backgroundimages: Set your prefered Image, then set the DockBackColor and the BackColor to the same Color
+        ///     (Control)
+        /// </summary>
+        [Description("Determines the color with which the client rectangle will be drawn.\r\n" +
+                     "If this property is used instead of the BackColor it will not have any influence on the borders to the surrounding controls (DockPane).\r\n" +
+                     "The BackColor property changes the borders of surrounding controls (DockPane).\r\n" +
+                     "Alternatively both properties may be used (BackColor to draw and define the color of the borders and DockBackColor to define the color of the client rectangle).\r\n" +
+                     "For Backgroundimages: Set your prefered Image, then set the DockBackColor and the BackColor to the same Color (Control).")]
+        public Color DockBackColor
+        {
+            get => !m_BackColor.IsEmpty ? m_BackColor : base.BackColor;
+
+            set
+            {
+                if (m_BackColor != value)
+                {
+                    m_BackColor = value;
+                    Refresh();
+                }
+            }
+        }
+
+        internal AutoHideStripBase AutoHideStripControl
+        {
+            get
+            {
+                if (m_autoHideStripControl == null)
+                {
+                    m_autoHideStripControl = Theme.Extender.AutoHideStripFactory.CreateAutoHideStrip(this);
+                    Controls.Add(m_autoHideStripControl);
+                }
+
+                return m_autoHideStripControl;
+            }
+        }
+
+        [Browsable(false)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public IDockContent ActiveAutoHideContent
+        {
+            get => AutoHideWindow.ActiveContent;
+            set => AutoHideWindow.ActiveContent = value;
+        }
+
+        [LocalizedCategory("Category_Docking")]
+        [LocalizedDescription("DockPanel_AllowEndUserDocking_Description")]
+        [DefaultValue(true)]
+        public bool AllowEndUserDocking
+        {
+            get
+            {
+                if (Win32Helper.IsRunningOnMono && m_allowEndUserDocking)
+                    m_allowEndUserDocking = false;
+
+                return m_allowEndUserDocking;
+            }
+
+            set
+            {
+                if (Win32Helper.IsRunningOnMono && value)
+                    throw new InvalidOperationException("AllowEndUserDocking can only be false if running on Mono");
+
+                m_allowEndUserDocking = value;
+            }
+        }
+
+        [LocalizedCategory("Category_Docking")]
+        [LocalizedDescription("DockPanel_AllowEndUserNestedDocking_Description")]
+        [DefaultValue(true)]
+        public bool AllowEndUserNestedDocking
+        {
+            get
+            {
+                if (Win32Helper.IsRunningOnMono && m_allowEndUserDocking)
+                    m_allowEndUserDocking = false;
+                return m_allowEndUserNestedDocking;
+            }
+
+            set
+            {
+                if (Win32Helper.IsRunningOnMono && value)
+                    throw new InvalidOperationException(
+                        "AllowEndUserNestedDocking can only be false if running on Mono");
+
+                m_allowEndUserNestedDocking = value;
+            }
+        }
+
+        [Browsable(false)] public DockContentCollection Contents { get; } = new DockContentCollection();
+
+        internal DockContent DummyContent { get; }
+
+        [DefaultValue(false)]
+        [LocalizedCategory("Appearance")]
+        [LocalizedDescription("DockPanel_RightToLeftLayout_Description")]
+        public bool RightToLeftLayout
+        {
+            get => m_rightToLeftLayout;
+
+            set
+            {
+                if (m_rightToLeftLayout == value)
+                    return;
+
+                m_rightToLeftLayout = value;
+                foreach (var floatWindow in FloatWindows)
+                    floatWindow.RightToLeftLayout = value;
+            }
+        }
+
+        [DefaultValue(false)]
+        [LocalizedCategory("Category_Docking")]
+        [LocalizedDescription("DockPanel_ShowDocumentIcon_Description")]
+        public bool ShowDocumentIcon
+        {
+            get => m_showDocumentIcon;
+            set
+            {
+                if (m_showDocumentIcon == value)
+                    return;
+
+                m_showDocumentIcon = value;
+                Refresh();
+            }
+        }
+
+        [DefaultValue(DocumentTabStripLocation.Top)]
+        [LocalizedCategory("Category_Docking")]
+        [LocalizedDescription("DockPanel_DocumentTabStripLocation_Description")]
+        public DocumentTabStripLocation DocumentTabStripLocation { get; set; } = DocumentTabStripLocation.Top;
+
+        [Browsable(false)]
+        [Obsolete("Use Theme.Extender instead.")]
+        public DockPanelExtender Extender => null;
+
+        [Browsable(false)]
+        [Obsolete("Use Theme.Extender instead.")]
+        public DockPanelExtender.IDockPaneFactory DockPaneFactory => null;
+
+        [Browsable(false)]
+        [Obsolete("Use Theme.Extender instead.")]
+        public DockPanelExtender.IFloatWindowFactory FloatWindowFactory => null;
+
+        [Browsable(false)]
+        [Obsolete("Use Theme.Extender instead.")]
+        public DockPanelExtender.IDockWindowFactory DockWindowFactory => null;
+
+        [Browsable(false)] public DockPaneCollection Panes { get; }
+
+        /// <summary>
+        ///     Dock area.
+        /// </summary>
+        /// <remarks>
+        ///     This <see cref="Rectangle" /> is the center rectangle of <see cref="DockPanel" /> control.
+        ///     Excluded spaces are for the following visual elements,
+        ///     * Auto hide strips on four sides.
+        ///     * Necessary paddings defined in themes.
+        ///     Therefore, all dock contents mainly fall into this area (except auto hide window, which might slightly move beyond
+        ///     this area).
+        /// </remarks>
+        public Rectangle DockArea =>
+            new Rectangle(DockPadding.Left, DockPadding.Top,
+                ClientRectangle.Width - DockPadding.Left - DockPadding.Right,
+                ClientRectangle.Height - DockPadding.Top - DockPadding.Bottom);
+
+        [LocalizedCategory("Category_Docking")]
+        [LocalizedDescription("DockPanel_DockBottomPortion_Description")]
+        [DefaultValue(0.25)]
+        public double DockBottomPortion
+        {
+            get => m_dockBottomPortion;
+
+            set
+            {
+                if (value <= 0)
+                    throw new ArgumentOutOfRangeException(nameof(value));
+
+                if (Math.Abs(value - m_dockBottomPortion) < double.Epsilon)
+                    return;
+
+                m_dockBottomPortion = value;
+
+                if (m_dockBottomPortion < 1 && m_dockTopPortion < 1)
+                    if (m_dockTopPortion + m_dockBottomPortion > 1)
+                        m_dockTopPortion = 1 - m_dockBottomPortion;
+
+                PerformLayout();
+            }
+        }
+
+        [LocalizedCategory("Category_Docking")]
+        [LocalizedDescription("DockPanel_DockLeftPortion_Description")]
+        [DefaultValue(0.25)]
+        public double DockLeftPortion
+        {
+            get => m_dockLeftPortion;
+
+            set
+            {
+                if (value <= 0)
+                    throw new ArgumentOutOfRangeException(nameof(value));
+
+                if (Math.Abs(value - m_dockLeftPortion) < double.Epsilon)
+                    return;
+
+                m_dockLeftPortion = value;
+
+                if (m_dockLeftPortion < 1 && m_dockRightPortion < 1)
+                    if (m_dockLeftPortion + m_dockRightPortion > 1)
+                        m_dockRightPortion = 1 - m_dockLeftPortion;
+                PerformLayout();
+            }
+        }
+
+        [LocalizedCategory("Category_Docking")]
+        [LocalizedDescription("DockPanel_DockRightPortion_Description")]
+        [DefaultValue(0.25)]
+        public double DockRightPortion
+        {
+            get => m_dockRightPortion;
+
+            set
+            {
+                if (value <= 0)
+                    throw new ArgumentOutOfRangeException(nameof(value));
+
+                if (Math.Abs(value - m_dockRightPortion) < double.Epsilon)
+                    return;
+
+                m_dockRightPortion = value;
+
+                if (m_dockLeftPortion < 1 && m_dockRightPortion < 1)
+                    if (m_dockLeftPortion + m_dockRightPortion > 1)
+                        m_dockLeftPortion = 1 - m_dockRightPortion;
+
+                PerformLayout();
+            }
+        }
+
+        [LocalizedCategory("Category_Docking")]
+        [LocalizedDescription("DockPanel_DockTopPortion_Description")]
+        [DefaultValue(0.25)]
+        public double DockTopPortion
+        {
+            get => m_dockTopPortion;
+
+            set
+            {
+                if (value <= 0)
+                    throw new ArgumentOutOfRangeException(nameof(value));
+
+                if (Math.Abs(value - m_dockTopPortion) < double.Epsilon)
+                    return;
+
+                m_dockTopPortion = value;
+
+                if (m_dockTopPortion < 1 && m_dockBottomPortion < 1)
+                    if (m_dockTopPortion + m_dockBottomPortion > 1)
+                        m_dockBottomPortion = 1 - m_dockTopPortion;
+                PerformLayout();
+            }
+        }
+
+        [Browsable(false)] public DockWindowCollection DockWindows { get; private set; }
+
+        [Browsable(false)]
+        public int DocumentsCount
+        {
+            get
+            {
+                var count = 0;
+                foreach (var content in Documents)
+                    count++;
+
+                return count;
+            }
+        }
+
+        [Browsable(false)]
+        public IEnumerable<IDockContent> Documents
+        {
+            get
+            {
+                foreach (var content in Contents)
+                    if (content.DockHandler.DockState == DockState.Document)
+                        yield return content;
+            }
+        }
+
+        private Control DummyControl { get; }
+
+        [Browsable(false)] public FloatWindowCollection FloatWindows { get; }
+
+        [Category("Layout")]
+        [LocalizedDescription("DockPanel_DefaultFloatWindowSize_Description")]
+        public Size DefaultFloatWindowSize { get; set; } = new Size(300, 300);
+
+        [LocalizedCategory("Category_Docking")]
+        [LocalizedDescription("DockPanel_DocumentStyle_Description")]
+        [DefaultValue(DocumentStyle.DockingMdi)]
+        public DocumentStyle DocumentStyle
+        {
+            get => m_documentStyle;
+            set
+            {
+                if (value == m_documentStyle)
+                    return;
+
+                if (!Enum.IsDefined(typeof(DocumentStyle), value))
+                    throw new InvalidEnumArgumentException();
+
+                if (value == DocumentStyle.SystemMdi && DockWindows != null &&
+                    DockWindows[DockState.Document].VisibleNestedPanes.Count > 0)
+                    throw new InvalidEnumArgumentException();
+
+                m_documentStyle = value;
+
+                if (initializing) return;
+
+                SuspendLayout(true);
+
+                SetAutoHideWindowParent();
+                SetMdiClient();
+                InvalidateWindowRegion();
+
+                foreach (var content in Contents)
+                    if (content.DockHandler.DockState == DockState.Document)
+                        content.DockHandler.SetPaneAndVisible(content.DockHandler.Pane);
+
+                PerformMdiClientLayout();
+
+                ResumeLayout(true, true);
+            }
+        }
+
+        [LocalizedCategory("Category_Performance")]
+        [LocalizedDescription("DockPanel_SupportDeeplyNestedContent_Description")]
+        [DefaultValue(false)]
+        public bool SupportDeeplyNestedContent { get; set; }
+
+        /// <summary>
+        ///     Flag to show autohide content on mouse hover. Default value is <code>true</code>.
+        /// </summary>
+        /// <remarks>
+        ///     This flag is ignored in VS2012/2013 themes. Such themes assume it is always <code>false</code>.
+        /// </remarks>
+        [LocalizedCategory("Category_Docking")]
+        [LocalizedDescription("DockPanel_ShowAutoHideContentOnHover_Description")]
+        [DefaultValue(true)]
+        public bool ShowAutoHideContentOnHover { get; set; }
+
+        internal Form ParentForm
+        {
+            get
+            {
+                if (!IsParentFormValid())
+                    throw new InvalidOperationException(Strings.DockPanel_ParentForm_Invalid);
+
+                return GetMdiClientController().ParentForm;
+            }
+        }
+
+        private Rectangle SystemMdiClientBounds
+        {
+            get
+            {
+                if (!IsParentFormValid() || !Visible)
+                    return Rectangle.Empty;
+
+                var rect = ParentForm.RectangleToClient(RectangleToScreen(DocumentWindowBounds));
+                return rect;
+            }
+        }
+
+        public Rectangle DocumentWindowBounds
+        {
+            get
+            {
+                var rectDocumentBounds = DisplayRectangle;
+                if (DockWindows[DockState.DockLeft].Visible)
+                {
+                    rectDocumentBounds.X += DockWindows[DockState.DockLeft].Width;
+                    rectDocumentBounds.Width -= DockWindows[DockState.DockLeft].Width;
+                }
+
+                if (DockWindows[DockState.DockRight].Visible)
+                    rectDocumentBounds.Width -= DockWindows[DockState.DockRight].Width;
+                if (DockWindows[DockState.DockTop].Visible)
+                {
+                    rectDocumentBounds.Y += DockWindows[DockState.DockTop].Height;
+                    rectDocumentBounds.Height -= DockWindows[DockState.DockTop].Height;
+                }
+
+                if (DockWindows[DockState.DockBottom].Visible)
+                    rectDocumentBounds.Height -= DockWindows[DockState.DockBottom].Height;
+
+                return rectDocumentBounds;
+            }
+        }
+
+        void ISupportInitialize.BeginInit()
+        {
+            initializing = true;
+        }
+
+        void ISupportInitialize.EndInit()
+        {
+            initializing = false;
         }
 
         internal void ResetDummy()
@@ -73,56 +521,9 @@ namespace Atiran.Utility.Docking2
             DummyControl.BackColor = DockBackColor;
         }
 
-        private Color m_BackColor;
-
-        /// <summary>
-        /// Determines the color with which the client rectangle will be drawn.
-        /// If this property is used instead of the BackColor it will not have any influence on the borders to the surrounding controls (DockPane).
-        /// The BackColor property changes the borders of surrounding controls (DockPane).
-        /// Alternatively both properties may be used (BackColor to draw and define the color of the borders and DockBackColor to define the color of the client rectangle). 
-        /// For Backgroundimages: Set your prefered Image, then set the DockBackColor and the BackColor to the same Color (Control)
-        /// </summary>
-        [Description("Determines the color with which the client rectangle will be drawn.\r\n" +
-            "If this property is used instead of the BackColor it will not have any influence on the borders to the surrounding controls (DockPane).\r\n" +
-            "The BackColor property changes the borders of surrounding controls (DockPane).\r\n" +
-            "Alternatively both properties may be used (BackColor to draw and define the color of the borders and DockBackColor to define the color of the client rectangle).\r\n" +
-            "For Backgroundimages: Set your prefered Image, then set the DockBackColor and the BackColor to the same Color (Control).")]
-        public Color DockBackColor
-        {
-            get
-            {
-                return !m_BackColor.IsEmpty ? m_BackColor : base.BackColor;
-            }
-
-            set
-            {
-                if (m_BackColor != value)
-                {
-                    m_BackColor = value;
-                    Refresh();
-                }
-            }
-        }
-
         private bool ShouldSerializeDockBackColor()
         {
             return !m_BackColor.IsEmpty;
-        }
-
-        private AutoHideStripBase m_autoHideStripControl;
-
-        internal AutoHideStripBase AutoHideStripControl
-        {
-            get
-            {	
-                if (m_autoHideStripControl == null)
-                {
-                    m_autoHideStripControl = Theme.Extender.AutoHideStripFactory.CreateAutoHideStrip(this);
-                    Controls.Add(m_autoHideStripControl);
-                }
-
-                return m_autoHideStripControl;
-            }
         }
 
         internal void ResetAutoHideStripControl()
@@ -144,339 +545,41 @@ namespace Atiran.Utility.Docking2
             if (DocumentStyle != DocumentStyle.DockingMdi)
                 return;
 
-            foreach (DockPane pane in Panes)
+            foreach (var pane in Panes)
                 if (pane.DockState == DockState.Document)
                     pane.SetContentBounds();
 
             InvalidateWindowRegion();
         }
 
-        private bool m_disposed;
-
-        protected  override void Dispose(bool disposing)
+        protected override void Dispose(bool disposing)
         {
             if (!m_disposed && disposing)
             {
                 m_focusManager.Dispose();
                 if (m_mdiClientController != null)
                 {
-                    m_mdiClientController.HandleAssigned -= new EventHandler(MdiClientHandleAssigned);
-                    m_mdiClientController.MdiChildActivate -= new EventHandler(ParentFormMdiChildActivate);
-                    m_mdiClientController.Layout -= new LayoutEventHandler(MdiClient_Layout);
+                    m_mdiClientController.HandleAssigned -= MdiClientHandleAssigned;
+                    m_mdiClientController.MdiChildActivate -= ParentFormMdiChildActivate;
+                    m_mdiClientController.Layout -= MdiClient_Layout;
                     m_mdiClientController.Dispose();
                 }
+
                 FloatWindows.Dispose();
                 Panes.Dispose();
                 DummyContent.Dispose();
 
                 m_disposed = true;
             }
-                
+
             base.Dispose(disposing);
         }
 
-        [Browsable(false)]
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public IDockContent ActiveAutoHideContent
-        {
-            get { return AutoHideWindow.ActiveContent; }
-            set { AutoHideWindow.ActiveContent = value; }
-        }
-
-        private bool m_allowEndUserDocking = !Win32Helper.IsRunningOnMono;
-        [LocalizedCategory("Category_Docking")]
-        [LocalizedDescription("DockPanel_AllowEndUserDocking_Description")]
-        [DefaultValue(true)]
-        public bool AllowEndUserDocking
-        {
-            get
-            {
-                if (Win32Helper.IsRunningOnMono && m_allowEndUserDocking)
-                    m_allowEndUserDocking = false;
-
-                return m_allowEndUserDocking;
-            }
-
-            set
-            {
-                if (Win32Helper.IsRunningOnMono && value)
-                    throw new InvalidOperationException("AllowEndUserDocking can only be false if running on Mono");
-                    
-                m_allowEndUserDocking = value;
-            }
-        }
-
-        private bool m_allowEndUserNestedDocking = !Win32Helper.IsRunningOnMono;
-        [LocalizedCategory("Category_Docking")]
-        [LocalizedDescription("DockPanel_AllowEndUserNestedDocking_Description")]
-        [DefaultValue(true)]
-        public bool AllowEndUserNestedDocking
-        {
-            get
-            {
-                if (Win32Helper.IsRunningOnMono && m_allowEndUserDocking)
-                    m_allowEndUserDocking = false;
-                return m_allowEndUserNestedDocking;
-            }
-
-            set
-            {
-                if (Win32Helper.IsRunningOnMono && value)
-                    throw new InvalidOperationException("AllowEndUserNestedDocking can only be false if running on Mono");
-
-                m_allowEndUserNestedDocking = value;
-            }
-        }
-
-        private DockContentCollection m_contents = new DockContentCollection();
-        [Browsable(false)]
-        public DockContentCollection Contents
-        {
-            get { return m_contents; }
-        }
-
-        internal DockContent DummyContent
-        {
-            get { return m_dummyContent; }
-        }
-
-        private bool m_rightToLeftLayout = false;
-        [DefaultValue(false)]
-        [LocalizedCategory("Appearance")]
-        [LocalizedDescription("DockPanel_RightToLeftLayout_Description")]
-        public bool RightToLeftLayout
-        {
-            get
-            {
-                return m_rightToLeftLayout;
-            }
-
-            set
-            {
-                if (m_rightToLeftLayout == value)
-                    return;
-
-                m_rightToLeftLayout = value;
-                foreach (FloatWindow floatWindow in FloatWindows)
-                    floatWindow.RightToLeftLayout = value;
-            }
-        }
-
-        protected  override void OnRightToLeftChanged(EventArgs e)
+        protected override void OnRightToLeftChanged(EventArgs e)
         {
             base.OnRightToLeftChanged(e);
-            foreach (FloatWindow floatWindow in FloatWindows)
+            foreach (var floatWindow in FloatWindows)
                 floatWindow.RightToLeft = RightToLeft;
-        }
-
-        private bool m_showDocumentIcon = false;
-        [DefaultValue(false)]
-        [LocalizedCategory("Category_Docking")]
-        [LocalizedDescription("DockPanel_ShowDocumentIcon_Description")]
-        public bool ShowDocumentIcon
-        {
-            get	{	return m_showDocumentIcon;	}
-            set
-            {
-                if (m_showDocumentIcon == value)
-                    return;
-
-                m_showDocumentIcon = value;
-                Refresh();
-            }
-        }
-
-        [DefaultValue(DocumentTabStripLocation.Top)]
-        [LocalizedCategory("Category_Docking")]
-        [LocalizedDescription("DockPanel_DocumentTabStripLocation_Description")]
-        public DocumentTabStripLocation DocumentTabStripLocation { get; set; } = DocumentTabStripLocation.Top;
-
-        [Browsable(false)]
-        [Obsolete("Use Theme.Extender instead.")]
-        public DockPanelExtender Extender
-        {
-            get { return null; }
-        }
-
-        [Browsable(false)]
-        [Obsolete("Use Theme.Extender instead.")]
-        public DockPanelExtender.IDockPaneFactory DockPaneFactory
-        {
-            get { return null; }
-        }
-
-        [Browsable(false)]
-        [Obsolete("Use Theme.Extender instead.")]
-        public DockPanelExtender.IFloatWindowFactory FloatWindowFactory
-        {
-            get { return null; }
-        }
-
-        [Browsable(false)]
-        [Obsolete("Use Theme.Extender instead.")]
-        public DockPanelExtender.IDockWindowFactory DockWindowFactory
-        {
-            get { return null; }
-        }
-
-        [Browsable(false)]
-        public DockPaneCollection Panes
-        {
-            get { return m_panes; }
-        }
-
-        /// <summary>
-        /// Dock area.
-        /// </summary>
-        /// <remarks>
-        /// This <see cref="Rectangle"/> is the center rectangle of <see cref="DockPanel"/> control.
-        /// 
-        /// Excluded spaces are for the following visual elements,
-        /// * Auto hide strips on four sides.
-        /// * Necessary paddings defined in themes.
-        /// 
-        /// Therefore, all dock contents mainly fall into this area (except auto hide window, which might slightly move beyond this area).
-        /// </remarks>
-        public Rectangle DockArea
-        {
-            get
-            {
-                return new Rectangle(DockPadding.Left, DockPadding.Top,
-                    ClientRectangle.Width - DockPadding.Left - DockPadding.Right,
-                    ClientRectangle.Height - DockPadding.Top - DockPadding.Bottom);
-            }
-        }
-
-        private double m_dockBottomPortion = 0.25;
-
-        [LocalizedCategory("Category_Docking")]
-        [LocalizedDescription("DockPanel_DockBottomPortion_Description")]
-        [DefaultValue(0.25)]
-        public double DockBottomPortion
-        {
-            get
-            {
-                return m_dockBottomPortion;
-            }
-
-            set
-            {
-                if (value <= 0)
-                    throw new ArgumentOutOfRangeException(nameof(value));
-
-                if (Math.Abs(value - m_dockBottomPortion) < double.Epsilon)
-                    return;
-
-                m_dockBottomPortion = value;
-
-                if (m_dockBottomPortion < 1 && m_dockTopPortion < 1)
-                {
-                    if (m_dockTopPortion + m_dockBottomPortion > 1)
-                        m_dockTopPortion = 1 - m_dockBottomPortion;
-                }
-
-                PerformLayout();
-            }
-        }
-
-        private double m_dockLeftPortion = 0.25;
-
-        [LocalizedCategory("Category_Docking")]
-        [LocalizedDescription("DockPanel_DockLeftPortion_Description")]
-        [DefaultValue(0.25)]
-        public double DockLeftPortion
-        {
-            get
-            {
-                return m_dockLeftPortion;
-            }
-
-            set
-            {
-                if (value <= 0)
-                    throw new ArgumentOutOfRangeException(nameof(value));
-
-                if (Math.Abs(value - m_dockLeftPortion) < double.Epsilon)
-                    return;
-
-                m_dockLeftPortion = value;
-
-                if (m_dockLeftPortion < 1 && m_dockRightPortion < 1)
-                {
-                    if (m_dockLeftPortion + m_dockRightPortion > 1)
-                        m_dockRightPortion = 1 - m_dockLeftPortion;
-                }
-                PerformLayout();
-            }
-        }
-
-        private double m_dockRightPortion = 0.25;
-
-        [LocalizedCategory("Category_Docking")]
-        [LocalizedDescription("DockPanel_DockRightPortion_Description")]
-        [DefaultValue(0.25)]
-        public double DockRightPortion
-        {
-            get
-            {
-                return m_dockRightPortion;
-            }
-
-            set
-            {
-                if (value <= 0)
-                    throw new ArgumentOutOfRangeException(nameof(value));
-
-                if (Math.Abs(value - m_dockRightPortion) < double.Epsilon)
-                    return;
-
-                m_dockRightPortion = value;
-
-                if (m_dockLeftPortion < 1 && m_dockRightPortion < 1)
-                {
-                    if (m_dockLeftPortion + m_dockRightPortion > 1)
-                        m_dockLeftPortion = 1 - m_dockRightPortion;
-                }
-
-                PerformLayout();
-            }
-        }
-
-        private double m_dockTopPortion = 0.25;
-
-        [LocalizedCategory("Category_Docking")]
-        [LocalizedDescription("DockPanel_DockTopPortion_Description")]
-        [DefaultValue(0.25)]
-        public double DockTopPortion
-        {
-            get
-            {
-                return m_dockTopPortion;
-            }
-
-            set
-            {
-                if (value <= 0)
-                    throw new ArgumentOutOfRangeException(nameof(value));
-
-                if (Math.Abs(value - m_dockTopPortion) < double.Epsilon)
-                    return;
-
-                m_dockTopPortion = value;
-
-                if (m_dockTopPortion < 1 && m_dockBottomPortion < 1)
-                {
-                    if (m_dockTopPortion + m_dockBottomPortion > 1)
-                        m_dockBottomPortion = 1 - m_dockTopPortion;
-                }
-                PerformLayout();
-            }
-        }
-
-        [Browsable(false)]
-        public DockWindowCollection DockWindows
-        {
-            get { return m_dockWindows; }
         }
 
         public void UpdateDockWindowZOrder(DockStyle dockStyle, bool fullPanelEdge)
@@ -511,25 +614,12 @@ namespace Atiran.Utility.Docking2
             }
         }
 
-        [Browsable(false)]
-        public int DocumentsCount
-        {
-            get
-            {
-                int count = 0;
-                foreach (IDockContent content in Documents)
-                    count++;
-
-                return count;
-            }
-        }
-
         public IDockContent[] DocumentsToArray()
         {
-            int count = DocumentsCount;
-            IDockContent[] documents = new IDockContent[count];
-            int i = 0;
-            foreach (IDockContent content in Documents)
+            var count = DocumentsCount;
+            var documents = new IDockContent[count];
+            var i = 0;
+            foreach (var content in Documents)
             {
                 documents[i] = content;
                 i++;
@@ -537,34 +627,6 @@ namespace Atiran.Utility.Docking2
 
             return documents;
         }
-
-        [Browsable(false)]
-        public IEnumerable<IDockContent> Documents
-        {
-            get
-            {
-                foreach (IDockContent content in Contents)
-                {
-                    if (content.DockHandler.DockState == DockState.Document)
-                        yield return content;
-                }
-            }
-        }
-
-        private Control DummyControl
-        {
-            get { return m_dummyControl; }
-        }
-
-        [Browsable(false)]
-        public FloatWindowCollection FloatWindows
-        {
-            get { return m_floatWindows; }
-        }
-
-        [Category("Layout")]
-        [LocalizedDescription("DockPanel_DefaultFloatWindowSize_Description")]
-        public Size DefaultFloatWindowSize { get; set; } = new Size(300, 300);
 
         private bool ShouldSerializeDefaultFloatWindowSize()
         {
@@ -576,72 +638,15 @@ namespace Atiran.Utility.Docking2
             DefaultFloatWindowSize = new Size(300, 300);
         }
 
-        private DocumentStyle m_documentStyle = DocumentStyle.DockingMdi;
-        [LocalizedCategory("Category_Docking")]
-        [LocalizedDescription("DockPanel_DocumentStyle_Description")]
-        [DefaultValue(DocumentStyle.DockingMdi)]
-        public DocumentStyle DocumentStyle
-        {
-            get	{	return m_documentStyle;	}
-            set
-            {
-                if (value == m_documentStyle)
-                    return;
-
-                if (!Enum.IsDefined(typeof(DocumentStyle), value))
-                    throw new InvalidEnumArgumentException();
-
-                if (value == DocumentStyle.SystemMdi && DockWindows != null && DockWindows[DockState.Document].VisibleNestedPanes.Count > 0)
-                    throw new InvalidEnumArgumentException();
-
-                m_documentStyle = value;
-
-                if (initializing)
-                {
-                    return;
-                }
-
-                SuspendLayout(true);
-
-                SetAutoHideWindowParent();
-                SetMdiClient();
-                InvalidateWindowRegion();
-
-                foreach (IDockContent content in Contents)
-                {
-                    if (content.DockHandler.DockState == DockState.Document)
-                        content.DockHandler.SetPaneAndVisible(content.DockHandler.Pane);
-                }
-
-                PerformMdiClientLayout();
-
-                ResumeLayout(true, true);
-            }
-        }
-
-        [LocalizedCategory("Category_Performance")]
-        [LocalizedDescription("DockPanel_SupportDeeplyNestedContent_Description")]
-        [DefaultValue(false)]
-        public bool SupportDeeplyNestedContent { get; set; }
-
-        /// <summary>
-        /// Flag to show autohide content on mouse hover. Default value is <code>true</code>.
-        /// </summary>
-        /// <remarks>
-        /// This flag is ignored in VS2012/2013 themes. Such themes assume it is always <code>false</code>.
-        /// </remarks>
-        [LocalizedCategory("Category_Docking")]
-        [LocalizedDescription("DockPanel_ShowAutoHideContentOnHover_Description")]
-        [DefaultValue(true)]
-        public bool ShowAutoHideContentOnHover { get; set; }
-
         public int GetDockWindowSize(DockState dockState)
         {
             if (dockState == DockState.DockLeft || dockState == DockState.DockRight)
             {
-                int width = ClientRectangle.Width - DockPadding.Left - DockPadding.Right;
-                int dockLeftSize = m_dockLeftPortion >= 1 ? (int)m_dockLeftPortion : (int)(width * m_dockLeftPortion);
-                int dockRightSize = m_dockRightPortion >= 1 ? (int)m_dockRightPortion : (int)(width * m_dockRightPortion);
+                var width = ClientRectangle.Width - DockPadding.Left - DockPadding.Right;
+                var dockLeftSize = m_dockLeftPortion >= 1 ? (int) m_dockLeftPortion : (int) (width * m_dockLeftPortion);
+                var dockRightSize = m_dockRightPortion >= 1
+                    ? (int) m_dockRightPortion
+                    : (int) (width * m_dockRightPortion);
 
                 if (dockLeftSize < MeasurePane.MinSize)
                     dockLeftSize = MeasurePane.MinSize;
@@ -650,7 +655,7 @@ namespace Atiran.Utility.Docking2
 
                 if (dockLeftSize + dockRightSize > width - MeasurePane.MinSize)
                 {
-                    int adjust = (dockLeftSize + dockRightSize) - (width - MeasurePane.MinSize);
+                    var adjust = dockLeftSize + dockRightSize - (width - MeasurePane.MinSize);
                     dockLeftSize -= adjust / 2;
                     dockRightSize -= adjust / 2;
                 }
@@ -660,9 +665,11 @@ namespace Atiran.Utility.Docking2
 
             if (dockState == DockState.DockTop || dockState == DockState.DockBottom)
             {
-                int height = ClientRectangle.Height - DockPadding.Top - DockPadding.Bottom;
-                int dockTopSize = m_dockTopPortion >= 1 ? (int)m_dockTopPortion : (int)(height * m_dockTopPortion);
-                int dockBottomSize = m_dockBottomPortion >= 1 ? (int)m_dockBottomPortion : (int)(height * m_dockBottomPortion);
+                var height = ClientRectangle.Height - DockPadding.Top - DockPadding.Bottom;
+                var dockTopSize = m_dockTopPortion >= 1 ? (int) m_dockTopPortion : (int) (height * m_dockTopPortion);
+                var dockBottomSize = m_dockBottomPortion >= 1
+                    ? (int) m_dockBottomPortion
+                    : (int) (height * m_dockBottomPortion);
 
                 if (dockTopSize < MeasurePane.MinSize)
                     dockTopSize = MeasurePane.MinSize;
@@ -671,7 +678,7 @@ namespace Atiran.Utility.Docking2
 
                 if (dockTopSize + dockBottomSize > height - MeasurePane.MinSize)
                 {
-                    int adjust = (dockTopSize + dockBottomSize) - (height - MeasurePane.MinSize);
+                    var adjust = dockTopSize + dockBottomSize - (height - MeasurePane.MinSize);
                     dockTopSize -= adjust / 2;
                     dockBottomSize -= adjust / 2;
                 }
@@ -682,12 +689,9 @@ namespace Atiran.Utility.Docking2
             return 0;
         }
 
-        protected  override void OnLayout(LayoutEventArgs levent)
+        protected override void OnLayout(LayoutEventArgs levent)
         {
-            if (Theme == null)
-            {
-                return;
-            }
+            if (Theme == null) return;
 
             SuspendLayout(true);
 
@@ -702,7 +706,7 @@ namespace Atiran.Utility.Docking2
 
             AutoHideWindow.Bounds = GetAutoHideWindowBounds(AutoHideWindowRectangle);
 
-            DockWindow documentDockWindow = DockWindows[DockState.Document];
+            var documentDockWindow = DockWindows[DockState.Document];
 
             if (ReferenceEquals(documentDockWindow.Parent, AutoHideWindow.Parent))
             {
@@ -735,22 +739,22 @@ namespace Atiran.Utility.Docking2
             return AutoHideStripControl.GetTabStripRectangle(dockState);
         }
 
-        protected  override void OnPaint(PaintEventArgs e)
+        protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
 
             if (DockBackColor.ToArgb() == BackColor.ToArgb())
                 return;
 
-            Graphics g = e.Graphics;
-            SolidBrush bgBrush = new SolidBrush(DockBackColor);
+            var g = e.Graphics;
+            var bgBrush = new SolidBrush(DockBackColor);
             g.FillRectangle(bgBrush, ClientRectangle);
         }
 
         internal void AddContent(IDockContent content)
         {
             if (content == null)
-                throw(new ArgumentNullException());
+                throw new ArgumentNullException();
 
             if (!Contents.Contains(content))
             {
@@ -778,7 +782,7 @@ namespace Atiran.Utility.Docking2
         private void CalculateDockPadding()
         {
             DockPadding.All = Theme.Measures.DockPadding;
-            int standard = AutoHideStripControl.MeasureHeight();
+            var standard = AutoHideStripControl.MeasureHeight();
             if (AutoHideStripControl.GetNumberOfPanes(DockState.DockLeftAutoHide) > 0)
                 DockPadding.Left = standard;
             if (AutoHideStripControl.GetNumberOfPanes(DockState.DockRightAutoHide) > 0)
@@ -792,8 +796,8 @@ namespace Atiran.Utility.Docking2
         internal void RemoveContent(IDockContent content)
         {
             if (content == null)
-                throw(new ArgumentNullException());
-            
+                throw new ArgumentNullException();
+
             if (Contents.Contains(content))
             {
                 Contents.Remove(content);
@@ -818,7 +822,7 @@ namespace Atiran.Utility.Docking2
             if (FloatWindows.Count != 0)
                 return;
 
-            if (ParentForm == null) 
+            if (ParentForm == null)
                 return;
 
             ParentForm.Focus();
@@ -826,14 +830,14 @@ namespace Atiran.Utility.Docking2
 
         public void SetPaneIndex(DockPane pane, int index)
         {
-            int oldIndex = Panes.IndexOf(pane);
+            var oldIndex = Panes.IndexOf(pane);
             if (oldIndex == -1)
-                throw(new ArgumentException(Strings.DockPanel_SetPaneIndex_InvalidPane));
+                throw new ArgumentException(Strings.DockPanel_SetPaneIndex_InvalidPane);
 
             if (index < 0 || index > Panes.Count - 1)
                 if (index != -1)
-                    throw(new ArgumentOutOfRangeException(Strings.DockPanel_SetPaneIndex_InvalidIndex));
-                
+                    throw new ArgumentOutOfRangeException(Strings.DockPanel_SetPaneIndex_InvalidIndex);
+
             if (oldIndex == index)
                 return;
             if (oldIndex == Panes.Count - 1 && index == -1)
@@ -850,10 +854,7 @@ namespace Atiran.Utility.Docking2
 
         public void SuspendLayout(bool allWindows)
         {
-            if (Theme == null)
-            {
-                throw new InvalidOperationException(Strings.Theme_NoTheme);
-            }
+            if (Theme == null) throw new InvalidOperationException(Strings.Theme_NoTheme);
 
             FocusManager.SuspendFocusTracking();
             SuspendLayout();
@@ -869,17 +870,6 @@ namespace Atiran.Utility.Docking2
                 ResumeMdiClientLayout(performLayout);
         }
 
-        internal Form ParentForm
-        {
-            get
-            {
-                if (!IsParentFormValid())
-                    throw new InvalidOperationException(Strings.DockPanel_ParentForm_Invalid);
-
-                return GetMdiClientController().ParentForm;
-            }
-        }
-
         private bool IsParentFormValid()
         {
             if (DocumentStyle == DocumentStyle.DockingSdi || DocumentStyle == DocumentStyle.DockingWindow)
@@ -888,19 +878,16 @@ namespace Atiran.Utility.Docking2
             if (!MdiClientExists)
                 GetMdiClientController().RenewMdiClient();
 
-            return (MdiClientExists);
+            return MdiClientExists;
         }
 
-        protected  override void OnParentChanged(EventArgs e)
+        protected override void OnParentChanged(EventArgs e)
         {
-            if (Theme == null)
-            {
-                return;
-            }
+            if (Theme == null) return;
 
             SetAutoHideWindowParent();
-            GetMdiClientController().ParentForm = (this.Parent as Form);
-            base.OnParentChanged (e);
+            GetMdiClientController().ParentForm = Parent as Form;
+            base.OnParentChanged(e);
         }
 
         private void SetAutoHideWindowParent()
@@ -908,7 +895,7 @@ namespace Atiran.Utility.Docking2
             Control parent;
             if (DocumentStyle == DocumentStyle.DockingMdi ||
                 DocumentStyle == DocumentStyle.SystemMdi)
-                parent = this.Parent;
+                parent = Parent;
             else
                 parent = this;
             if (AutoHideWindow.Parent != parent)
@@ -918,65 +905,27 @@ namespace Atiran.Utility.Docking2
             }
         }
 
-        protected  override void OnVisibleChanged(EventArgs e)
+        protected override void OnVisibleChanged(EventArgs e)
         {
-            base.OnVisibleChanged (e);
+            base.OnVisibleChanged(e);
 
             if (Visible)
                 SetMdiClient();
         }
 
-        private Rectangle SystemMdiClientBounds
-        {
-            get
-            {
-                if (!IsParentFormValid() || !Visible)
-                    return Rectangle.Empty;
-
-                Rectangle rect = ParentForm.RectangleToClient(RectangleToScreen(DocumentWindowBounds));
-                return rect;
-            }
-        }
-
-        public Rectangle DocumentWindowBounds
-        {
-            get
-            {
-                Rectangle rectDocumentBounds = DisplayRectangle;
-                if (DockWindows[DockState.DockLeft].Visible)
-                {
-                    rectDocumentBounds.X += DockWindows[DockState.DockLeft].Width;
-                    rectDocumentBounds.Width -= DockWindows[DockState.DockLeft].Width;
-                }
-                if (DockWindows[DockState.DockRight].Visible)
-                    rectDocumentBounds.Width -= DockWindows[DockState.DockRight].Width;
-                if (DockWindows[DockState.DockTop].Visible)
-                {
-                    rectDocumentBounds.Y += DockWindows[DockState.DockTop].Height;
-                    rectDocumentBounds.Height -= DockWindows[DockState.DockTop].Height;
-                }
-                if (DockWindows[DockState.DockBottom].Visible)
-                    rectDocumentBounds.Height -= DockWindows[DockState.DockBottom].Height;
-
-                return rectDocumentBounds;
-
-            }
-        }
-
-        private PaintEventHandler m_dummyControlPaintEventHandler = null;
         private void InvalidateWindowRegion()
         {
             if (DesignMode)
                 return;
 
             if (m_dummyControlPaintEventHandler == null)
-                m_dummyControlPaintEventHandler = new PaintEventHandler(DummyControl_Paint);
+                m_dummyControlPaintEventHandler = DummyControl_Paint;
 
             DummyControl.Paint += m_dummyControlPaintEventHandler;
             DummyControl.Invalidate();
         }
 
-        void DummyControl_Paint(object sender, PaintEventArgs e)
+        private void DummyControl_Paint(object sender, PaintEventArgs e)
         {
             DummyControl.Paint -= m_dummyControlPaintEventHandler;
             UpdateWindowRegion();
@@ -984,12 +933,12 @@ namespace Atiran.Utility.Docking2
 
         private void UpdateWindowRegion()
         {
-            if (this.DocumentStyle == DocumentStyle.DockingMdi)
+            if (DocumentStyle == DocumentStyle.DockingMdi)
                 UpdateWindowRegion_ClipContent();
-            else if (this.DocumentStyle == DocumentStyle.DockingSdi ||
-                this.DocumentStyle == DocumentStyle.DockingWindow)
+            else if (DocumentStyle == DocumentStyle.DockingSdi ||
+                     DocumentStyle == DocumentStyle.DockingWindow)
                 UpdateWindowRegion_FullDocumentArea();
-            else if (this.DocumentStyle == DocumentStyle.SystemMdi)
+            else if (DocumentStyle == DocumentStyle.SystemMdi)
                 UpdateWindowRegion_EmptyDocumentArea();
         }
 
@@ -1000,19 +949,19 @@ namespace Atiran.Utility.Docking2
 
         private void UpdateWindowRegion_EmptyDocumentArea()
         {
-            Rectangle rect = DocumentWindowBounds;
-            SetRegion(new Rectangle[] { rect });
+            var rect = DocumentWindowBounds;
+            SetRegion(new[] {rect});
         }
 
         private void UpdateWindowRegion_ClipContent()
         {
-            int count = 0;
-            foreach (DockPane pane in this.Panes)
+            var count = 0;
+            foreach (var pane in Panes)
             {
                 if (!pane.Visible || pane.DockState != DockState.Document)
                     continue;
 
-                count ++;
+                count++;
             }
 
             if (count == 0)
@@ -1021,9 +970,9 @@ namespace Atiran.Utility.Docking2
                 return;
             }
 
-            Rectangle[] rects = new Rectangle[count];
-            int i = 0;
-            foreach (DockPane pane in this.Panes)
+            var rects = new Rectangle[count];
+            var i = 0;
+            foreach (var pane in Panes)
             {
                 if (!pane.Visible || pane.DockState != DockState.Document)
                     continue;
@@ -1035,7 +984,6 @@ namespace Atiran.Utility.Docking2
             SetRegion(rects);
         }
 
-        private Rectangle[] m_clipRects = null;
         private void SetRegion(Rectangle[] clipRects)
         {
             if (!IsClipRectsChanged(clipRects))
@@ -1044,16 +992,15 @@ namespace Atiran.Utility.Docking2
             m_clipRects = clipRects;
 
             if (m_clipRects == null || m_clipRects.GetLength(0) == 0)
+            {
                 Region = null;
+            }
             else
             {
-                Region region = new Region(new Rectangle(0, 0, this.Width, this.Height));
-                foreach (Rectangle rect in m_clipRects)
+                var region = new Region(new Rectangle(0, 0, Width, Height));
+                foreach (var rect in m_clipRects)
                     region.Exclude(rect);
-                if (Region != null)
-                {
-                    Region.Dispose();
-                }
+                if (Region != null) Region.Dispose();
 
                 Region = region;
             }
@@ -1063,124 +1010,115 @@ namespace Atiran.Utility.Docking2
         {
             if (clipRects == null && m_clipRects == null)
                 return false;
-            else if ((clipRects == null) != (m_clipRects == null))
+            if (clipRects == null != (m_clipRects == null))
                 return true;
 
-            foreach (Rectangle rect in clipRects)
+            foreach (var rect in clipRects)
             {
-                bool matched = false;
-                foreach (Rectangle rect2 in m_clipRects)
-                {
+                var matched = false;
+                foreach (var rect2 in m_clipRects)
                     if (rect == rect2)
                     {
                         matched = true;
                         break;
                     }
-                }
+
                 if (!matched)
                     return true;
             }
 
-            foreach (Rectangle rect2 in m_clipRects)
+            foreach (var rect2 in m_clipRects)
             {
-                bool matched = false;
-                foreach (Rectangle rect in clipRects)
-                {
+                var matched = false;
+                foreach (var rect in clipRects)
                     if (rect == rect2)
                     {
                         matched = true;
                         break;
                     }
-                }
+
                 if (!matched)
                     return true;
             }
+
             return false;
         }
 
-        private static readonly object ActiveAutoHideContentChangedEvent = new object();
         [LocalizedCategory("Category_DockingNotification")]
         [LocalizedDescription("DockPanel_ActiveAutoHideContentChanged_Description")]
         public event EventHandler ActiveAutoHideContentChanged
         {
-            add { Events.AddHandler(ActiveAutoHideContentChangedEvent, value); }
-            remove { Events.RemoveHandler(ActiveAutoHideContentChangedEvent, value); }
+            add => Events.AddHandler(ActiveAutoHideContentChangedEvent, value);
+            remove => Events.RemoveHandler(ActiveAutoHideContentChangedEvent, value);
         }
+
         protected virtual void OnActiveAutoHideContentChanged(EventArgs e)
         {
-            EventHandler handler = (EventHandler)Events[ActiveAutoHideContentChangedEvent];
+            var handler = (EventHandler) Events[ActiveAutoHideContentChangedEvent];
             if (handler != null)
                 handler(this, e);
         }
+
         private void m_autoHideWindow_ActiveContentChanged(object sender, EventArgs e)
         {
             OnActiveAutoHideContentChanged(e);
         }
 
-
-        private static readonly object ContentAddedEvent = new object();
         [LocalizedCategory("Category_DockingNotification")]
         [LocalizedDescription("DockPanel_ContentAdded_Description")]
         public event EventHandler<DockContentEventArgs> ContentAdded
         {
-            add	{	Events.AddHandler(ContentAddedEvent, value);	}
-            remove	{	Events.RemoveHandler(ContentAddedEvent, value);	}
+            add => Events.AddHandler(ContentAddedEvent, value);
+            remove => Events.RemoveHandler(ContentAddedEvent, value);
         }
+
         protected virtual void OnContentAdded(DockContentEventArgs e)
         {
-            EventHandler<DockContentEventArgs> handler = (EventHandler<DockContentEventArgs>)Events[ContentAddedEvent];
+            var handler = (EventHandler<DockContentEventArgs>) Events[ContentAddedEvent];
             if (handler != null)
                 handler(this, e);
         }
 
-        private static readonly object ContentRemovedEvent = new object();
         [LocalizedCategory("Category_DockingNotification")]
         [LocalizedDescription("DockPanel_ContentRemoved_Description")]
         public event EventHandler<DockContentEventArgs> ContentRemoved
         {
-            add	{	Events.AddHandler(ContentRemovedEvent, value);	}
-            remove	{	Events.RemoveHandler(ContentRemovedEvent, value);	}
+            add => Events.AddHandler(ContentRemovedEvent, value);
+            remove => Events.RemoveHandler(ContentRemovedEvent, value);
         }
+
         protected virtual void OnContentRemoved(DockContentEventArgs e)
         {
-            EventHandler<DockContentEventArgs> handler = (EventHandler<DockContentEventArgs>)Events[ContentRemovedEvent];
+            var handler = (EventHandler<DockContentEventArgs>) Events[ContentRemovedEvent];
             if (handler != null)
                 handler(this, e);
         }
 
         internal void ResetDockWindows()
         {
-            if (m_autoHideWindow == null)
-            {
-                return;
-            }
+            if (AutoHideWindow == null) return;
 
-            var old = m_dockWindows;
+            var old = DockWindows;
             LoadDockWindows();
             if (old != null)
-            {
                 foreach (var dockWindow in old)
                 {
                     Controls.Remove(dockWindow);
                     dockWindow.Dispose();
                 }
-            }
         }
 
         internal void LoadDockWindows()
         {
-            m_dockWindows = new DockWindowCollection(this);
-            foreach (var dockWindow in DockWindows)
-            {
-                Controls.Add(dockWindow);
-            }
+            DockWindows = new DockWindowCollection(this);
+            foreach (var dockWindow in DockWindows) Controls.Add(dockWindow);
         }
 
         public void ResetAutoHideStripWindow()
         {
-            var old = m_autoHideWindow;
-            m_autoHideWindow = Theme.Extender.AutoHideWindowFactory.CreateAutoHideWindow(this);
-            m_autoHideWindow.Visible = false;
+            var old = AutoHideWindow;
+            AutoHideWindow = Theme.Extender.AutoHideWindowFactory.CreateAutoHideWindow(this);
+            AutoHideWindow.Visible = false;
             SetAutoHideWindowParent();
 
             if (old != null)
@@ -1189,18 +1127,6 @@ namespace Atiran.Utility.Docking2
                 old.Parent = null;
                 old.Dispose();
             }
-        }
-
-        private bool initializing;
-
-        void ISupportInitialize.BeginInit()
-        {
-            initializing = true;
-        }
-
-        void ISupportInitialize.EndInit()
-        {
-            initializing = false;
         }
     }
 }

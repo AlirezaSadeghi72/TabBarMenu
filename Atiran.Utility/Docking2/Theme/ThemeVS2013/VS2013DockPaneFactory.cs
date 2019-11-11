@@ -16,7 +16,8 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2013
             return new VS2013DockPane(content, floatWindow, show);
         }
 
-        public DockPane CreateDockPane(IDockContent content, DockPane previousPane, DockAlignment alignment, double proportion, bool show)
+        public DockPane CreateDockPane(IDockContent content, DockPane previousPane, DockAlignment alignment,
+            double proportion, bool show)
         {
             return new VS2013DockPane(content, previousPane, alignment, proportion, show);
         }

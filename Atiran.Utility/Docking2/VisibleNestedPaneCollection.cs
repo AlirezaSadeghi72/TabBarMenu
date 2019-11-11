@@ -6,46 +6,32 @@ namespace Atiran.Utility.Docking2
 {
     public sealed class VisibleNestedPaneCollection : ReadOnlyCollection<DockPane>
     {
-        private NestedPaneCollection m_nestedPanes;
-
         internal VisibleNestedPaneCollection(NestedPaneCollection nestedPanes)
             : base(new List<DockPane>())
         {
-            m_nestedPanes = nestedPanes;
+            NestedPanes = nestedPanes;
         }
 
-        public NestedPaneCollection NestedPanes
-        {
-            get	{	return m_nestedPanes;	}
-        }
+        public NestedPaneCollection NestedPanes { get; }
 
-        public INestedPanesContainer Container
-        {
-            get	{	return NestedPanes.Container;	}
-        }
+        public INestedPanesContainer Container => NestedPanes.Container;
 
-        public DockState DockState
-        {
-            get	{	return NestedPanes.DockState;	}
-        }
+        public DockState DockState => NestedPanes.DockState;
 
-        public bool IsFloat
-        {
-            get	{	return NestedPanes.IsFloat;	}
-        }
+        public bool IsFloat => NestedPanes.IsFloat;
 
         internal void Refresh()
         {
             Items.Clear();
-            for (int i=0; i<NestedPanes.Count; i++)
+            for (var i = 0; i < NestedPanes.Count; i++)
             {
-                DockPane pane = NestedPanes[i];
-                NestedDockingStatus status = pane.NestedDockingStatus;
+                var pane = NestedPanes[i];
+                var status = pane.NestedDockingStatus;
                 status.SetDisplayingStatus(true, status.PreviousPane, status.Alignment, status.Proportion);
                 Items.Add(pane);
             }
 
-            foreach (DockPane pane in NestedPanes)
+            foreach (var pane in NestedPanes)
                 if (pane.DockState != DockState || pane.IsHidden)
                 {
                     pane.Bounds = Rectangle.Empty;
@@ -55,9 +41,9 @@ namespace Atiran.Utility.Docking2
 
             CalculateBounds();
 
-            foreach (DockPane pane in this)
+            foreach (var pane in this)
             {
-                NestedDockingStatus status = pane.NestedDockingStatus;
+                var status = pane.NestedDockingStatus;
                 pane.Bounds = status.PaneBounds;
                 pane.SplitterBounds = status.SplitterBounds;
                 pane.SplitterAlignment = status.Alignment;
@@ -69,10 +55,9 @@ namespace Atiran.Utility.Docking2
             if (!Contains(pane))
                 return;
 
-            NestedDockingStatus statusPane = pane.NestedDockingStatus;
+            var statusPane = pane.NestedDockingStatus;
             DockPane lastNestedPane = null;
-            for (int i=Count - 1; i> IndexOf(pane); i--)
-            {
+            for (var i = Count - 1; i > IndexOf(pane); i--)
                 if (PatchController.EnableDisplayingPaneFix == true)
                 {
                     if (this[i].NestedDockingStatus.DisplayingPreviousPane == pane)
@@ -89,32 +74,36 @@ namespace Atiran.Utility.Docking2
                         break;
                     }
                 }
-            }
 
             if (lastNestedPane != null)
             {
-                int indexLastNestedPane = IndexOf(lastNestedPane);
+                var indexLastNestedPane = IndexOf(lastNestedPane);
                 Items.Remove(lastNestedPane);
                 Items[IndexOf(pane)] = lastNestedPane;
-                NestedDockingStatus lastNestedDock = lastNestedPane.NestedDockingStatus;
-                lastNestedDock.SetDisplayingStatus(true, statusPane.DisplayingPreviousPane, statusPane.DisplayingAlignment, statusPane.DisplayingProportion);
-                for (int i=indexLastNestedPane - 1; i>IndexOf(lastNestedPane); i--)
+                var lastNestedDock = lastNestedPane.NestedDockingStatus;
+                lastNestedDock.SetDisplayingStatus(true, statusPane.DisplayingPreviousPane,
+                    statusPane.DisplayingAlignment, statusPane.DisplayingProportion);
+                for (var i = indexLastNestedPane - 1; i > IndexOf(lastNestedPane); i--)
                 {
-                    NestedDockingStatus status = this[i].NestedDockingStatus;
+                    var status = this[i].NestedDockingStatus;
                     if (PatchController.EnableDisplayingPaneFix == true)
                     {
                         if (status.DisplayingPreviousPane == pane)
-                            status.SetDisplayingStatus(true, lastNestedPane, status.DisplayingAlignment, status.DisplayingProportion);
+                            status.SetDisplayingStatus(true, lastNestedPane, status.DisplayingAlignment,
+                                status.DisplayingProportion);
                     }
                     else
                     {
                         if (status.PreviousPane == pane)
-                            status.SetDisplayingStatus(true, lastNestedPane, status.DisplayingAlignment, status.DisplayingProportion);
+                            status.SetDisplayingStatus(true, lastNestedPane, status.DisplayingAlignment,
+                                status.DisplayingProportion);
                     }
                 }
             }
             else
+            {
                 Items.Remove(pane);
+            }
 
             statusPane.SetDisplayingStatus(false, null, DockAlignment.Left, 0.5);
         }
@@ -124,24 +113,27 @@ namespace Atiran.Utility.Docking2
             if (Count == 0)
                 return;
 
-            this[0].NestedDockingStatus.SetDisplayingBounds(Container.DisplayingRectangle, Container.DisplayingRectangle, Rectangle.Empty);
+            this[0].NestedDockingStatus.SetDisplayingBounds(Container.DisplayingRectangle,
+                Container.DisplayingRectangle, Rectangle.Empty);
 
-            for (int i=1; i<Count; i++)
+            for (var i = 1; i < Count; i++)
             {
-                DockPane pane = this[i];
-                NestedDockingStatus status = pane.NestedDockingStatus;
-                DockPane prevPane = status.DisplayingPreviousPane;
-                NestedDockingStatus statusPrev = prevPane.NestedDockingStatus;
+                var pane = this[i];
+                var status = pane.NestedDockingStatus;
+                var prevPane = status.DisplayingPreviousPane;
+                var statusPrev = prevPane.NestedDockingStatus;
 
-                Rectangle rect = statusPrev.PaneBounds;
-                bool bVerticalSplitter = (status.DisplayingAlignment == DockAlignment.Left || status.DisplayingAlignment == DockAlignment.Right);
+                var rect = statusPrev.PaneBounds;
+                var bVerticalSplitter = status.DisplayingAlignment == DockAlignment.Left ||
+                                        status.DisplayingAlignment == DockAlignment.Right;
 
-                Rectangle rectThis = rect;
-                Rectangle rectPrev = rect;
-                Rectangle rectSplitter = rect;
+                var rectThis = rect;
+                var rectPrev = rect;
+                var rectSplitter = rect;
                 if (status.DisplayingAlignment == DockAlignment.Left)
                 {
-                    rectThis.Width = (int)((double)rect.Width * status.DisplayingProportion) - (pane.DockPanel.Theme.Measures.SplitterSize / 2);
+                    rectThis.Width = (int) (rect.Width * status.DisplayingProportion) -
+                                     pane.DockPanel.Theme.Measures.SplitterSize / 2;
                     rectSplitter.X = rectThis.X + rectThis.Width;
                     rectSplitter.Width = pane.DockPanel.Theme.Measures.SplitterSize;
                     rectPrev.X = rectSplitter.X + rectSplitter.Width;
@@ -149,7 +141,8 @@ namespace Atiran.Utility.Docking2
                 }
                 else if (status.DisplayingAlignment == DockAlignment.Right)
                 {
-                    rectPrev.Width = (rect.Width - (int)((double)rect.Width * status.DisplayingProportion)) - (pane.DockPanel.Theme.Measures.SplitterSize / 2);
+                    rectPrev.Width = rect.Width - (int) (rect.Width * status.DisplayingProportion) -
+                                     pane.DockPanel.Theme.Measures.SplitterSize / 2;
                     rectSplitter.X = rectPrev.X + rectPrev.Width;
                     rectSplitter.Width = pane.DockPanel.Theme.Measures.SplitterSize;
                     rectThis.X = rectSplitter.X + rectSplitter.Width;
@@ -157,7 +150,8 @@ namespace Atiran.Utility.Docking2
                 }
                 else if (status.DisplayingAlignment == DockAlignment.Top)
                 {
-                    rectThis.Height = (int)((double)rect.Height * status.DisplayingProportion) - (pane.DockPanel.Theme.Measures.SplitterSize / 2);
+                    rectThis.Height = (int) (rect.Height * status.DisplayingProportion) -
+                                      pane.DockPanel.Theme.Measures.SplitterSize / 2;
                     rectSplitter.Y = rectThis.Y + rectThis.Height;
                     rectSplitter.Height = pane.DockPanel.Theme.Measures.SplitterSize;
                     rectPrev.Y = rectSplitter.Y + rectSplitter.Height;
@@ -165,14 +159,17 @@ namespace Atiran.Utility.Docking2
                 }
                 else if (status.DisplayingAlignment == DockAlignment.Bottom)
                 {
-                    rectPrev.Height = (rect.Height - (int)((double)rect.Height * status.DisplayingProportion)) - (pane.DockPanel.Theme.Measures.SplitterSize / 2);
+                    rectPrev.Height = rect.Height - (int) (rect.Height * status.DisplayingProportion) -
+                                      pane.DockPanel.Theme.Measures.SplitterSize / 2;
                     rectSplitter.Y = rectPrev.Y + rectPrev.Height;
                     rectSplitter.Height = pane.DockPanel.Theme.Measures.SplitterSize;
                     rectThis.Y = rectSplitter.Y + rectSplitter.Height;
                     rectThis.Height = rect.Height - rectPrev.Height - rectSplitter.Height;
                 }
                 else
+                {
                     rectThis = Rectangle.Empty;
+                }
 
                 rectSplitter.Intersect(rect);
                 rectThis.Intersect(rect);

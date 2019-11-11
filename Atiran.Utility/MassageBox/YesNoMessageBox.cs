@@ -1,268 +1,273 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using System.Windows.Forms;
-
 
 namespace Atiran.Utility.MassageBox
 {
-    public class YesNoMessageBox : System.Windows.Forms.Form
+    public class YesNoMessageBox : Form
     {
-        private System.Windows.Forms.PictureBox ClosePictureBox;
-        private System.Windows.Forms.Label lblCaption;
-        private Panel pnlMain;
+        private Button btnNo;
+        private Button btnNoAll;
+        private Button btnYes;
+        private Button btnYesAll;
+        private PictureBox ClosePictureBox;
+        private Label lblCaption;
+        public bool LoadOnYesButton = true;
         private PictureBox pictureBox1;
         private Panel pnlButtons;
-        private Button btnNo;
-        private Button btnYes;
-        private System.Windows.Forms.Panel pnlTop;
-        private Button btnNoAll;
-        private Button btnYesAll;
-        public bool LoadOnYesButton = true;
-        private ListBox txtMessage;
+        private Panel pnlMain;
+        private Panel pnlTop;
         public bool ShowAllButton = true;
+        private Thread threadLoad;
+        private ThreadStart threadStartLoad;
+        private ListBox txtMessage;
+
         public YesNoMessageBox()
         {
             InitializeComponent();
         }
-        private void InitializeComponent()
-        {
-            this.pnlTop = new System.Windows.Forms.Panel();
-            this.lblCaption = new System.Windows.Forms.Label();
-            this.ClosePictureBox = new System.Windows.Forms.PictureBox();
-            this.pnlMain = new System.Windows.Forms.Panel();
-            this.txtMessage = new System.Windows.Forms.ListBox();
-            this.pnlButtons = new System.Windows.Forms.Panel();
-            this.btnNoAll = new System.Windows.Forms.Button();
-            this.btnNo = new System.Windows.Forms.Button();
-            this.btnYesAll = new System.Windows.Forms.Button();
-            this.btnYes = new System.Windows.Forms.Button();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.pnlTop.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.ClosePictureBox)).BeginInit();
-            this.pnlMain.SuspendLayout();
-            this.pnlButtons.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
-            this.SuspendLayout();
-            // 
-            // pnlTop
-            // 
-            this.pnlTop.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(21)))), ((int)(((byte)(100)))), ((int)(((byte)(123)))));
-            this.pnlTop.Controls.Add(this.lblCaption);
-            this.pnlTop.Controls.Add(this.ClosePictureBox);
-            this.pnlTop.Dock = System.Windows.Forms.DockStyle.Top;
-            this.pnlTop.Location = new System.Drawing.Point(0, 0);
-            this.pnlTop.Name = "pnlTop";
-            this.pnlTop.Size = new System.Drawing.Size(470, 32);
-            this.pnlTop.TabIndex = 0;
-            // 
-            // lblCaption
-            // 
-            this.lblCaption.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(21)))), ((int)(((byte)(100)))), ((int)(((byte)(123)))));
-            this.lblCaption.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblCaption.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.lblCaption.Location = new System.Drawing.Point(0, 0);
-            this.lblCaption.Name = "lblCaption";
-            this.lblCaption.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.lblCaption.Size = new System.Drawing.Size(436, 32);
-            this.lblCaption.TabIndex = 1;
-            this.lblCaption.Text = "توضيحات";
-            this.lblCaption.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // ClosePictureBox
-            // 
-            this.ClosePictureBox.BackColor = System.Drawing.Color.Transparent;
-            this.ClosePictureBox.Dock = System.Windows.Forms.DockStyle.Right;
-            this.ClosePictureBox.Image = global::Atiran.Utility.Properties.Resources.Exit_1;
-            this.ClosePictureBox.Location = new System.Drawing.Point(436, 0);
-            this.ClosePictureBox.Name = "ClosePictureBox";
-            this.ClosePictureBox.Size = new System.Drawing.Size(34, 32);
-            this.ClosePictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.ClosePictureBox.TabIndex = 0;
-            this.ClosePictureBox.TabStop = false;
-            this.ClosePictureBox.Click += new System.EventHandler(this.ClosePictureBox_Click);
-            this.ClosePictureBox.MouseEnter += new System.EventHandler(this.ClosePictureBox_MouseEnter);
-            this.ClosePictureBox.MouseLeave += new System.EventHandler(this.ClosePictureBox_MouseLeave);
-            // 
-            // pnlMain
-            // 
-            this.pnlMain.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(130)))), ((int)(((byte)(150)))));
-            this.pnlMain.Controls.Add(this.txtMessage);
-            this.pnlMain.Controls.Add(this.pnlButtons);
-            this.pnlMain.Controls.Add(this.pictureBox1);
-            this.pnlMain.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlMain.Location = new System.Drawing.Point(0, 32);
-            this.pnlMain.Name = "pnlMain";
-            this.pnlMain.Size = new System.Drawing.Size(470, 151);
-            this.pnlMain.TabIndex = 1;
-            // 
-            // txtMessage
-            // 
-            this.txtMessage.FormattingEnabled = true;
-            this.txtMessage.ItemHeight = 22;
-            this.txtMessage.Location = new System.Drawing.Point(12, 15);
-            this.txtMessage.Name = "txtMessage";
-            this.txtMessage.Size = new System.Drawing.Size(373, 70);
-            this.txtMessage.TabIndex = 5;
-            this.txtMessage.TabStop = false;
-            // 
-            // pnlButtons
-            // 
-            this.pnlButtons.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.pnlButtons.Controls.Add(this.btnNoAll);
-            this.pnlButtons.Controls.Add(this.btnNo);
-            this.pnlButtons.Controls.Add(this.btnYesAll);
-            this.pnlButtons.Controls.Add(this.btnYes);
-            this.pnlButtons.Location = new System.Drawing.Point(52, 99);
-            this.pnlButtons.Name = "pnlButtons";
-            this.pnlButtons.Size = new System.Drawing.Size(333, 36);
-            this.pnlButtons.TabIndex = 3;
-            // 
-            // btnNoAll
-            // 
-            this.btnNoAll.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.btnNoAll.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnNoAll.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnNoAll.ForeColor = System.Drawing.SystemColors.ButtonFace;
-            this.btnNoAll.Location = new System.Drawing.Point(3, 3);
-            this.btnNoAll.Name = "btnNoAll";
-            this.btnNoAll.Size = new System.Drawing.Size(75, 30);
-            this.btnNoAll.TabIndex = 3;
-            this.btnNoAll.Text = "انصراف";
-            this.btnNoAll.UseVisualStyleBackColor = false;
-            this.btnNoAll.Enter += new System.EventHandler(this.Button_Enter);
-            this.btnNoAll.Leave += new System.EventHandler(this.Button_Leave);
-            // 
-            // btnNo
-            // 
-            this.btnNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.btnNo.DialogResult = System.Windows.Forms.DialogResult.No;
-            this.btnNo.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnNo.ForeColor = System.Drawing.Color.White;
-            this.btnNo.Location = new System.Drawing.Point(169, 3);
-            this.btnNo.Name = "btnNo";
-            this.btnNo.Size = new System.Drawing.Size(75, 30);
-            this.btnNo.TabIndex = 1;
-            this.btnNo.Text = "خير";
-            this.btnNo.UseVisualStyleBackColor = false;
-            this.btnNo.Enter += new System.EventHandler(this.Button_Enter);
-            this.btnNo.Leave += new System.EventHandler(this.Button_Leave);
-            // 
-            // btnYesAll
-            // 
-            this.btnYesAll.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(64)))), ((int)(((byte)(0)))));
-            this.btnYesAll.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.btnYesAll.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnYesAll.ForeColor = System.Drawing.Color.White;
-            this.btnYesAll.Location = new System.Drawing.Point(81, 3);
-            this.btnYesAll.Name = "btnYesAll";
-            this.btnYesAll.Size = new System.Drawing.Size(75, 30);
-            this.btnYesAll.TabIndex = 2;
-            this.btnYesAll.Text = "بلي(همه)";
-            this.btnYesAll.UseVisualStyleBackColor = false;
-            this.btnYesAll.Enter += new System.EventHandler(this.Button_Enter);
-            this.btnYesAll.Leave += new System.EventHandler(this.Button_Leave);
-            // 
-            // btnYes
-            // 
-            this.btnYes.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
-            this.btnYes.DialogResult = System.Windows.Forms.DialogResult.Yes;
-            this.btnYes.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnYes.ForeColor = System.Drawing.Color.White;
-            this.btnYes.Location = new System.Drawing.Point(248, 3);
-            this.btnYes.Name = "btnYes";
-            this.btnYes.Size = new System.Drawing.Size(75, 30);
-            this.btnYes.TabIndex = 0;
-            this.btnYes.Text = "بلي";
-            this.btnYes.UseVisualStyleBackColor = false;
-            this.btnYes.Enter += new System.EventHandler(this.Button_Enter);
-            this.btnYes.Leave += new System.EventHandler(this.Button_Leave);
-            // 
-            // pictureBox1
-            // 
-            this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.pictureBox1.Image = global::Atiran.Utility.MassageBox.Resources.Question;
-            this.pictureBox1.Location = new System.Drawing.Point(391, 15);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(72, 78);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pictureBox1.TabIndex = 1;
-            this.pictureBox1.TabStop = false;
-            // 
-            // YesNoMessageBox
-            // 
-            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(181)))), ((int)(((byte)(172)))), ((int)(((byte)(9)))));
-            this.ClientSize = new System.Drawing.Size(470, 183);
-            this.Controls.Add(this.pnlMain);
-            this.Controls.Add(this.pnlTop);
-            this.Font = new System.Drawing.Font("IRANSans(FaNum)", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(178)));
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-            this.Name = "YesNoMessageBox";
-            this.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Load += new System.EventHandler(this.ConfirmMessageBox_Load);
-            this.pnlTop.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.ClosePictureBox)).EndInit();
-            this.pnlMain.ResumeLayout(false);
-            this.pnlButtons.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
-            this.ResumeLayout(false);
 
-        }
-        private void ClosePictureBox_Click(object sender, EventArgs e)
-        {
-            this.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-        }
         public string Caption
         {
-            set { lblCaption.Text = value; }
+            set => lblCaption.Text = value;
         }
+
         public string SetMessage
         {
             set
             {
                 txtMessage.Items.AddRange(value.Split('\n'));
-                if (ShowAllButton)
-                {
-                    txtMessage.SelectedIndex = 0;
-                }
+                if (ShowAllButton) txtMessage.SelectedIndex = 0;
             }
         }
+
+        private void InitializeComponent()
+        {
+            pnlTop = new Panel();
+            lblCaption = new Label();
+            ClosePictureBox = new PictureBox();
+            pnlMain = new Panel();
+            txtMessage = new ListBox();
+            pnlButtons = new Panel();
+            btnNoAll = new Button();
+            btnNo = new Button();
+            btnYesAll = new Button();
+            btnYes = new Button();
+            pictureBox1 = new PictureBox();
+            pnlTop.SuspendLayout();
+            ((ISupportInitialize) ClosePictureBox).BeginInit();
+            pnlMain.SuspendLayout();
+            pnlButtons.SuspendLayout();
+            ((ISupportInitialize) pictureBox1).BeginInit();
+            SuspendLayout();
+            // 
+            // pnlTop
+            // 
+            pnlTop.BackColor = Color.FromArgb(21, 100, 123);
+            pnlTop.Controls.Add(lblCaption);
+            pnlTop.Controls.Add(ClosePictureBox);
+            pnlTop.Dock = DockStyle.Top;
+            pnlTop.Location = new Point(0, 0);
+            pnlTop.Name = "pnlTop";
+            pnlTop.Size = new Size(470, 32);
+            pnlTop.TabIndex = 0;
+            // 
+            // lblCaption
+            // 
+            lblCaption.BackColor = Color.FromArgb(21, 100, 123);
+            lblCaption.Dock = DockStyle.Fill;
+            lblCaption.ForeColor = SystemColors.ActiveCaptionText;
+            lblCaption.Location = new Point(0, 0);
+            lblCaption.Name = "lblCaption";
+            lblCaption.RightToLeft = RightToLeft.Yes;
+            lblCaption.Size = new Size(436, 32);
+            lblCaption.TabIndex = 1;
+            lblCaption.Text = "توضيحات";
+            lblCaption.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // ClosePictureBox
+            // 
+            ClosePictureBox.BackColor = Color.Transparent;
+            ClosePictureBox.Dock = DockStyle.Right;
+            ClosePictureBox.Image = Properties.Resources.Exit_1;
+            ClosePictureBox.Location = new Point(436, 0);
+            ClosePictureBox.Name = "ClosePictureBox";
+            ClosePictureBox.Size = new Size(34, 32);
+            ClosePictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
+            ClosePictureBox.TabIndex = 0;
+            ClosePictureBox.TabStop = false;
+            ClosePictureBox.Click += ClosePictureBox_Click;
+            ClosePictureBox.MouseEnter += ClosePictureBox_MouseEnter;
+            ClosePictureBox.MouseLeave += ClosePictureBox_MouseLeave;
+            // 
+            // pnlMain
+            // 
+            pnlMain.BackColor = Color.FromArgb(20, 130, 150);
+            pnlMain.Controls.Add(txtMessage);
+            pnlMain.Controls.Add(pnlButtons);
+            pnlMain.Controls.Add(pictureBox1);
+            pnlMain.Dock = DockStyle.Fill;
+            pnlMain.Location = new Point(0, 32);
+            pnlMain.Name = "pnlMain";
+            pnlMain.Size = new Size(470, 151);
+            pnlMain.TabIndex = 1;
+            // 
+            // txtMessage
+            // 
+            txtMessage.FormattingEnabled = true;
+            txtMessage.ItemHeight = 22;
+            txtMessage.Location = new Point(12, 15);
+            txtMessage.Name = "txtMessage";
+            txtMessage.Size = new Size(373, 70);
+            txtMessage.TabIndex = 5;
+            txtMessage.TabStop = false;
+            // 
+            // pnlButtons
+            // 
+            pnlButtons.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            pnlButtons.Controls.Add(btnNoAll);
+            pnlButtons.Controls.Add(btnNo);
+            pnlButtons.Controls.Add(btnYesAll);
+            pnlButtons.Controls.Add(btnYes);
+            pnlButtons.Location = new Point(52, 99);
+            pnlButtons.Name = "pnlButtons";
+            pnlButtons.Size = new Size(333, 36);
+            pnlButtons.TabIndex = 3;
+            // 
+            // btnNoAll
+            // 
+            btnNoAll.BackColor = Color.FromArgb(64, 0, 0);
+            btnNoAll.DialogResult = DialogResult.Cancel;
+            btnNoAll.FlatStyle = FlatStyle.Flat;
+            btnNoAll.ForeColor = SystemColors.ButtonFace;
+            btnNoAll.Location = new Point(3, 3);
+            btnNoAll.Name = "btnNoAll";
+            btnNoAll.Size = new Size(75, 30);
+            btnNoAll.TabIndex = 3;
+            btnNoAll.Text = "انصراف";
+            btnNoAll.UseVisualStyleBackColor = false;
+            btnNoAll.Enter += Button_Enter;
+            btnNoAll.Leave += Button_Leave;
+            // 
+            // btnNo
+            // 
+            btnNo.BackColor = Color.FromArgb(192, 0, 0);
+            btnNo.DialogResult = DialogResult.No;
+            btnNo.FlatStyle = FlatStyle.Flat;
+            btnNo.ForeColor = Color.White;
+            btnNo.Location = new Point(169, 3);
+            btnNo.Name = "btnNo";
+            btnNo.Size = new Size(75, 30);
+            btnNo.TabIndex = 1;
+            btnNo.Text = "خير";
+            btnNo.UseVisualStyleBackColor = false;
+            btnNo.Enter += Button_Enter;
+            btnNo.Leave += Button_Leave;
+            // 
+            // btnYesAll
+            // 
+            btnYesAll.BackColor = Color.FromArgb(0, 64, 0);
+            btnYesAll.DialogResult = DialogResult.OK;
+            btnYesAll.FlatStyle = FlatStyle.Flat;
+            btnYesAll.ForeColor = Color.White;
+            btnYesAll.Location = new Point(81, 3);
+            btnYesAll.Name = "btnYesAll";
+            btnYesAll.Size = new Size(75, 30);
+            btnYesAll.TabIndex = 2;
+            btnYesAll.Text = "بلي(همه)";
+            btnYesAll.UseVisualStyleBackColor = false;
+            btnYesAll.Enter += Button_Enter;
+            btnYesAll.Leave += Button_Leave;
+            // 
+            // btnYes
+            // 
+            btnYes.BackColor = Color.FromArgb(0, 192, 0);
+            btnYes.DialogResult = DialogResult.Yes;
+            btnYes.FlatStyle = FlatStyle.Flat;
+            btnYes.ForeColor = Color.White;
+            btnYes.Location = new Point(248, 3);
+            btnYes.Name = "btnYes";
+            btnYes.Size = new Size(75, 30);
+            btnYes.TabIndex = 0;
+            btnYes.Text = "بلي";
+            btnYes.UseVisualStyleBackColor = false;
+            btnYes.Enter += Button_Enter;
+            btnYes.Leave += Button_Leave;
+            // 
+            // pictureBox1
+            // 
+            pictureBox1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            pictureBox1.Image = Resources.Question;
+            pictureBox1.Location = new Point(391, 15);
+            pictureBox1.Name = "pictureBox1";
+            pictureBox1.Size = new Size(72, 78);
+            pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
+            pictureBox1.TabIndex = 1;
+            pictureBox1.TabStop = false;
+            // 
+            // YesNoMessageBox
+            // 
+            BackColor = Color.FromArgb(181, 172, 9);
+            ClientSize = new Size(470, 183);
+            Controls.Add(pnlMain);
+            Controls.Add(pnlTop);
+            Font = new Font("IRANSans(FaNum)", 10F, FontStyle.Regular, GraphicsUnit.Point, 178);
+            FormBorderStyle = FormBorderStyle.None;
+            Name = "YesNoMessageBox";
+            RightToLeft = RightToLeft.Yes;
+            StartPosition = FormStartPosition.CenterParent;
+            Load += ConfirmMessageBox_Load;
+            pnlTop.ResumeLayout(false);
+            ((ISupportInitialize) ClosePictureBox).EndInit();
+            pnlMain.ResumeLayout(false);
+            pnlButtons.ResumeLayout(false);
+            ((ISupportInitialize) pictureBox1).EndInit();
+            ResumeLayout(false);
+        }
+
+        private void ClosePictureBox_Click(object sender, EventArgs e)
+        {
+            DialogResult = DialogResult.Cancel;
+        }
+
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
             if (keyData == Keys.Escape || keyData == (Keys.Alt | Keys.F4))
             {
-                this.DialogResult = DialogResult.No;
+                DialogResult = DialogResult.No;
                 return true;
             }
+
             return base.ProcessCmdKey(ref msg, keyData);
         }
+
         private void ClosePictureBox_MouseEnter(object sender, EventArgs e)
         {
             ClosePictureBox.BackColor = Color.DarkRed;
         }
+
         private void ClosePictureBox_MouseLeave(object sender, EventArgs e)
         {
             ClosePictureBox.BackColor = Color.Transparent;
         }
+
         private void Button_Leave(object sender, EventArgs e)
         {
-            ((Button)sender).FlatAppearance.BorderColor = Color.White;
-            ((Button)sender).FlatAppearance.BorderSize = 1;
+            ((Button) sender).FlatAppearance.BorderColor = Color.White;
+            ((Button) sender).FlatAppearance.BorderSize = 1;
         }
+
         private void Button_Enter(object sender, EventArgs e)
         {
-            ((Button)sender).FlatAppearance.BorderColor = Color.Blue;
-            ((Button)sender).FlatAppearance.BorderSize = 1;
+            ((Button) sender).FlatAppearance.BorderColor = Color.Blue;
+            ((Button) sender).FlatAppearance.BorderSize = 1;
         }
-        private System.Threading.Thread threadLoad;
-        private System.Threading.ThreadStart threadStartLoad;
+
         //================================================================
         /// <summary>
-        ///  Load User Control
+        ///     Load User Control
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -274,20 +279,21 @@ namespace Atiran.Utility.MassageBox
             }
             catch (Exception ex)
             {
-                System.Windows.Forms.MessageBox.Show(ex.ToString());
+                MessageBox.Show(ex.ToString());
             }
         }
+
         /// <summary>
-        /// Starting Thread
+        ///     Starting Thread
         /// </summary>
         private void MTF_UserControl()
         {
             try
             {
-                threadStartLoad = new System.Threading.ThreadStart(MTF_UserControlLoad_Load);
-                threadLoad = new System.Threading.Thread(threadStartLoad)
+                threadStartLoad = MTF_UserControlLoad_Load;
+                threadLoad = new Thread(threadStartLoad)
                 {
-                    Priority = System.Threading.ThreadPriority.AboveNormal,
+                    Priority = ThreadPriority.AboveNormal,
                     IsBackground = true //<— Set the thread to work in background
                 };
                 //
@@ -295,32 +301,28 @@ namespace Atiran.Utility.MassageBox
             }
             catch (Exception ex)
             {
-                System.Windows.Forms.MessageBox.Show(ex.ToString());
+                MessageBox.Show(ex.ToString());
             }
         }
+
         /// <summary>
-        /// Act Thread
+        ///     Act Thread
         /// </summary>
-        /// 
         private void MTF_UserControlLoad_Load()
         {
-            Invoke(new System.Windows.Forms.MethodInvoker(delegate ()
+            Invoke(new MethodInvoker(delegate
             {
                 if (!ShowAllButton)
                 {
                     btnNoAll.Visible = false;
                     btnYesAll.Visible = false;
                 }
+
                 if (LoadOnYesButton)
-                {
                     btnYes.Focus();
-                }
                 else
-                {
                     btnNo.Focus();
-                }
             }));
         }
-
     }
 }

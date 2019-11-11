@@ -40,17 +40,38 @@ namespace Atiran.Utility.Docking2
         public DockTargetPalette DockTarget { get; } = new DockTargetPalette();
         public CommandBarMenuPalette CommandBarMenuDefault { get; } = new CommandBarMenuPalette();
         public CommandBarMenuPopupPalette CommandBarMenuPopupDefault { get; } = new CommandBarMenuPopupPalette();
-        public CommandBarMenuPopupDisabledPalette CommandBarMenuPopupDisabled { get; } = new CommandBarMenuPopupDisabledPalette();
-        public CommandBarMenuPopupHoveredPalette CommandBarMenuPopupHovered { get; } = new CommandBarMenuPopupHoveredPalette();
-        public CommandBarMenuTopLevelHeaderPalette CommandBarMenuTopLevelHeaderHovered { get; } = new CommandBarMenuTopLevelHeaderPalette();
+
+        public CommandBarMenuPopupDisabledPalette CommandBarMenuPopupDisabled { get; } =
+            new CommandBarMenuPopupDisabledPalette();
+
+        public CommandBarMenuPopupHoveredPalette CommandBarMenuPopupHovered { get; } =
+            new CommandBarMenuPopupHoveredPalette();
+
+        public CommandBarMenuTopLevelHeaderPalette CommandBarMenuTopLevelHeaderHovered { get; } =
+            new CommandBarMenuTopLevelHeaderPalette();
+
         public CommandBarToolbarPalette CommandBarToolbarDefault { get; } = new CommandBarToolbarPalette();
-        public CommandBarToolbarButtonCheckedPalette CommandBarToolbarButtonChecked { get; } = new CommandBarToolbarButtonCheckedPalette();
-        public CommandBarToolbarButtonCheckedHoveredPalette CommandBarToolbarButtonCheckedHovered { get; } = new CommandBarToolbarButtonCheckedHoveredPalette();
-        public CommandBarToolbarButtonPalette CommandBarToolbarButtonDefault { get; } = new CommandBarToolbarButtonPalette();
-        public CommandBarToolbarButtonHoveredPalette CommandBarToolbarButtonHovered { get; } = new CommandBarToolbarButtonHoveredPalette();
-        public CommandBarToolbarButtonPressedPalette CommandBarToolbarButtonPressed { get; } = new CommandBarToolbarButtonPressedPalette();
-        public CommandBarToolbarOverflowButtonPalette CommandBarToolbarOverflowHovered { get; } = new CommandBarToolbarOverflowButtonPalette();
-        public CommandBarToolbarOverflowButtonPalette CommandBarToolbarOverflowPressed { get; } = new CommandBarToolbarOverflowButtonPalette();
+
+        public CommandBarToolbarButtonCheckedPalette CommandBarToolbarButtonChecked { get; } =
+            new CommandBarToolbarButtonCheckedPalette();
+
+        public CommandBarToolbarButtonCheckedHoveredPalette CommandBarToolbarButtonCheckedHovered { get; } =
+            new CommandBarToolbarButtonCheckedHoveredPalette();
+
+        public CommandBarToolbarButtonPalette CommandBarToolbarButtonDefault { get; } =
+            new CommandBarToolbarButtonPalette();
+
+        public CommandBarToolbarButtonHoveredPalette CommandBarToolbarButtonHovered { get; } =
+            new CommandBarToolbarButtonHoveredPalette();
+
+        public CommandBarToolbarButtonPressedPalette CommandBarToolbarButtonPressed { get; } =
+            new CommandBarToolbarButtonPressedPalette();
+
+        public CommandBarToolbarOverflowButtonPalette CommandBarToolbarOverflowHovered { get; } =
+            new CommandBarToolbarOverflowButtonPalette();
+
+        public CommandBarToolbarOverflowButtonPalette CommandBarToolbarOverflowPressed { get; } =
+            new CommandBarToolbarOverflowButtonPalette();
 
         public VisualStudioColorTable ColorTable { get; }
     }

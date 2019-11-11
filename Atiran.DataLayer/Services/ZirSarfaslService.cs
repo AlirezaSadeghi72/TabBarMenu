@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Atiran.DataLayer.Services
+﻿namespace Atiran.DataLayer.Services
 {
     public class ZirSarfaslService
     {
@@ -20,6 +14,6 @@ namespace Atiran.DataLayer.Services
         public decimal Man_Befor { get; set; }
         public string bed_bes_Befor { get; set; }
 
-        public Nullable<bool> Active { get; set; }
+        public bool? Active { get; set; }
     }
 }

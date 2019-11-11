@@ -52,7 +52,7 @@ namespace Atiran.Utility.Docking2
     public static class ImageServiceHelper
     {
         /// <summary>
-        /// Gets images for tabs and captions.
+        ///     Gets images for tabs and captions.
         /// </summary>
         /// <param name="mask"></param>
         /// <param name="glyph"></param>
@@ -63,31 +63,31 @@ namespace Atiran.Utility.Docking2
         {
             var width = mask.Width;
             var height = mask.Height;
-            Bitmap input = new Bitmap(width, height);
-            using (Graphics gfx = Graphics.FromImage(input))
+            var input = new Bitmap(width, height);
+            using (var gfx = Graphics.FromImage(input))
             {
-                SolidBrush brush = new SolidBrush(glyph);
+                var brush = new SolidBrush(glyph);
                 gfx.FillRectangle(brush, 0, 0, width, height);
             }
 
-            Bitmap output = new Bitmap(input.Width, input.Height, PixelFormat.Format32bppArgb);
+            var output = new Bitmap(input.Width, input.Height, PixelFormat.Format32bppArgb);
             var rect = new Rectangle(0, 0, input.Width, input.Height);
             var bitsMask = mask.LockBits(rect, ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
             var bitsInput = input.LockBits(rect, ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
             var bitsOutput = output.LockBits(rect, ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
             unsafe
             {
-                for (int y = 0; y < input.Height; y++)
+                for (var y = 0; y < input.Height; y++)
                 {
-                    byte* ptrMask = (byte*)bitsMask.Scan0 + y * bitsMask.Stride;
-                    byte* ptrInput = (byte*)bitsInput.Scan0 + y * bitsInput.Stride;
-                    byte* ptrOutput = (byte*)bitsOutput.Scan0 + y * bitsOutput.Stride;
-                    for (int x = 0; x < input.Width; x++)
+                    var ptrMask = (byte*) bitsMask.Scan0 + y * bitsMask.Stride;
+                    var ptrInput = (byte*) bitsInput.Scan0 + y * bitsInput.Stride;
+                    var ptrOutput = (byte*) bitsOutput.Scan0 + y * bitsOutput.Stride;
+                    for (var x = 0; x < input.Width; x++)
                     {
-                        ptrOutput[4 * x] = ptrInput[4 * x];           // blue
-                        ptrOutput[4 * x + 1] = ptrInput[4 * x + 1];   // green
-                        ptrOutput[4 * x + 2] = ptrInput[4 * x + 2];   // red
-                        ptrOutput[4 * x + 3] = ptrMask[4 * x];        // alpha
+                        ptrOutput[4 * x] = ptrInput[4 * x]; // blue
+                        ptrOutput[4 * x + 1] = ptrInput[4 * x + 1]; // green
+                        ptrOutput[4 * x + 2] = ptrInput[4 * x + 2]; // red
+                        ptrOutput[4 * x + 3] = ptrMask[4 * x]; // alpha
                     }
                 }
             }
@@ -97,21 +97,15 @@ namespace Atiran.Utility.Docking2
             output.UnlockBits(bitsOutput);
             input.Dispose();
 
-            if (border == null)
-            {
-                border = background;
-            }
+            if (border == null) border = background;
 
-            Bitmap back = new Bitmap(width, height);
-            using (Graphics gfx = Graphics.FromImage(back))
+            var back = new Bitmap(width, height);
+            using (var gfx = Graphics.FromImage(back))
             {
-                SolidBrush brush = new SolidBrush(background);
-                SolidBrush brush2 = new SolidBrush(border.Value);
+                var brush = new SolidBrush(background);
+                var brush2 = new SolidBrush(border.Value);
                 gfx.FillRectangle(brush2, 0, 0, width, height);
-                if (background != border.Value)
-                {
-                    gfx.FillRectangle(brush, 1, 1, width - 2, height - 2);
-                }
+                if (background != border.Value) gfx.FillRectangle(brush, 1, 1, width - 2, height - 2);
 
                 gfx.DrawImageUnscaled(output, 0, 0);
             }
@@ -122,11 +116,11 @@ namespace Atiran.Utility.Docking2
 
         public static Bitmap GetBackground(Color innerBorder, Color outerBorder, int width, IPaintingService painting)
         {
-            Bitmap back = new Bitmap(width, width);
-            using (Graphics gfx = Graphics.FromImage(back))
+            var back = new Bitmap(width, width);
+            using (var gfx = Graphics.FromImage(back))
             {
-                SolidBrush brush = painting.GetBrush(innerBorder);
-                SolidBrush brush2 = painting.GetBrush(outerBorder);
+                var brush = painting.GetBrush(innerBorder);
+                var brush2 = painting.GetBrush(outerBorder);
                 gfx.FillRectangle(brush2, 0, 0, width, width);
                 gfx.FillRectangle(brush, 1, 1, width - 2, width - 2);
             }
@@ -136,10 +130,10 @@ namespace Atiran.Utility.Docking2
 
         public static Bitmap GetLayerImage(Color color, int width, IPaintingService painting)
         {
-            Bitmap back = new Bitmap(width, width);
-            using (Graphics gfx = Graphics.FromImage(back))
+            var back = new Bitmap(width, width);
+            using (var gfx = Graphics.FromImage(back))
             {
-                SolidBrush brush = painting.GetBrush(color);
+                var brush = painting.GetBrush(color);
                 gfx.FillRectangle(brush, 0, 0, width, width);
             }
 
@@ -147,10 +141,12 @@ namespace Atiran.Utility.Docking2
         }
 
         /// <summary>
-        /// Gets images for docking indicators.
+        ///     Gets images for docking indicators.
         /// </summary>
         /// <returns></returns>
-        public static Bitmap GetDockIcon(Bitmap maskArrow, Bitmap layerArrow, Bitmap maskWindow, Bitmap layerWindow, Bitmap maskBack, Color background, IPaintingService painting, Bitmap maskCore = null, Bitmap layerCore = null, Color? separator = null)
+        public static Bitmap GetDockIcon(Bitmap maskArrow, Bitmap layerArrow, Bitmap maskWindow, Bitmap layerWindow,
+            Bitmap maskBack, Color background, IPaintingService painting, Bitmap maskCore = null,
+            Bitmap layerCore = null, Color? separator = null)
         {
             var width = maskBack.Width;
             var height = maskBack.Height;
@@ -159,12 +155,12 @@ namespace Atiran.Utility.Docking2
 
             if (maskArrow != null)
             {
-                Bitmap input = layerArrow;
+                var input = layerArrow;
                 arrowOut = MaskImages(input, maskArrow);
             }
 
-            Bitmap windowIn = layerWindow;
-            Bitmap windowOut = MaskImages(windowIn, maskWindow);
+            var windowIn = layerWindow;
+            var windowOut = MaskImages(windowIn, maskWindow);
 
             Bitmap coreOut = null;
             if (layerCore != null)
@@ -173,10 +169,10 @@ namespace Atiran.Utility.Docking2
                 coreOut = MaskImages(coreIn, maskCore);
             }
 
-            Bitmap backIn = new Bitmap(width, height);
-            using (Graphics gfx = Graphics.FromImage(backIn))
+            var backIn = new Bitmap(width, height);
+            using (var gfx = Graphics.FromImage(backIn))
             {
-                SolidBrush brush = painting.GetBrush(background);
+                var brush = painting.GetBrush(background);
                 gfx.FillRectangle(brush, 0, 0, width, height);
                 gfx.DrawImageUnscaled(windowOut, 0, 0);
                 windowOut.Dispose();
@@ -188,15 +184,15 @@ namespace Atiran.Utility.Docking2
 
                 if (separator != null)
                 {
-                    Pen sep = painting.GetPen(separator.Value);
+                    var sep = painting.GetPen(separator.Value);
                     gfx.DrawRectangle(sep, 0, 0, width - 1, height - 1);
                 }
             }
 
-            Bitmap backOut = MaskImages(backIn, maskBack);
+            var backOut = MaskImages(backIn, maskBack);
             backIn.Dispose();
 
-            using (Graphics gfx = Graphics.FromImage(backOut))
+            using (var gfx = Graphics.FromImage(backOut))
             {
                 if (arrowOut != null)
                 {
@@ -219,17 +215,17 @@ namespace Atiran.Utility.Docking2
             var bitsOutput = arrowOut.LockBits(rect, ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
             unsafe
             {
-                for (int y = 0; y < height; y++)
+                for (var y = 0; y < height; y++)
                 {
-                    byte* ptrMask = (byte*)bitsMask.Scan0 + y * bitsMask.Stride;
-                    byte* ptrInput = (byte*)bitsInput.Scan0 + y * bitsInput.Stride;
-                    byte* ptrOutput = (byte*)bitsOutput.Scan0 + y * bitsOutput.Stride;
-                    for (int x = 0; x < width; x++)
+                    var ptrMask = (byte*) bitsMask.Scan0 + y * bitsMask.Stride;
+                    var ptrInput = (byte*) bitsInput.Scan0 + y * bitsInput.Stride;
+                    var ptrOutput = (byte*) bitsOutput.Scan0 + y * bitsOutput.Stride;
+                    for (var x = 0; x < width; x++)
                     {
-                        ptrOutput[4 * x] = ptrInput[4 * x];           // blue
-                        ptrOutput[4 * x + 1] = ptrInput[4 * x + 1];   // green
-                        ptrOutput[4 * x + 2] = ptrInput[4 * x + 2];   // red
-                        ptrOutput[4 * x + 3] = ptrMask[4 * x];        // alpha
+                        ptrOutput[4 * x] = ptrInput[4 * x]; // blue
+                        ptrOutput[4 * x + 1] = ptrInput[4 * x + 1]; // green
+                        ptrOutput[4 * x + 2] = ptrInput[4 * x + 2]; // red
+                        ptrOutput[4 * x + 3] = ptrMask[4 * x]; // alpha
                     }
                 }
             }
@@ -252,7 +248,8 @@ namespace Atiran.Utility.Docking2
             return result;
         }
 
-        public static Bitmap CombineFive(Bitmap five, Bitmap bottom, Bitmap center, Bitmap left, Bitmap right, Bitmap top)
+        public static Bitmap CombineFive(Bitmap five, Bitmap bottom, Bitmap center, Bitmap left, Bitmap right,
+            Bitmap top)
         {
             var result = new Bitmap(five);
             var cell = (result.Width - bottom.Width) / 2;
@@ -269,7 +266,8 @@ namespace Atiran.Utility.Docking2
             return result;
         }
 
-        public static Bitmap GetFiveBackground(Bitmap mask, Color innerBorder, Color outerBorder, IPaintingService painting)
+        public static Bitmap GetFiveBackground(Bitmap mask, Color innerBorder, Color outerBorder,
+            IPaintingService painting)
         {
             // TODO: calculate points using functions.
             using (var input = GetLayerImage(innerBorder, mask.Width, painting))
@@ -279,7 +277,7 @@ namespace Atiran.Utility.Docking2
                     var pen = painting.GetPen(outerBorder);
                     gfx.DrawLines(pen, new[]
                     {
-                        new Point(36, 25),new Point(36, 0),
+                        new Point(36, 25), new Point(36, 0),
                         new Point(75, 0), new Point(75, 25)
                     });
                     gfx.DrawLines(pen, new[]
@@ -308,5 +306,4 @@ namespace Atiran.Utility.Docking2
             }
         }
     }
-
 }

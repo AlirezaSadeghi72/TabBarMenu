@@ -1,54 +1,25 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows.Forms;
 using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.ComponentModel;
 
 namespace Atiran.Utility.Docking
 {
     partial class DockPanel
     {
+        private SplitterDragHandler m_splitterDragHandler;
+
+        private SplitterDragHandler GetSplitterDragHandler()
+        {
+            if (m_splitterDragHandler == null)
+                m_splitterDragHandler = new SplitterDragHandler(this);
+            return m_splitterDragHandler;
+        }
+
+        internal void BeginDrag(ISplitterDragSource dragSource, Rectangle rectSplitter)
+        {
+            GetSplitterDragHandler().BeginDrag(dragSource, rectSplitter);
+        }
+
         private sealed class SplitterDragHandler : DragHandler
         {
-            private class SplitterOutline
-            {
-                public SplitterOutline()
-                {
-                    m_dragForm = new DragForm();
-                    SetDragForm(Rectangle.Empty);
-                    DragForm.BackColor = Color.Black;
-                    DragForm.Opacity = 0.7;
-                    DragForm.Show(false);
-                }
-
-                DragForm m_dragForm;
-                private DragForm DragForm
-                {
-                    get { return m_dragForm; }
-                }
-
-                public void Show(Rectangle rect)
-                {
-                    SetDragForm(rect);
-                }
-
-                public void Close()
-                {
-                    DragForm.Close();
-                }
-
-                private void SetDragForm(Rectangle rect)
-                {
-                    DragForm.Bounds = rect;
-                    if (rect == Rectangle.Empty)
-                        DragForm.Region = new Region(Rectangle.Empty);
-                    else if (DragForm.Region != null)
-                        DragForm.Region = null;
-                }
-            }
-
             public SplitterDragHandler(DockPanel dockPanel)
                 : base(dockPanel)
             {
@@ -56,23 +27,13 @@ namespace Atiran.Utility.Docking
 
             public new ISplitterDragSource DragSource
             {
-                get { return base.DragSource as ISplitterDragSource; }
-                private set { base.DragSource = value; }
+                get => base.DragSource as ISplitterDragSource;
+                private set => base.DragSource = value;
             }
 
-            private SplitterOutline m_outline;
-            private SplitterOutline Outline
-            {
-                get { return m_outline; }
-                set { m_outline = value; }
-            }
+            private SplitterOutline Outline { get; set; }
 
-            private Rectangle m_rectSplitter;
-            private Rectangle RectSplitter
-            {
-                get { return m_rectSplitter; }
-                set { m_rectSplitter = value; }
-            }
+            private Rectangle RectSplitter { get; set; }
 
             public void BeginDrag(ISplitterDragSource dragSource, Rectangle rectSplitter)
             {
@@ -90,19 +51,19 @@ namespace Atiran.Utility.Docking
                 DragSource.BeginDrag(rectSplitter);
             }
 
-            protected  override void OnDragging()
+            protected override void OnDragging()
             {
-                Outline.Show(GetSplitterOutlineBounds(Control.MousePosition));
+                Outline.Show(GetSplitterOutlineBounds(MousePosition));
             }
 
-            protected  override void OnEndDrag(bool abort)
+            protected override void OnEndDrag(bool abort)
             {
                 DockPanel.SuspendLayout(true);
 
                 Outline.Close();
 
                 if (!abort)
-                    DragSource.MoveSplitter(GetMovingOffset(Control.MousePosition));
+                    DragSource.MoveSplitter(GetMovingOffset(MousePosition));
 
                 DragSource.EndDrag();
                 DockPanel.ResumeLayout(true, true);
@@ -110,18 +71,17 @@ namespace Atiran.Utility.Docking
 
             private int GetMovingOffset(Point ptMouse)
             {
-                Rectangle rect = GetSplitterOutlineBounds(ptMouse);
+                var rect = GetSplitterOutlineBounds(ptMouse);
                 if (DragSource.IsVertical)
                     return rect.X - RectSplitter.X;
-                else
-                    return rect.Y - RectSplitter.Y;
+                return rect.Y - RectSplitter.Y;
             }
 
             private Rectangle GetSplitterOutlineBounds(Point ptMouse)
             {
-                Rectangle rectLimit = DragSource.DragLimitBounds;
+                var rectLimit = DragSource.DragLimitBounds;
 
-                Rectangle rect = RectSplitter;
+                var rect = RectSplitter;
                 if (rectLimit.Width <= 0 || rectLimit.Height <= 0)
                     return rect;
 
@@ -147,19 +107,39 @@ namespace Atiran.Utility.Docking
 
                 return rect;
             }
-        }
 
-        private SplitterDragHandler m_splitterDragHandler = null;
-        private SplitterDragHandler GetSplitterDragHandler()
-        {
-            if (m_splitterDragHandler == null)
-                m_splitterDragHandler = new SplitterDragHandler(this);
-            return m_splitterDragHandler;
-        }
+            private class SplitterOutline
+            {
+                public SplitterOutline()
+                {
+                    DragForm = new DragForm();
+                    SetDragForm(Rectangle.Empty);
+                    DragForm.BackColor = Color.Black;
+                    DragForm.Opacity = 0.7;
+                    DragForm.Show(false);
+                }
 
-        internal void BeginDrag(ISplitterDragSource dragSource, Rectangle rectSplitter)
-        {
-            GetSplitterDragHandler().BeginDrag(dragSource, rectSplitter);
+                private DragForm DragForm { get; }
+
+                public void Show(Rectangle rect)
+                {
+                    SetDragForm(rect);
+                }
+
+                public void Close()
+                {
+                    DragForm.Close();
+                }
+
+                private void SetDragForm(Rectangle rect)
+                {
+                    DragForm.Bounds = rect;
+                    if (rect == Rectangle.Empty)
+                        DragForm.Region = new Region(Rectangle.Empty);
+                    else if (DragForm.Region != null)
+                        DragForm.Region = null;
+                }
+            }
         }
     }
 }

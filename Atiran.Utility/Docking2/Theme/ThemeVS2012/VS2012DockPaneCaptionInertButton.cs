@@ -6,18 +6,20 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2012
     [ToolboxItem(false)]
     public class VS2012DockPaneCaptionInertButton : InertButtonBase
     {
-        private Bitmap _hovered;
-        private Bitmap _normal;
         private Bitmap _active;
-        private Bitmap _pressed;
+        private Bitmap _autoHide;
+        private Bitmap _hovered;
         private Bitmap _hoveredActive;
         private Bitmap _hoveredAutoHide;
-        private Bitmap _autoHide;
+        private Bitmap _normal;
+        private Bitmap _pressed;
         private Bitmap _pressedAutoHide;
 
-        public VS2012DockPaneCaptionInertButton(DockPaneCaptionBase dockPaneCaption, Bitmap hovered, Bitmap normal, Bitmap pressed, Bitmap hoveredActive, Bitmap active, Bitmap hoveredAutoHide = null, Bitmap autoHide = null, Bitmap pressedAutoHide = null)
+        public VS2012DockPaneCaptionInertButton(DockPaneCaptionBase dockPaneCaption, Bitmap hovered, Bitmap normal,
+            Bitmap pressed, Bitmap hoveredActive, Bitmap active, Bitmap hoveredAutoHide = null, Bitmap autoHide = null,
+            Bitmap pressedAutoHide = null)
         {
-            m_dockPaneCaption = dockPaneCaption;
+            DockPaneCaption = dockPaneCaption;
             _hovered = hovered;
             _normal = normal;
             _pressed = pressed;
@@ -29,35 +31,16 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2012
             RefreshChanges();
         }
 
-        private DockPaneCaptionBase m_dockPaneCaption;
-        private DockPaneCaptionBase DockPaneCaption
-        {
-            get { return m_dockPaneCaption; }
-        }
+        private DockPaneCaptionBase DockPaneCaption { get; }
 
-        public bool IsAutoHide
-        {
-            get { return DockPaneCaption.DockPane.IsAutoHide; }
-        }
+        public bool IsAutoHide => DockPaneCaption.DockPane.IsAutoHide;
 
-        public bool IsActive
-        {
-            get { return DockPaneCaption.DockPane.IsActivePane; }
-        }
+        public bool IsActive => DockPaneCaption.DockPane.IsActivePane;
 
-        public override Bitmap Image
-        {
-            get { return IsActive ? IsAutoHide ? _autoHide : _active : _normal; }
-        }
+        public override Bitmap Image => IsActive ? IsAutoHide ? _autoHide : _active : _normal;
 
-        public override Bitmap HoverImage
-        {
-            get { return IsActive ? IsAutoHide ? _hoveredAutoHide : _hoveredActive : _hovered; }
-        }
+        public override Bitmap HoverImage => IsActive ? IsAutoHide ? _hoveredAutoHide : _hoveredActive : _hovered;
 
-        public override Bitmap PressImage
-        {
-            get { return IsAutoHide ? _pressedAutoHide : _pressed; }
-        }
+        public override Bitmap PressImage => IsAutoHide ? _pressedAutoHide : _pressed;
     }
 }

@@ -1,171 +1,39 @@
 using System;
-using System.Windows.Forms;
-using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Collections;
 using System.Collections.Generic;
-using System.Security.Permissions;
 using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Security.Permissions;
+using System.Windows.Forms;
 using Atiran.Utility.Docking2.Desk;
+using Atiran.Utility.Docking2.Win32;
 using Atiran.Utility.MassageBox;
 
 namespace Atiran.Utility.Docking2
 {
     public abstract class DockPaneStripBase : Control
     {
-        [SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible")]
-        protected internal class Tab : IDisposable
-        {
-            private IDockContent m_content;
+        private Rectangle _dragBox = Rectangle.Empty;
 
-            public Tab(IDockContent content)
-            {
-                m_content = content;
-            }
-
-            ~Tab()
-            {
-                Dispose(false);
-            }
-
-            public IDockContent Content
-            {
-                get { return m_content; }
-            }
-
-            public Form ContentForm
-            {
-                get { return m_content as Form; }
-            }
-
-            public void Dispose()
-            {
-                Dispose(true);
-                GC.SuppressFinalize(this);
-            }
-
-            protected virtual void Dispose(bool disposing)
-            {
-            }
-
-            private Rectangle? _rect;
-
-            public Rectangle? Rectangle
-            {
-                get
-                {
-                    if (_rect != null)
-                    {
-                        return _rect;
-                    }
-
-                    return _rect = System.Drawing.Rectangle.Empty;
-                }
-
-                set
-                {
-                    _rect = value;
-                }
-            }
-        }
-
-        [SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible")]
-        protected sealed class TabCollection : IEnumerable<Tab>
-        {
-            #region IEnumerable Members
-            IEnumerator<Tab> IEnumerable<Tab>.GetEnumerator()
-            {
-                for (int i = 0; i < Count; i++)
-                    yield return this[i];
-            }
-
-            IEnumerator IEnumerable.GetEnumerator()
-            {
-                for (int i = 0; i < Count; i++)
-                    yield return this[i];
-            }
-            #endregion
-
-            internal TabCollection(DockPane pane)
-            {
-                m_dockPane = pane;
-            }
-
-            private DockPane m_dockPane;
-            public DockPane DockPane
-            {
-                get { return m_dockPane; }
-            }
-
-            public int Count
-            {
-                get { return DockPane.DisplayingContents.Count; }
-            }
-
-            public Tab this[int index]
-            {
-                get
-                {
-                    IDockContent content = DockPane.DisplayingContents[index];
-                    if (content == null)
-                        throw (new ArgumentOutOfRangeException(nameof(index)));
-                    return content.DockHandler.GetTab(DockPane.TabStripControl);
-                }
-            }
-
-            public bool Contains(Tab tab)
-            {
-                return (IndexOf(tab) != -1);
-            }
-
-            public bool Contains(IDockContent content)
-            {
-                return (IndexOf(content) != -1);
-            }
-
-            public int IndexOf(Tab tab)
-            {
-                if (tab == null)
-                    return -1;
-
-                return DockPane.DisplayingContents.IndexOf(tab.Content);
-            }
-
-            public int IndexOf(IDockContent content)
-            {
-                return DockPane.DisplayingContents.IndexOf(content);
-            }
-        }
+        private TabCollection m_tabs;
 
         protected DockPaneStripBase(DockPane pane)
         {
-            m_dockPane = pane;
+            DockPane = pane;
 
             SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
             SetStyle(ControlStyles.Selectable, false);
             AllowDrop = true;
         }
 
-        private DockPane m_dockPane;
-        protected DockPane DockPane
-        {
-            get { return m_dockPane; }
-        }
+        protected DockPane DockPane { get; }
 
-        protected DockPane.AppearanceStyle Appearance
-        {
-            get { return DockPane.Appearance; }
-        }
+        protected DockPane.AppearanceStyle Appearance => DockPane.Appearance;
 
-        private TabCollection m_tabs;
+        protected TabCollection Tabs => m_tabs ?? (m_tabs = new TabCollection(DockPane));
 
-        protected TabCollection Tabs
-        {
-            get
-            {
-                return m_tabs ?? (m_tabs = new TabCollection(DockPane));
-            }
-        }
+        protected bool HasTabPageContextMenu => DockPane.HasTabPageContextMenu;
 
         internal void RefreshChanges()
         {
@@ -185,7 +53,7 @@ namespace Atiran.Utility.Docking2
 
         protected int HitTest()
         {
-            return HitTest(PointToClient(Control.MousePosition));
+            return HitTest(PointToClient(MousePosition));
         }
 
         protected internal abstract int HitTest(Point point);
@@ -202,11 +70,10 @@ namespace Atiran.Utility.Docking2
             return new Tab(content);
         }
 
-        private Rectangle _dragBox = Rectangle.Empty;
         protected override void OnMouseDown(MouseEventArgs e)
         {
             base.OnMouseDown(e);
-            int index = HitTest();
+            var index = HitTest();
             if (index != -1)
             {
                 if (e.Button == MouseButtons.Middle)
@@ -216,22 +83,19 @@ namespace Atiran.Utility.Docking2
                 }
                 else
                 {
-                    IDockContent content = Tabs[index].Content;
+                    var content = Tabs[index].Content;
                     if (DockPane.ActiveContent != content)
-                    {
                         // Test if the content should be active
                         if (MouseDownActivateTest(e))
                             DockPane.ActiveContent = content;
-                    }
-
                 }
             }
 
             if (e.Button == MouseButtons.Left)
             {
                 var dragSize = SystemInformation.DragSize;
-                _dragBox = new Rectangle(new Point(e.X - (dragSize.Width / 2),
-                                                e.Y - (dragSize.Height / 2)), dragSize);
+                _dragBox = new Rectangle(new Point(e.X - dragSize.Width / 2,
+                    e.Y - dragSize.Height / 2), dragSize);
             }
         }
 
@@ -245,13 +109,9 @@ namespace Atiran.Utility.Docking2
             if (DockPane.ActiveContent == null)
                 return;
 
-            if (DockPane.DockPanel.AllowEndUserDocking && DockPane.AllowDockDragAndDrop && DockPane.ActiveContent.DockHandler.AllowEndUserDocking)
+            if (DockPane.DockPanel.AllowEndUserDocking && DockPane.AllowDockDragAndDrop &&
+                DockPane.ActiveContent.DockHandler.AllowEndUserDocking)
                 DockPane.DockPanel.BeginDrag(DockPane.ActiveContent.DockHandler);
-        }
-
-        protected bool HasTabPageContextMenu
-        {
-            get { return DockPane.HasTabPageContextMenu; }
         }
 
         protected void ShowTabPageContextMenu(Point position)
@@ -263,32 +123,29 @@ namespace Atiran.Utility.Docking2
         {
             if (index >= 0 || index < Tabs.Count)
             {
-                IDockContent content = Tabs[index].Content;
+                var content = Tabs[index].Content;
 
                 if ((Tabs[index].Content.DockHandler.Form as DeskTab).ShowQuestionClose)
                 {
-                    if (ShowPersianMessageBox.ShowMessge("پيغام", "آيا تب " + Tabs[index].Content.DockHandler.TabText + " بسته شود",
-                              MessageBoxButtons.YesNo,false,false) == DialogResult.Yes)
+                    if (ShowPersianMessageBox.ShowMessge("پيغام",
+                            "آيا تب " + Tabs[index].Content.DockHandler.TabText + " بسته شود",
+                            MessageBoxButtons.YesNo, false, false) == DialogResult.Yes)
                     {
-
                         // Close the specified content.
                         DockPane.CloseContent(content);
                         if (PatchController.EnableSelectClosestOnClose == true)
                             SelectClosestPane(index);
                         return true;
-
                     }
                 }
                 else
                 {
-                        // Close the specified content.
-                        DockPane.CloseContent(content);
-                        if (PatchController.EnableSelectClosestOnClose == true)
-                            SelectClosestPane(index);
-                        return true;
-
+                    // Close the specified content.
+                    DockPane.CloseContent(content);
+                    if (PatchController.EnableSelectClosestOnClose == true)
+                        SelectClosestPane(index);
+                    return true;
                 }
-
             }
 
             return false;
@@ -316,14 +173,14 @@ namespace Atiran.Utility.Docking2
         [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
         protected override void WndProc(ref Message m)
         {
-            if (m.Msg == (int)Win32.Msgs.WM_LBUTTONDBLCLK)
+            if (m.Msg == (int) Msgs.WM_LBUTTONDBLCLK)
             {
                 base.WndProc(ref m);
 
-                int index = HitTest();
+                var index = HitTest();
                 if (DockPane.DockPanel.AllowEndUserDocking && index != -1)
                 {
-                    IDockContent content = Tabs[index].Content;
+                    var content = Tabs[index].Content;
                     if (content.DockHandler.CheckDockState(!content.DockHandler.IsFloat) != DockState.Unknown)
                         content.DockHandler.IsFloat = !content.DockHandler.IsFloat;
                 }
@@ -332,17 +189,16 @@ namespace Atiran.Utility.Docking2
             }
 
             base.WndProc(ref m);
-            return;
         }
 
         protected override void OnDragOver(DragEventArgs drgevent)
         {
             base.OnDragOver(drgevent);
 
-            int index = HitTest();
+            var index = HitTest();
             if (index != -1)
             {
-                IDockContent content = Tabs[index].Content;
+                var content = Tabs[index].Content;
                 if (DockPane.ActiveContent != content)
                     DockPane.ActiveContent = content;
             }
@@ -350,10 +206,7 @@ namespace Atiran.Utility.Docking2
 
         protected void ContentClosed()
         {
-            if (m_tabs.Count == 0)
-            {
-                DockPane.ClearLastActiveContent();
-            }
+            if (m_tabs.Count == 0) DockPane.ClearLastActiveContent();
         }
 
         protected abstract Rectangle GetTabBounds(Tab tab);
@@ -363,7 +216,8 @@ namespace Atiran.Utility.Docking2
             if (parent == null)
                 return rectangle;
 
-            return new Rectangle(parent.PointToScreen(new Point(rectangle.Left, rectangle.Top)), new Size(rectangle.Width, rectangle.Height));
+            return new Rectangle(parent.PointToScreen(new Point(rectangle.Left, rectangle.Top)),
+                new Size(rectangle.Width, rectangle.Height));
         }
 
         protected override AccessibleObject CreateAccessibilityInstance()
@@ -371,7 +225,112 @@ namespace Atiran.Utility.Docking2
             return new DockPaneStripAccessibleObject(this);
         }
 
-        public class DockPaneStripAccessibleObject : Control.ControlAccessibleObject
+        [SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible")]
+        protected internal class Tab : IDisposable
+        {
+            private Rectangle? _rect;
+
+            public Tab(IDockContent content)
+            {
+                Content = content;
+            }
+
+            public IDockContent Content { get; }
+
+            public Form ContentForm => Content as Form;
+
+            public Rectangle? Rectangle
+            {
+                get
+                {
+                    if (_rect != null) return _rect;
+
+                    return _rect = System.Drawing.Rectangle.Empty;
+                }
+
+                set => _rect = value;
+            }
+
+            public void Dispose()
+            {
+                Dispose(true);
+                GC.SuppressFinalize(this);
+            }
+
+            ~Tab()
+            {
+                Dispose(false);
+            }
+
+            protected virtual void Dispose(bool disposing)
+            {
+            }
+        }
+
+        [SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible")]
+        protected sealed class TabCollection : IEnumerable<Tab>
+        {
+            internal TabCollection(DockPane pane)
+            {
+                DockPane = pane;
+            }
+
+            public DockPane DockPane { get; }
+
+            public int Count => DockPane.DisplayingContents.Count;
+
+            public Tab this[int index]
+            {
+                get
+                {
+                    var content = DockPane.DisplayingContents[index];
+                    if (content == null)
+                        throw new ArgumentOutOfRangeException(nameof(index));
+                    return content.DockHandler.GetTab(DockPane.TabStripControl);
+                }
+            }
+
+            public bool Contains(Tab tab)
+            {
+                return IndexOf(tab) != -1;
+            }
+
+            public bool Contains(IDockContent content)
+            {
+                return IndexOf(content) != -1;
+            }
+
+            public int IndexOf(Tab tab)
+            {
+                if (tab == null)
+                    return -1;
+
+                return DockPane.DisplayingContents.IndexOf(tab.Content);
+            }
+
+            public int IndexOf(IDockContent content)
+            {
+                return DockPane.DisplayingContents.IndexOf(content);
+            }
+
+            #region IEnumerable Members
+
+            IEnumerator<Tab> IEnumerable<Tab>.GetEnumerator()
+            {
+                for (var i = 0; i < Count; i++)
+                    yield return this[i];
+            }
+
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                for (var i = 0; i < Count; i++)
+                    yield return this[i];
+            }
+
+            #endregion
+        }
+
+        public class DockPaneStripAccessibleObject : ControlAccessibleObject
         {
             private DockPaneStripBase _strip;
 
@@ -381,13 +340,7 @@ namespace Atiran.Utility.Docking2
                 _strip = strip;
             }
 
-            public override AccessibleRole Role
-            {
-                get
-                {
-                    return AccessibleRole.PageTabList;
-                }
-            }
+            public override AccessibleRole Role => AccessibleRole.PageTabList;
 
             public override int GetChildCount()
             {
@@ -401,10 +354,10 @@ namespace Atiran.Utility.Docking2
 
             public override AccessibleObject HitTest(int x, int y)
             {
-                Point point = new Point(x, y);
-                foreach (Tab tab in _strip.Tabs)
+                var point = new Point(x, y);
+                foreach (var tab in _strip.Tabs)
                 {
-                    Rectangle rectangle = _strip.GetTabBounds(tab);
+                    var rectangle = _strip.GetTabBounds(tab);
                     if (ToScreen(rectangle, _strip).Contains(point))
                         return new DockPaneStripTabAccessibleObject(_strip, tab, this);
                 }
@@ -418,53 +371,35 @@ namespace Atiran.Utility.Docking2
             private DockPaneStripBase _strip;
             private Tab _tab;
 
-            private AccessibleObject _parent;
-
             internal DockPaneStripTabAccessibleObject(DockPaneStripBase strip, Tab tab, AccessibleObject parent)
             {
                 _strip = strip;
                 _tab = tab;
 
-                _parent = parent;
+                Parent = parent;
             }
 
-            public override AccessibleObject Parent
-            {
-                get
-                {
-                    return _parent;
-                }
-            }
+            public override AccessibleObject Parent { get; }
 
-            public override AccessibleRole Role
-            {
-                get
-                {
-                    return AccessibleRole.PageTab;
-                }
-            }
+            public override AccessibleRole Role => AccessibleRole.PageTab;
 
             public override Rectangle Bounds
             {
                 get
                 {
-                    Rectangle rectangle = _strip.GetTabBounds(_tab);
+                    var rectangle = _strip.GetTabBounds(_tab);
                     return ToScreen(rectangle, _strip);
                 }
             }
 
             public override string Name
             {
-                get
-                {
-                    return _tab.Content.DockHandler.TabText;
-                }
+                get => _tab.Content.DockHandler.TabText;
                 set
                 {
                     //base.Name = value;
                 }
             }
         }
-
     }
 }

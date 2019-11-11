@@ -43,10 +43,10 @@ namespace Atiran.Utility.Docking2
 
     public interface ISplitterDragSource : IDragSource
     {
-        void BeginDrag(Rectangle rectSplitter);
-        void EndDrag();
         bool IsVertical { get; }
         Rectangle DragLimitBounds { get; }
+        void BeginDrag(Rectangle rectSplitter);
+        void EndDrag();
         void MoveSplitter(int offset);
     }
 

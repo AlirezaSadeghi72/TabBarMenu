@@ -1,5 +1,4 @@
-﻿
-namespace Atiran.Utility.Docking2.Theme.ThemeVS2013
+﻿namespace Atiran.Utility.Docking2.Theme.ThemeVS2013
 {
     public class VS2013DockPaneStripFactory : DockPanelExtender.IDockPaneStripFactory
     {

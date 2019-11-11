@@ -1,34 +1,14 @@
 using System;
-using System.Drawing;
-using System.Windows.Forms;
-using System.Drawing.Drawing2D;
 using System.ComponentModel;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Windows.Forms;
 
 namespace Atiran.Utility.Docking2.Theme.ThemeVS2012
 {
     [ToolboxItem(false)]
     internal class VS2012AutoHideStrip : AutoHideStripBase
     {
-        private class TabVS2012 : Tab
-        {
-            internal TabVS2012(IDockContent content)
-                : base(content)
-            {
-            }
-
-            /// <summary>
-            /// X for this <see href="TabVS2012"/> inside the logical strip rectangle.
-            /// </summary>
-            public int TabX { get; set; }
-
-            /// <summary>
-            /// Width of this <see href="TabVS2012"/>.
-            /// </summary>
-            public int TabWidth { get; set; }
-
-            public bool IsMouseOver { get; set; }
-        }
-
         private const int TextGapLeft = 0;
         private const int TextGapRight = 0;
         private const int TextGapBottom = 3;
@@ -37,66 +17,24 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2012
         private const int TabGapLeft = 0;
         private const int TabGapBetween = 12;
 
-        #region Customizable Properties
-        public Font TextFont
-        {
-            get { return DockPanel.Theme.Skin.AutoHideStripSkin.TextFont; }
-        }
-
-        private static StringFormat _stringFormatTabHorizontal;
-        private StringFormat StringFormatTabHorizontal
-        {
-            get
-            {
-                if (_stringFormatTabHorizontal == null)
-                {
-                    _stringFormatTabHorizontal = new StringFormat();
-                    _stringFormatTabHorizontal.Alignment = StringAlignment.Near;
-                    _stringFormatTabHorizontal.LineAlignment = StringAlignment.Center;
-                    _stringFormatTabHorizontal.FormatFlags = StringFormatFlags.NoWrap;
-                    _stringFormatTabHorizontal.Trimming = StringTrimming.None;
-                }
-
-                if (RightToLeft == RightToLeft.Yes)
-                    _stringFormatTabHorizontal.FormatFlags |= StringFormatFlags.DirectionRightToLeft;
-                else
-                    _stringFormatTabHorizontal.FormatFlags &= ~StringFormatFlags.DirectionRightToLeft;
-
-                return _stringFormatTabHorizontal;
-            }
-        }
-
-        private static StringFormat _stringFormatTabVertical;
-        private StringFormat StringFormatTabVertical
-        {
-            get
-            {
-                if (_stringFormatTabVertical == null)
-                {
-                    _stringFormatTabVertical = new StringFormat();
-                    _stringFormatTabVertical.Alignment = StringAlignment.Near;
-                    _stringFormatTabVertical.LineAlignment = StringAlignment.Center;
-                    _stringFormatTabVertical.FormatFlags = StringFormatFlags.NoWrap | StringFormatFlags.DirectionVertical;
-                    _stringFormatTabVertical.Trimming = StringTrimming.None;
-                }
-                if (RightToLeft == RightToLeft.Yes)
-                    _stringFormatTabVertical.FormatFlags |= StringFormatFlags.DirectionRightToLeft;
-                else
-                    _stringFormatTabVertical.FormatFlags &= ~StringFormatFlags.DirectionRightToLeft;
-
-                return _stringFormatTabVertical;
-            }
-        }
-
-        #endregion
-
-        private static Matrix _matrixIdentity = new Matrix();
-        private static Matrix MatrixIdentity
-        {
-            get { return _matrixIdentity; }
-        }
-
         private static DockState[] _dockStates;
+
+        private static GraphicsPath _graphicsPath;
+
+        private TabVS2012 lastSelectedTab;
+
+        public VS2012AutoHideStrip(DockPanel panel)
+            : base(panel)
+        {
+            SetStyle(ControlStyles.ResizeRedraw |
+                     ControlStyles.UserPaint |
+                     ControlStyles.AllPaintingInWmPaint |
+                     ControlStyles.OptimizedDoubleBuffer, true);
+            BackColor = DockPanel.Theme.ColorPalette.MainWindowActive.Background;
+        }
+
+        private static Matrix MatrixIdentity { get; } = new Matrix();
+
         private static DockState[] DockStates
         {
             get
@@ -109,11 +47,11 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2012
                     _dockStates[2] = DockState.DockTopAutoHide;
                     _dockStates[3] = DockState.DockBottomAutoHide;
                 }
+
                 return _dockStates;
             }
         }
 
-        private static GraphicsPath _graphicsPath;
         internal static GraphicsPath GraphicsPath
         {
             get
@@ -125,24 +63,14 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2012
             }
         }
 
-        public VS2012AutoHideStrip(DockPanel panel)
-            : base(panel)
-        {
-            SetStyle(ControlStyles.ResizeRedraw |
-                ControlStyles.UserPaint |
-                ControlStyles.AllPaintingInWmPaint |
-                ControlStyles.OptimizedDoubleBuffer, true);
-            BackColor = DockPanel.Theme.ColorPalette.MainWindowActive.Background;
-        }
-
-        protected  override void OnPaint(PaintEventArgs e)
+        protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
-            Graphics g = e.Graphics;
+            var g = e.Graphics;
             DrawTabStrip(g);
         }
 
-        protected  override void OnLayout(LayoutEventArgs levent)
+        protected override void OnLayout(LayoutEventArgs levent)
         {
             CalculateTabs();
             base.OnLayout(levent);
@@ -158,25 +86,23 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2012
 
         private void DrawTabStrip(Graphics g, DockState dockState)
         {
-            Rectangle rectTabStrip = GetLogicalTabStripRectangle(dockState);
+            var rectTabStrip = GetLogicalTabStripRectangle(dockState);
 
             if (rectTabStrip.IsEmpty)
                 return;
 
-            Matrix matrixIdentity = g.Transform;
+            var matrixIdentity = g.Transform;
             if (dockState == DockState.DockLeftAutoHide || dockState == DockState.DockRightAutoHide)
             {
-                Matrix matrixRotated = new Matrix();
-                matrixRotated.RotateAt(90, new PointF((float)rectTabStrip.X + (float)rectTabStrip.Height / 2,
-                    (float)rectTabStrip.Y + (float)rectTabStrip.Height / 2));
+                var matrixRotated = new Matrix();
+                matrixRotated.RotateAt(90, new PointF(rectTabStrip.X + (float) rectTabStrip.Height / 2,
+                    rectTabStrip.Y + (float) rectTabStrip.Height / 2));
                 g.Transform = matrixRotated;
             }
 
-            foreach (Pane pane in GetPanes(dockState))
-            {
-                foreach (TabVS2012 tab in pane.AutoHideTabs)
-                    DrawTab(g, tab);
-            }
+            foreach (var pane in GetPanes(dockState))
+            foreach (TabVS2012 tab in pane.AutoHideTabs)
+                DrawTab(g, tab);
 
             g.Transform = matrixIdentity;
         }
@@ -191,19 +117,17 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2012
 
         private void CalculateTabs(DockState dockState)
         {
-            Rectangle rectTabStrip = GetLogicalTabStripRectangle(dockState);
+            var rectTabStrip = GetLogicalTabStripRectangle(dockState);
 
-            int x = TabGapLeft + rectTabStrip.X;
-            foreach (Pane pane in GetPanes(dockState))
+            var x = TabGapLeft + rectTabStrip.X;
+            foreach (var pane in GetPanes(dockState))
+            foreach (TabVS2012 tab in pane.AutoHideTabs)
             {
-                foreach (TabVS2012 tab in pane.AutoHideTabs)
-                {
-                    int width = TextRenderer.MeasureText(tab.Content.DockHandler.TabText, TextFont).Width +
-                        TextGapLeft + TextGapRight;
-                    tab.TabX = x;
-                    tab.TabWidth = width;
-                    x += width + TabGapBetween;
-                }
+                var width = TextRenderer.MeasureText(tab.Content.DockHandler.TabText, TextFont).Width +
+                            TextGapLeft + TextGapRight;
+                tab.TabX = x;
+                tab.TabWidth = width;
+                x += width + TabGapBetween;
             }
         }
 
@@ -220,8 +144,8 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2012
 
         private GraphicsPath GetTabOutline(TabVS2012 tab, bool rtlTransform)
         {
-            DockState dockState = tab.Content.DockHandler.DockState;
-            Rectangle rectTab = GetTabRectangle(tab);
+            var dockState = tab.Content.DockHandler.DockState;
+            var rectTab = GetTabRectangle(tab);
             if (rtlTransform)
                 rectTab = RtlTransform(rectTab, dockState);
 
@@ -236,15 +160,15 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2012
 
         private void DrawTab(Graphics g, TabVS2012 tab)
         {
-            Rectangle rectTabOrigin = GetTabRectangle(tab);
+            var rectTabOrigin = GetTabRectangle(tab);
             if (rectTabOrigin.IsEmpty)
                 return;
 
-            DockState dockState = tab.Content.DockHandler.DockState;
-            IDockContent content = tab.Content;
+            var dockState = tab.Content.DockHandler.DockState;
+            var content = tab.Content;
 
             //Set no rotate for drawing icon and text
-            Matrix matrixRotate = g.Transform;
+            var matrixRotate = g.Transform;
             g.Transform = MatrixIdentity;
 
             Color borderColor;
@@ -265,16 +189,19 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2012
 
             g.FillRectangle(DockPanel.Theme.PaintingService.GetBrush(backgroundColor), rectTabOrigin);
 
-            Rectangle rectBorder = GetBorderRectangle(rectTabOrigin, dockState, TextRenderer.MeasureText(tab.Content.DockHandler.TabText, TextFont).Width);
+            var rectBorder = GetBorderRectangle(rectTabOrigin, dockState,
+                TextRenderer.MeasureText(tab.Content.DockHandler.TabText, TextFont).Width);
             g.FillRectangle(DockPanel.Theme.PaintingService.GetBrush(borderColor), rectBorder);
 
             // Draw the text
-            Rectangle rectText = GetTextRectangle(rectTabOrigin, dockState);
+            var rectText = GetTextRectangle(rectTabOrigin, dockState);
 
             if (dockState == DockState.DockLeftAutoHide || dockState == DockState.DockRightAutoHide)
-                g.DrawString(content.DockHandler.TabText, TextFont, DockPanel.Theme.PaintingService.GetBrush(textColor), rectText, StringFormatTabVertical);
+                g.DrawString(content.DockHandler.TabText, TextFont, DockPanel.Theme.PaintingService.GetBrush(textColor),
+                    rectText, StringFormatTabVertical);
             else
-                g.DrawString(content.DockHandler.TabText, TextFont, DockPanel.Theme.PaintingService.GetBrush(textColor), rectText, StringFormatTabHorizontal);
+                g.DrawString(content.DockHandler.TabText, TextFont, DockPanel.Theme.PaintingService.GetBrush(textColor),
+                    rectText, StringFormatTabHorizontal);
 
             // Set rotate back
             g.Transform = matrixRotate;
@@ -325,9 +252,7 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2012
             var rectStrip = GetTabStripRectangle(state);
             var location = rectStrip.Location;
             if (state == DockState.DockLeftAutoHide || state == DockState.DockRightAutoHide)
-            {
                 return new Rectangle(0, 0, rectStrip.Height, rectStrip.Width);
-            }
 
             return new Rectangle(0, 0, rectStrip.Width, rectStrip.Height);
         }
@@ -366,7 +291,7 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2012
                 result.Width -= TextGapBottom;
                 return result;
             }
-            
+
             if (state == DockState.DockBottomAutoHide)
             {
                 result.X += TextGapLeft;
@@ -387,51 +312,46 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2012
             return Rectangle.Empty;
         }
 
-        protected  override IDockContent HitTest(Point point)
+        protected override IDockContent HitTest(Point point)
         {
-            Tab tab = TabHitTest(point);
+            var tab = TabHitTest(point);
 
             if (tab != null)
                 return tab.Content;
-            else
-                return null;
+            return null;
         }
 
-        protected  override Rectangle GetTabBounds(Tab tab)
+        protected override Rectangle GetTabBounds(Tab tab)
         {
-            GraphicsPath path = GetTabOutline((TabVS2012)tab, true);
-            RectangleF bounds = path.GetBounds();
-            return new Rectangle((int)bounds.Left, (int)bounds.Top, (int)bounds.Width, (int)bounds.Height);
+            var path = GetTabOutline((TabVS2012) tab, true);
+            var bounds = path.GetBounds();
+            return new Rectangle((int) bounds.Left, (int) bounds.Top, (int) bounds.Width, (int) bounds.Height);
         }
 
         protected Tab TabHitTest(Point ptMouse)
         {
-            foreach (DockState state in DockStates)
+            foreach (var state in DockStates)
             {
-                Rectangle rectTabStrip = GetTabStripRectangle(state);
+                var rectTabStrip = GetTabStripRectangle(state);
                 if (!rectTabStrip.Contains(ptMouse))
                     continue;
 
-                foreach (Pane pane in GetPanes(state))
+                foreach (var pane in GetPanes(state))
+                foreach (TabVS2012 tab in pane.AutoHideTabs)
                 {
-                    foreach (TabVS2012 tab in pane.AutoHideTabs)
-                    {
-                        GraphicsPath path = GetTabOutline(tab, true);
-                        if (path.IsVisible(ptMouse))
-                            return tab;
-                    }
+                    var path = GetTabOutline(tab, true);
+                    if (path.IsVisible(ptMouse))
+                        return tab;
                 }
             }
 
             return null;
         }
 
-        private TabVS2012 lastSelectedTab = null;
-
-        protected  override void OnMouseMove(MouseEventArgs e)
+        protected override void OnMouseMove(MouseEventArgs e)
         {
             base.OnMouseMove(e);
-            var tab = (TabVS2012)TabHitTest(PointToClient(MousePosition));
+            var tab = (TabVS2012) TabHitTest(PointToClient(MousePosition));
             if (tab != null)
             {
                 tab.IsMouseOver = true;
@@ -450,7 +370,7 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2012
             }
         }
 
-        protected  override void OnMouseLeave(EventArgs e)
+        protected override void OnMouseLeave(EventArgs e)
         {
             base.OnMouseLeave(e);
 
@@ -464,15 +384,90 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2012
             return 31;
         }
 
-        protected  override void OnRefreshChanges()
+        protected override void OnRefreshChanges()
         {
             CalculateTabs();
             Invalidate();
         }
 
-        protected  override AutoHideStripBase.Tab CreateTab(IDockContent content)
+        protected override Tab CreateTab(IDockContent content)
         {
             return new TabVS2012(content);
         }
+
+        private class TabVS2012 : Tab
+        {
+            internal TabVS2012(IDockContent content)
+                : base(content)
+            {
+            }
+
+            /// <summary>
+            ///     X for this <see href="TabVS2012" /> inside the logical strip rectangle.
+            /// </summary>
+            public int TabX { get; set; }
+
+            /// <summary>
+            ///     Width of this <see href="TabVS2012" />.
+            /// </summary>
+            public int TabWidth { get; set; }
+
+            public bool IsMouseOver { get; set; }
+        }
+
+        #region Customizable Properties
+
+        public Font TextFont => DockPanel.Theme.Skin.AutoHideStripSkin.TextFont;
+
+        private static StringFormat _stringFormatTabHorizontal;
+
+        private StringFormat StringFormatTabHorizontal
+        {
+            get
+            {
+                if (_stringFormatTabHorizontal == null)
+                {
+                    _stringFormatTabHorizontal = new StringFormat();
+                    _stringFormatTabHorizontal.Alignment = StringAlignment.Near;
+                    _stringFormatTabHorizontal.LineAlignment = StringAlignment.Center;
+                    _stringFormatTabHorizontal.FormatFlags = StringFormatFlags.NoWrap;
+                    _stringFormatTabHorizontal.Trimming = StringTrimming.None;
+                }
+
+                if (RightToLeft == RightToLeft.Yes)
+                    _stringFormatTabHorizontal.FormatFlags |= StringFormatFlags.DirectionRightToLeft;
+                else
+                    _stringFormatTabHorizontal.FormatFlags &= ~StringFormatFlags.DirectionRightToLeft;
+
+                return _stringFormatTabHorizontal;
+            }
+        }
+
+        private static StringFormat _stringFormatTabVertical;
+
+        private StringFormat StringFormatTabVertical
+        {
+            get
+            {
+                if (_stringFormatTabVertical == null)
+                {
+                    _stringFormatTabVertical = new StringFormat();
+                    _stringFormatTabVertical.Alignment = StringAlignment.Near;
+                    _stringFormatTabVertical.LineAlignment = StringAlignment.Center;
+                    _stringFormatTabVertical.FormatFlags =
+                        StringFormatFlags.NoWrap | StringFormatFlags.DirectionVertical;
+                    _stringFormatTabVertical.Trimming = StringTrimming.None;
+                }
+
+                if (RightToLeft == RightToLeft.Yes)
+                    _stringFormatTabVertical.FormatFlags |= StringFormatFlags.DirectionRightToLeft;
+                else
+                    _stringFormatTabVertical.FormatFlags &= ~StringFormatFlags.DirectionRightToLeft;
+
+                return _stringFormatTabVertical;
+            }
+        }
+
+        #endregion
     }
 }

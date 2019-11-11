@@ -1,10 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
+
 <edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
   <!-- EF Runtime content -->
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-    <Schema Namespace="DBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+      <Schema Namespace="DBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self"
+              xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator"
+              xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation"
+              xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="act_zirsarfasls">
           <Key>
             <PropertyRef Name="rdf" />
@@ -270,10 +274,14 @@
             <End Role="zirsarfasls" EntitySet="zirsarfasls" />
           </AssociationSet>
         </EntityContainer>
-      </Schema></edmx:StorageModels>
+      </Schema>
+    </edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
-      <Schema Namespace="DBModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+      <Schema Namespace="DBModel" Alias="Self" annotation:UseStrongSpatialTypes="false"
+              xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation"
+              xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation"
+              xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
         <EntityType Name="act_zirsarfasls">
           <Key>
             <PropertyRef Name="rdf" />
@@ -289,7 +297,8 @@
           <Property Name="manafter" Type="Decimal" Precision="19" Scale="4" Nullable="false" />
           <Property Name="kind" Type="Int32" />
           <Property Name="sanadno" Type="Int32" />
-          <NavigationProperty Name="zirsarfasl" Relationship="Self.FK_act_zirsarfasls_zirsarfasls" FromRole="act_zirsarfasls" ToRole="zirsarfasls" />
+          <NavigationProperty Name="zirsarfasl" Relationship="Self.FK_act_zirsarfasls_zirsarfasls"
+                              FromRole="act_zirsarfasls" ToRole="zirsarfasls" />
         </EntityType>
         <EntityType Name="overal_setting">
           <Key>
@@ -313,8 +322,10 @@
           <Property Name="start_date" Type="String" MaxLength="10" FixedLength="true" Unicode="false" />
           <Property Name="Active" Type="Boolean" />
           <Property Name="GroupSarfaslID" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="zirsarfasls" Relationship="Self.FK_zirsarfasls_sarfasls" FromRole="sarfasls" ToRole="zirsarfasls" />
-          <NavigationProperty Name="GroupSarfasl" Relationship="DBModel.FK_sarfasls_GroupSarfasl" FromRole="sarfasl" ToRole="GroupSarfasl" />
+          <NavigationProperty Name="zirsarfasls" Relationship="Self.FK_zirsarfasls_sarfasls" FromRole="sarfasls"
+                              ToRole="zirsarfasls" />
+          <NavigationProperty Name="GroupSarfasl" Relationship="DBModel.FK_sarfasls_GroupSarfasl" FromRole="sarfasl"
+                              ToRole="GroupSarfasl" />
         </EntityType>
         <EntityType Name="zirsarfasl">
           <Key>
@@ -327,8 +338,10 @@
           <Property Name="has_dar" Type="String" MaxLength="1" FixedLength="true" Unicode="false" Nullable="false" />
           <Property Name="man" Type="Decimal" Precision="19" Scale="4" Nullable="false" />
           <Property Name="Active" Type="Boolean" />
-          <NavigationProperty Name="act_zirsarfasls" Relationship="Self.FK_act_zirsarfasls_zirsarfasls" FromRole="zirsarfasls" ToRole="act_zirsarfasls" />
-          <NavigationProperty Name="sarfasl" Relationship="Self.FK_zirsarfasls_sarfasls" FromRole="zirsarfasls" ToRole="sarfasls" />
+          <NavigationProperty Name="act_zirsarfasls" Relationship="Self.FK_act_zirsarfasls_zirsarfasls"
+                              FromRole="zirsarfasls" ToRole="act_zirsarfasls" />
+          <NavigationProperty Name="sarfasl" Relationship="Self.FK_zirsarfasls_sarfasls" FromRole="zirsarfasls"
+                              ToRole="sarfasls" />
         </EntityType>
         <EntityType Name="Form">
           <Key>
@@ -364,7 +377,8 @@
           <Property Name="order" Type="Int32" />
           <Property Name="Shortcut" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Form" Relationship="Self.FK_Menu_Form" FromRole="Menu" ToRole="Form" />
-          <NavigationProperty Name="UserFavorites" Relationship="DBModel.FK_UserFavorites_Menu" FromRole="Menu" ToRole="UserFavorite" />
+          <NavigationProperty Name="UserFavorites" Relationship="DBModel.FK_UserFavorites_Menu" FromRole="Menu"
+                              ToRole="UserFavorite" />
         </EntityType>
         <EntityType Name="SubSystem">
           <Key>
@@ -379,7 +393,8 @@
             <PropertyRef Name="RowID" />
           </Key>
           <Property Name="RowID" Type="Int32" Nullable="false" />
-          <Property Name="VersionName" Type="String" MaxLength="500" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="VersionName" Type="String" MaxLength="500" FixedLength="false" Unicode="true"
+                    Nullable="false" />
           <Property Name="Explain" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
         </EntityType>
         <Association Name="FK_act_zirsarfasls_zirsarfasls">
@@ -450,7 +465,8 @@
             <Parameter Name="listSarfasl" Mode="In" Type="String" />
             <Parameter Name="listZirSarfasl" Mode="In" Type="String" />
           </FunctionImport>
-          <FunctionImport Name="USP_GetDataStimulSoft_Sarfasl_ZirSarfasl" ReturnType="Collection(DBModel.USP_GetDataStimulSoft_Sarfasl_ZirSarfasl_Result)">
+          <FunctionImport Name="USP_GetDataStimulSoft_Sarfasl_ZirSarfasl"
+                          ReturnType="Collection(DBModel.USP_GetDataStimulSoft_Sarfasl_ZirSarfasl_Result)">
             <Parameter Name="Fromdate" Mode="In" Type="String" />
             <Parameter Name="Todate" Mode="In" Type="String" />
             <Parameter Name="SarfaslID" Mode="In" Type="Int32" />
@@ -519,9 +535,11 @@
             <PropertyRef Name="GroupSarfaslID" />
           </Key>
           <Property Name="GroupSarfaslID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="GroupSarfaslName" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="GroupSarfaslName" Type="String" Nullable="false" MaxLength="500" FixedLength="false"
+                    Unicode="true" />
           <Property Name="Active" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="sarfasls" Relationship="DBModel.FK_sarfasls_GroupSarfasl" FromRole="GroupSarfasl" ToRole="sarfasl" />
+          <NavigationProperty Name="sarfasls" Relationship="DBModel.FK_sarfasls_GroupSarfasl" FromRole="GroupSarfasl"
+                              ToRole="sarfasl" />
         </EntityType>
         <Association Name="FK_sarfasls_GroupSarfasl">
           <End Type="DBModel.GroupSarfasl" Role="GroupSarfasl" Multiplicity="1" />
@@ -557,7 +575,8 @@
           <Property Name="address" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="active" Type="Boolean" />
           <Property Name="shmo" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="UserFavorites" Relationship="DBModel.FK_UserFavorites_sys_users" FromRole="sys_users" ToRole="UserFavorite" />
+          <NavigationProperty Name="UserFavorites" Relationship="DBModel.FK_UserFavorites_sys_users"
+                              FromRole="sys_users" ToRole="UserFavorite" />
         </EntityType>
         <EntityType Name="UserFavorite">
           <Key>
@@ -566,8 +585,10 @@
           <Property Name="RowID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="UserID" Type="Int32" Nullable="false" />
           <Property Name="MenuID" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="sys_users" Relationship="DBModel.FK_UserFavorites_sys_users" FromRole="UserFavorite" ToRole="sys_users" />
-          <NavigationProperty Name="Menu" Relationship="DBModel.FK_UserFavorites_Menu" FromRole="UserFavorite" ToRole="Menu" />
+          <NavigationProperty Name="sys_users" Relationship="DBModel.FK_UserFavorites_sys_users"
+                              FromRole="UserFavorite" ToRole="sys_users" />
+          <NavigationProperty Name="Menu" Relationship="DBModel.FK_UserFavorites_Menu" FromRole="UserFavorite"
+                              ToRole="Menu" />
         </EntityType>
         <Association Name="FK_UserFavorites_sys_users">
           <End Type="DBModel.sys_users" Role="sys_users" Multiplicity="1" />

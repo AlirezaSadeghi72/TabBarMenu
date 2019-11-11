@@ -10,17 +10,20 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2012
     [ToolboxItem(false)]
     internal class VS2012SplitterControl : DockPane.SplitterControlBase
     {
-        private readonly SolidBrush _horizontalBrush;
         private readonly SolidBrush _backgroundBrush;
-        private PathGradientBrush _foregroundBrush;
+        private readonly SolidBrush _horizontalBrush;
         private readonly Color[] _verticalSurroundColors;
-        private int SplitterSize { get; }
+        private PathGradientBrush _foregroundBrush;
 
         public VS2012SplitterControl(DockPane pane)
             : base(pane)
         {
-            _horizontalBrush = pane.DockPanel.Theme.PaintingService.GetBrush(pane.DockPanel.Theme.ColorPalette.TabSelectedInactive.Background);
-            _backgroundBrush = pane.DockPanel.Theme.PaintingService.GetBrush(pane.DockPanel.Theme.ColorPalette.MainWindowActive.Background);
+            _horizontalBrush =
+                pane.DockPanel.Theme.PaintingService.GetBrush(pane.DockPanel.Theme.ColorPalette.TabSelectedInactive
+                    .Background);
+            _backgroundBrush =
+                pane.DockPanel.Theme.PaintingService.GetBrush(pane.DockPanel.Theme.ColorPalette.MainWindowActive
+                    .Background);
             _verticalSurroundColors = new[]
             {
                 pane.DockPanel.Theme.ColorPalette.MainWindowActive.Background
@@ -28,10 +31,12 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2012
             SplitterSize = pane.DockPanel.Theme.Measures.SplitterSize;
         }
 
-        protected  override void OnSizeChanged(EventArgs e)
+        private int SplitterSize { get; }
+
+        protected override void OnSizeChanged(EventArgs e)
         {
             base.OnSizeChanged(e);
-            Rectangle rect = ClientRectangle;
+            var rect = ClientRectangle;
             if (rect.Width <= 0 || rect.Height <= 0)
                 return;
 
@@ -55,21 +60,18 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2012
             }
         }
 
-        protected  override void Dispose(bool disposing)
+        protected override void Dispose(bool disposing)
         {
-            if (!IsDisposed && disposing)
-            {
-                _foregroundBrush?.Dispose();
-            }
+            if (!IsDisposed && disposing) _foregroundBrush?.Dispose();
 
             base.Dispose(disposing);
         }
 
-        protected  override void OnPaint(PaintEventArgs e)
+        protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
 
-            Rectangle rect = ClientRectangle;
+            var rect = ClientRectangle;
             if (rect.Width <= 0 || rect.Height <= 0)
                 return;
 
@@ -77,23 +79,23 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2012
             {
                 case DockAlignment.Right:
                 case DockAlignment.Left:
-                    {
-                        Debug.Assert(SplitterSize == rect.Width);
+                {
+                    Debug.Assert(SplitterSize == rect.Width);
 
-                        if (_foregroundBrush == null)
-                            MakeForegroundBrush(rect);
+                    if (_foregroundBrush == null)
+                        MakeForegroundBrush(rect);
 
-                        e.Graphics.FillRectangle(_backgroundBrush, rect);
-                        e.Graphics.FillRectangle(_foregroundBrush, rect.X + SplitterSize / 2 - 1, rect.Y,
-                                                    SplitterSize / 3, rect.Height);
-                    }
+                    e.Graphics.FillRectangle(_backgroundBrush, rect);
+                    e.Graphics.FillRectangle(_foregroundBrush, rect.X + SplitterSize / 2 - 1, rect.Y,
+                        SplitterSize / 3, rect.Height);
+                }
                     break;
                 case DockAlignment.Bottom:
                 case DockAlignment.Top:
-                    {
-                        Debug.Assert(SplitterSize == rect.Height);
-                        e.Graphics.FillRectangle(_horizontalBrush, rect);
-                    }
+                {
+                    Debug.Assert(SplitterSize == rect.Height);
+                    e.Graphics.FillRectangle(_horizontalBrush, rect);
+                }
                     break;
             }
         }

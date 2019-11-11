@@ -6,7 +6,7 @@ namespace Atiran.Utility.Docking2
     {
         public static bool IsZeroWidthOrHeight(Rectangle rectangle)
         {
-            return (rectangle.Width == 0 || rectangle.Height == 0);
+            return rectangle.Width == 0 || rectangle.Height == 0;
         }
     }
 }

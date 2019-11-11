@@ -2,7 +2,6 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
-using Atiran.Utility.Docking2.Theme.ThemeVS2005;
 using static Atiran.Utility.Docking2.DockPanel;
 using static Atiran.Utility.Docking2.DockPanelExtender;
 
@@ -26,6 +25,7 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2005
             private static Bitmap _bitmapPaneDiamondFill = Resources.Dockindicator_PaneDiamond_Fill;
             private static Bitmap _bitmapPaneDiamondHotSpot = Resources.DockIndicator_PaneDiamond_Hotspot;
             private static Bitmap _bitmapPaneDiamondHotSpotIndex = Resources.DockIndicator_PaneDiamond_HotspotIndex;
+
             private static HotSpotIndex[] _hotSpots =
             {
                 new HotSpotIndex(1, 0, DockStyle.Top),
@@ -35,7 +35,7 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2005
                 new HotSpotIndex(1, 2, DockStyle.Bottom)
             };
 
-            private GraphicsPath _displayingGraphicsPath = DrawHelper.CalculateGraphicsPathFromBitmap(_bitmapPaneDiamond);
+            private DockStyle m_status = DockStyle.None;
 
             public VS2005PaneIndicator()
             {
@@ -44,10 +44,8 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2005
                 Region = new Region(DisplayingGraphicsPath);
             }
 
-            public GraphicsPath DisplayingGraphicsPath
-            {
-                get { return _displayingGraphicsPath; }
-            }
+            public GraphicsPath DisplayingGraphicsPath { get; } =
+                DrawHelper.CalculateGraphicsPathFromBitmap(_bitmapPaneDiamond);
 
             public DockStyle HitTest(Point pt)
             {
@@ -58,19 +56,17 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2005
                 if (!ClientRectangle.Contains(pt))
                     return DockStyle.None;
 
-                for (int i = _hotSpots.GetLowerBound(0); i <= _hotSpots.GetUpperBound(0); i++)
-                {
-                    if (_bitmapPaneDiamondHotSpot.GetPixel(pt.X, pt.Y) == _bitmapPaneDiamondHotSpotIndex.GetPixel(_hotSpots[i].X, _hotSpots[i].Y))
+                for (var i = _hotSpots.GetLowerBound(0); i <= _hotSpots.GetUpperBound(0); i++)
+                    if (_bitmapPaneDiamondHotSpot.GetPixel(pt.X, pt.Y) ==
+                        _bitmapPaneDiamondHotSpotIndex.GetPixel(_hotSpots[i].X, _hotSpots[i].Y))
                         return _hotSpots[i].DockStyle;
-                }
 
                 return DockStyle.None;
             }
 
-            private DockStyle m_status = DockStyle.None;
             public DockStyle Status
             {
-                get { return m_status; }
+                get => m_status;
                 set
                 {
                     m_status = value;

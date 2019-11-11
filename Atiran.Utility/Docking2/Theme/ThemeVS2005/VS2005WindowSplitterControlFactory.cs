@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel;
 using System.Windows.Forms;
-using Atiran.Utility.Docking2;
 using static Atiran.Utility.Docking2.DockPanelExtender;
 
 namespace Atiran.Utility.Docking2.Theme.ThemeVS2005
@@ -22,14 +21,11 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2005
                 _host = host;
             }
 
-            protected  override int SplitterSize
-            {
-                get { return _host.DockPanel.Theme.Measures.SplitterSize; }
-            }
+            protected override int SplitterSize => _host.DockPanel.Theme.Measures.SplitterSize;
 
-            protected  override void StartDrag()
+            protected override void StartDrag()
             {
-                _host.DockPanel.BeginDrag(_host, ((Control)_host).RectangleToScreen(Bounds));
+                _host.DockPanel.BeginDrag(_host, ((Control) _host).RectangleToScreen(Bounds));
             }
         }
     }

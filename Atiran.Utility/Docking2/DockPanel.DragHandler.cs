@@ -1,33 +1,39 @@
-using System.Windows.Forms;
 using System.Drawing;
+using System.Windows.Forms;
+using Atiran.Utility.Docking2.Win32;
 
 namespace Atiran.Utility.Docking2
 {
     partial class DockPanel
     {
         /// <summary>
-        /// DragHandlerBase is the base class for drag handlers. The derived class should:
-        ///   1. Define its public method BeginDrag. From within this public BeginDrag method,
-        ///      DragHandlerBase.BeginDrag should be called to initialize the mouse capture
-        ///      and message filtering.
-        ///   2. Override the OnDragging and OnEndDrag methods.
+        ///     DragHandlerBase is the base class for drag handlers. The derived class should:
+        ///     1. Define its public method BeginDrag. From within this public BeginDrag method,
+        ///     DragHandlerBase.BeginDrag should be called to initialize the mouse capture
+        ///     and message filtering.
+        ///     2. Override the OnDragging and OnEndDrag methods.
         /// </summary>
         public abstract class DragHandlerBase : NativeWindow, IMessageFilter
         {
-            protected DragHandlerBase()
-            {
-            }
+            protected abstract Control DragControl { get; }
 
-            protected abstract Control DragControl
-            {
-                get;
-            }
+            protected Point StartMousePosition { get; private set; } = Point.Empty;
 
-            private Point m_startMousePosition = Point.Empty;
-            protected Point StartMousePosition
+            bool IMessageFilter.PreFilterMessage(ref Message m)
             {
-                get { return m_startMousePosition; }
-                private set { m_startMousePosition = value; }
+                if (PatchController.EnableActiveXFix == false)
+                {
+                    if (m.Msg == (int) Msgs.WM_MOUSEMOVE)
+                        OnDragging();
+                    else if (m.Msg == (int) Msgs.WM_LBUTTONUP)
+                        EndDrag(false);
+                    else if (m.Msg == (int) Msgs.WM_CAPTURECHANGED)
+                        EndDrag(!Win32Helper.IsRunningOnMono);
+                    else if (m.Msg == (int) Msgs.WM_KEYDOWN && (int) m.WParam == (int) Keys.Escape)
+                        EndDrag(true);
+                }
+
+                return OnPreFilterMessage(ref m);
             }
 
             protected bool BeginDrag()
@@ -35,22 +41,15 @@ namespace Atiran.Utility.Docking2
                 if (DragControl == null)
                     return false;
 
-                StartMousePosition = Control.MousePosition;
+                StartMousePosition = MousePosition;
 
                 if (!Win32Helper.IsRunningOnMono)
-                {
                     if (!NativeMethods.DragDetect(DragControl.Handle, StartMousePosition))
-                    {
                         return false;
-                    }
-                }
 
                 DragControl.FindForm().Capture = true;
                 AssignHandle(DragControl.FindForm().Handle);
-                if (PatchController.EnableActiveXFix == false)
-                {
-                    Application.AddMessageFilter(this);
-                }
+                if (PatchController.EnableActiveXFix == false) Application.AddMessageFilter(this);
 
                 return true;
             }
@@ -63,44 +62,24 @@ namespace Atiran.Utility.Docking2
             {
                 ReleaseHandle();
 
-                if (PatchController.EnableActiveXFix == false)
-                {
-                    Application.RemoveMessageFilter(this);
-                }
+                if (PatchController.EnableActiveXFix == false) Application.RemoveMessageFilter(this);
 
                 DragControl.FindForm().Capture = false;
 
                 OnEndDrag(abort);
             }
 
-            bool IMessageFilter.PreFilterMessage(ref Message m)
-            {
-                if (PatchController.EnableActiveXFix == false)
-                {
-                    if (m.Msg == (int)Win32.Msgs.WM_MOUSEMOVE)
-                        OnDragging();
-                    else if (m.Msg == (int)Win32.Msgs.WM_LBUTTONUP)
-                        EndDrag(false);
-                    else if (m.Msg == (int)Win32.Msgs.WM_CAPTURECHANGED)
-                        EndDrag(!Win32Helper.IsRunningOnMono);
-                    else if (m.Msg == (int)Win32.Msgs.WM_KEYDOWN && (int)m.WParam == (int)Keys.Escape)
-                        EndDrag(true);
-                }
-
-                return OnPreFilterMessage(ref m);
-            }
-
             protected virtual bool OnPreFilterMessage(ref Message m)
             {
                 if (PatchController.EnableActiveXFix == true)
                 {
-                    if (m.Msg == (int)Win32.Msgs.WM_MOUSEMOVE)
+                    if (m.Msg == (int) Msgs.WM_MOUSEMOVE)
                         OnDragging();
-                    else if (m.Msg == (int)Win32.Msgs.WM_LBUTTONUP)
+                    else if (m.Msg == (int) Msgs.WM_LBUTTONUP)
                         EndDrag(false);
-                    else if (m.Msg == (int)Win32.Msgs.WM_CAPTURECHANGED)
+                    else if (m.Msg == (int) Msgs.WM_CAPTURECHANGED)
                         EndDrag(!Win32Helper.IsRunningOnMono);
-                    else if (m.Msg == (int)Win32.Msgs.WM_KEYDOWN && (int)m.WParam == (int)Keys.Escape)
+                    else if (m.Msg == (int) Msgs.WM_KEYDOWN && (int) m.WParam == (int) Keys.Escape)
                         EndDrag(true);
                 }
 
@@ -110,14 +89,12 @@ namespace Atiran.Utility.Docking2
             protected sealed override void WndProc(ref Message m)
             {
                 if (PatchController.EnableActiveXFix == true)
-                {
                     //Manually pre-filter message, rather than using
                     //Application.AddMessageFilter(this).  This fixes
                     //the docker control for ActiveX objects
-                    this.OnPreFilterMessage(ref m);
-                }
+                    OnPreFilterMessage(ref m);
 
-                if (m.Msg == (int)Win32.Msgs.WM_CANCELMODE || m.Msg == (int)Win32.Msgs.WM_CAPTURECHANGED)
+                if (m.Msg == (int) Msgs.WM_CANCELMODE || m.Msg == (int) Msgs.WM_CAPTURECHANGED)
                     EndDrag(true);
 
                 base.WndProc(ref m);
@@ -126,34 +103,21 @@ namespace Atiran.Utility.Docking2
 
         public abstract class DragHandler : DragHandlerBase
         {
-            private DockPanel m_dockPanel;
-
             protected DragHandler(DockPanel dockPanel)
             {
-                m_dockPanel = dockPanel;
+                DockPanel = dockPanel;
             }
 
-            public DockPanel DockPanel
-            {
-                get { return m_dockPanel; }
-            }
+            public DockPanel DockPanel { get; }
 
-            private IDragSource m_dragSource;
-            protected IDragSource DragSource
-            {
-                get { return m_dragSource; }
-                set { m_dragSource = value; }
-            }
+            protected IDragSource DragSource { get; set; }
 
-            protected sealed override Control DragControl
-            {
-                get { return DragSource == null ? null : DragSource.DragControl; }
-            }
+            protected sealed override Control DragControl => DragSource == null ? null : DragSource.DragControl;
 
             protected sealed override bool OnPreFilterMessage(ref Message m)
             {
-                if ((m.Msg == (int)Win32.Msgs.WM_KEYDOWN || m.Msg == (int)Win32.Msgs.WM_KEYUP) &&
-                    ((int)m.WParam == (int)Keys.ControlKey || (int)m.WParam == (int)Keys.ShiftKey))
+                if ((m.Msg == (int) Msgs.WM_KEYDOWN || m.Msg == (int) Msgs.WM_KEYUP) &&
+                    ((int) m.WParam == (int) Keys.ControlKey || (int) m.WParam == (int) Keys.ShiftKey))
                     OnDragging();
 
                 return base.OnPreFilterMessage(ref m);

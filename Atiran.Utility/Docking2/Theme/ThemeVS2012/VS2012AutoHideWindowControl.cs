@@ -1,11 +1,9 @@
+using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 
 namespace Atiran.Utility.Docking2.Theme.ThemeVS2012
 {
-    using Docking2;
-    using System.ComponentModel;
-
     [ToolboxItem(false)]
     internal class VS2012AutoHideWindowControl : DockPanel.AutoHideWindowControl
     {
@@ -14,11 +12,11 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2012
         {
         }
 
-        protected  override Rectangle DisplayingRectangle
+        protected override Rectangle DisplayingRectangle
         {
             get
             {
-                Rectangle rect = ClientRectangle;
+                var rect = ClientRectangle;
 
                 // exclude the border and the splitter
                 if (DockState == DockState.DockBottomAutoHide)
@@ -44,31 +42,23 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2012
             }
         }
 
-        protected  override void OnLayout(LayoutEventArgs levent)
+        protected override void OnLayout(LayoutEventArgs levent)
         {
             DockPadding.All = 0;
             if (DockState == DockState.DockLeftAutoHide)
-            {
                 m_splitter.Dock = DockStyle.Right;
-            }
             else if (DockState == DockState.DockRightAutoHide)
-            {
                 m_splitter.Dock = DockStyle.Left;
-            }
             else if (DockState == DockState.DockTopAutoHide)
-            {
                 m_splitter.Dock = DockStyle.Bottom;
-            }
-            else if (DockState == DockState.DockBottomAutoHide)
-            {
-                m_splitter.Dock = DockStyle.Top;
-            }
+            else if (DockState == DockState.DockBottomAutoHide) m_splitter.Dock = DockStyle.Top;
 
-            Rectangle rectDisplaying = DisplayingRectangle;
-            Rectangle rectHidden = new Rectangle(-rectDisplaying.Width, rectDisplaying.Y, rectDisplaying.Width, rectDisplaying.Height);
+            var rectDisplaying = DisplayingRectangle;
+            var rectHidden = new Rectangle(-rectDisplaying.Width, rectDisplaying.Y, rectDisplaying.Width,
+                rectDisplaying.Height);
             foreach (Control c in Controls)
             {
-                DockPane pane = c as DockPane;
+                var pane = c as DockPane;
                 if (pane == null)
                     continue;
 

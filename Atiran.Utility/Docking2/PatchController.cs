@@ -1,128 +1,47 @@
-﻿using Microsoft.Win32;
-using System;
+﻿using System;
 using System.Configuration;
 using Atiran.Utility.Docking2.Configuration;
+using Microsoft.Win32;
 
 namespace Atiran.Utility.Docking2
 {
     public static class PatchController
     {
-        public static bool? EnableAll { private get; set; }
-
-        public static void Reset()
-        {
-            EnableAll = _highDpi = _memoryLeakFix 
-                = _nestedDisposalFix = _focusLostFix = _contentOrderFix
-                = _fontInheritanceFix = _activeXFix = _displayingPaneFix
-                = _activeControlFix = _floatSplitterFix = _activateOnDockFix
-                = _selectClosestOnClose = null;
-        }
-
-#region Copy this section to create new option, and then comment it to show what needs to be modified.
-        //*
-        private static bool? _highDpi;
-
-        public static bool? EnableHighDpi
-        {
-            get
-            {
-                if (_highDpi != null)
-                {
-                    return _highDpi;
-                }
-
-                if (EnableAll != null)
-                {
-                    return _highDpi = EnableAll;
-                }
-
-                var section = ConfigurationManager.GetSection("dockPanelSuite") as PatchSection;
-                if (section != null)
-                {
-                    if (section.EnableAll != null)
-                    {
-                        return _highDpi = section.EnableAll;
-                    }
-
-                    return _highDpi = section.EnableHighDpi;
-                }
-
-                var environment = Environment.GetEnvironmentVariable("DPS_EnableHighDpi");
-                if (!string.IsNullOrEmpty(environment))
-                {
-                    var enable = false;
-                    if (bool.TryParse(environment, out enable))
-                    {
-                        return _highDpi = enable;
-                    }
-                }
-
-                {
-                    var key = Registry.CurrentUser.OpenSubKey(@"Software\DockPanelSuite");
-                    if (key != null)
-                    {
-                        var pair = key.GetValue("EnableHighDpi");
-                        if (pair != null)
-                        {
-                            var enable = false;
-                            if (bool.TryParse(pair.ToString(), out enable))
-                            {
-                                return _highDpi = enable;
-                            }
-                        }
-                    }
-                }
-
-                {
-                    var key = Registry.LocalMachine.OpenSubKey(@"Software\DockPanelSuite");
-                    if (key != null)
-                    {
-                        var pair = key.GetValue("EnableHighDpi");
-                        if (pair != null)
-                        {
-                            var enable = false;
-                            if (bool.TryParse(pair.ToString(), out enable))
-                            {
-                                return _highDpi = enable;
-                            }
-                        }
-                    }
-                }
-
-                return _highDpi = true;
-            }
-
-            set
-            {
-                _highDpi = value;
-            }
-        }
-        // */
-#endregion
-
         private static bool? _memoryLeakFix;
+
+        private static bool? _focusLostFix;
+
+        private static bool? _nestedDisposalFix;
+
+        private static bool? _fontInheritanceFix;
+
+        private static bool? _contentOrderFix;
+
+        private static bool? _activeXFix;
+
+        private static bool? _displayingPaneFix;
+
+        private static bool? _activeControlFix;
+
+        private static bool? _floatSplitterFix;
+
+        private static bool? _activateOnDockFix;
+
+        private static bool? _selectClosestOnClose;
+        public static bool? EnableAll { private get; set; }
 
         public static bool? EnableMemoryLeakFix
         {
             get
             {
-                if (_memoryLeakFix != null)
-                {
-                    return _memoryLeakFix;
-                }
+                if (_memoryLeakFix != null) return _memoryLeakFix;
 
-                if (EnableAll != null)
-                {
-                    return _memoryLeakFix = EnableAll;
-                }
+                if (EnableAll != null) return _memoryLeakFix = EnableAll;
 
                 var section = ConfigurationManager.GetSection("dockPanelSuite") as PatchSection;
                 if (section != null)
                 {
-                    if (section.EnableAll != null)
-                    {
-                        return _memoryLeakFix = section.EnableAll;
-                    }
+                    if (section.EnableAll != null) return _memoryLeakFix = section.EnableAll;
 
                     return _memoryLeakFix = section.EnableMemoryLeakFix;
                 }
@@ -131,10 +50,7 @@ namespace Atiran.Utility.Docking2
                 if (!string.IsNullOrEmpty(environment))
                 {
                     var enable = false;
-                    if (bool.TryParse(environment, out enable))
-                    {
-                        return _memoryLeakFix = enable;
-                    }
+                    if (bool.TryParse(environment, out enable)) return _memoryLeakFix = enable;
                 }
 
                 {
@@ -145,10 +61,7 @@ namespace Atiran.Utility.Docking2
                         if (pair != null)
                         {
                             var enable = false;
-                            if (bool.TryParse(pair.ToString(), out enable))
-                            {
-                                return _memoryLeakFix = enable;
-                            }
+                            if (bool.TryParse(pair.ToString(), out enable)) return _memoryLeakFix = enable;
                         }
                     }
                 }
@@ -161,10 +74,7 @@ namespace Atiran.Utility.Docking2
                         if (pair != null)
                         {
                             var enable = false;
-                            if (bool.TryParse(pair.ToString(), out enable))
-                            {
-                                return _memoryLeakFix = enable;
-                            }
+                            if (bool.TryParse(pair.ToString(), out enable)) return _memoryLeakFix = enable;
                         }
                     }
                 }
@@ -172,35 +82,21 @@ namespace Atiran.Utility.Docking2
                 return _memoryLeakFix = true;
             }
 
-            set
-            {
-                _memoryLeakFix = value;
-            }
+            set => _memoryLeakFix = value;
         }
-
-        private static bool? _focusLostFix;
 
         public static bool? EnableMainWindowFocusLostFix
         {
             get
             {
-                if (_focusLostFix != null)
-                {
-                    return _focusLostFix;
-                }
+                if (_focusLostFix != null) return _focusLostFix;
 
-                if (EnableAll != null)
-                {
-                    return _focusLostFix = EnableAll;
-                }
+                if (EnableAll != null) return _focusLostFix = EnableAll;
 
                 var section = ConfigurationManager.GetSection("dockPanelSuite") as PatchSection;
                 if (section != null)
                 {
-                    if (section.EnableAll != null)
-                    {
-                        return _focusLostFix = section.EnableAll;
-                    }
+                    if (section.EnableAll != null) return _focusLostFix = section.EnableAll;
 
                     return _focusLostFix = section.EnableMainWindowFocusLostFix;
                 }
@@ -209,10 +105,7 @@ namespace Atiran.Utility.Docking2
                 if (!string.IsNullOrEmpty(environment))
                 {
                     var enable = false;
-                    if (bool.TryParse(environment, out enable))
-                    {
-                        return _focusLostFix = enable;
-                    }
+                    if (bool.TryParse(environment, out enable)) return _focusLostFix = enable;
                 }
 
                 {
@@ -223,10 +116,7 @@ namespace Atiran.Utility.Docking2
                         if (pair != null)
                         {
                             var enable = false;
-                            if (bool.TryParse(pair.ToString(), out enable))
-                            {
-                                return _focusLostFix = enable;
-                            }
+                            if (bool.TryParse(pair.ToString(), out enable)) return _focusLostFix = enable;
                         }
                     }
                 }
@@ -239,10 +129,7 @@ namespace Atiran.Utility.Docking2
                         if (pair != null)
                         {
                             var enable = false;
-                            if (bool.TryParse(pair.ToString(), out enable))
-                            {
-                                return _focusLostFix = enable;
-                            }
+                            if (bool.TryParse(pair.ToString(), out enable)) return _focusLostFix = enable;
                         }
                     }
                 }
@@ -250,35 +137,21 @@ namespace Atiran.Utility.Docking2
                 return _focusLostFix = true;
             }
 
-            set
-            {
-                _focusLostFix = value;
-            }
+            set => _focusLostFix = value;
         }
-
-        private static bool? _nestedDisposalFix;
 
         public static bool? EnableNestedDisposalFix
         {
             get
             {
-                if (_nestedDisposalFix != null)
-                {
-                    return _nestedDisposalFix;
-                }
+                if (_nestedDisposalFix != null) return _nestedDisposalFix;
 
-                if (EnableAll != null)
-                {
-                    return _nestedDisposalFix = EnableAll;
-                }
+                if (EnableAll != null) return _nestedDisposalFix = EnableAll;
 
                 var section = ConfigurationManager.GetSection("dockPanelSuite") as PatchSection;
                 if (section != null)
                 {
-                    if (section.EnableAll != null)
-                    {
-                        return _nestedDisposalFix = section.EnableAll;
-                    }
+                    if (section.EnableAll != null) return _nestedDisposalFix = section.EnableAll;
 
                     return _nestedDisposalFix = section.EnableNestedDisposalFix;
                 }
@@ -287,10 +160,7 @@ namespace Atiran.Utility.Docking2
                 if (!string.IsNullOrEmpty(environment))
                 {
                     var enable = false;
-                    if (bool.TryParse(environment, out enable))
-                    {
-                        return _nestedDisposalFix = enable;
-                    }
+                    if (bool.TryParse(environment, out enable)) return _nestedDisposalFix = enable;
                 }
 
                 {
@@ -301,10 +171,7 @@ namespace Atiran.Utility.Docking2
                         if (pair != null)
                         {
                             var enable = false;
-                            if (bool.TryParse(pair.ToString(), out enable))
-                            {
-                                return _nestedDisposalFix = enable;
-                            }
+                            if (bool.TryParse(pair.ToString(), out enable)) return _nestedDisposalFix = enable;
                         }
                     }
                 }
@@ -317,10 +184,7 @@ namespace Atiran.Utility.Docking2
                         if (pair != null)
                         {
                             var enable = false;
-                            if (bool.TryParse(pair.ToString(), out enable))
-                            {
-                                return _nestedDisposalFix = enable;
-                            }
+                            if (bool.TryParse(pair.ToString(), out enable)) return _nestedDisposalFix = enable;
                         }
                     }
                 }
@@ -328,35 +192,21 @@ namespace Atiran.Utility.Docking2
                 return _nestedDisposalFix = true;
             }
 
-            set
-            {
-                _focusLostFix = value;
-            }
+            set => _focusLostFix = value;
         }
-
-        private static bool? _fontInheritanceFix;
 
         public static bool? EnableFontInheritanceFix
         {
             get
             {
-                if (_fontInheritanceFix != null)
-                {
-                    return _fontInheritanceFix;
-                }
+                if (_fontInheritanceFix != null) return _fontInheritanceFix;
 
-                if (EnableAll != null)
-                {
-                    return _fontInheritanceFix = EnableAll;
-                }
+                if (EnableAll != null) return _fontInheritanceFix = EnableAll;
 
                 var section = ConfigurationManager.GetSection("dockPanelSuite") as PatchSection;
                 if (section != null)
                 {
-                    if (section.EnableAll != null)
-                    {
-                        return _fontInheritanceFix = section.EnableAll;
-                    }
+                    if (section.EnableAll != null) return _fontInheritanceFix = section.EnableAll;
 
                     return _fontInheritanceFix = section.EnableFontInheritanceFix;
                 }
@@ -365,10 +215,7 @@ namespace Atiran.Utility.Docking2
                 if (!string.IsNullOrEmpty(environment))
                 {
                     var enable = false;
-                    if (bool.TryParse(environment, out enable))
-                    {
-                        return _fontInheritanceFix = enable;
-                    }
+                    if (bool.TryParse(environment, out enable)) return _fontInheritanceFix = enable;
                 }
 
                 {
@@ -379,10 +226,7 @@ namespace Atiran.Utility.Docking2
                         if (pair != null)
                         {
                             var enable = false;
-                            if (bool.TryParse(pair.ToString(), out enable))
-                            {
-                                return _fontInheritanceFix = enable;
-                            }
+                            if (bool.TryParse(pair.ToString(), out enable)) return _fontInheritanceFix = enable;
                         }
                     }
                 }
@@ -395,10 +239,7 @@ namespace Atiran.Utility.Docking2
                         if (pair != null)
                         {
                             var enable = false;
-                            if (bool.TryParse(pair.ToString(), out enable))
-                            {
-                                return _fontInheritanceFix = enable;
-                            }
+                            if (bool.TryParse(pair.ToString(), out enable)) return _fontInheritanceFix = enable;
                         }
                     }
                 }
@@ -406,35 +247,21 @@ namespace Atiran.Utility.Docking2
                 return _fontInheritanceFix = true;
             }
 
-            set
-            {
-                _fontInheritanceFix = value;
-            }
+            set => _fontInheritanceFix = value;
         }
-
-        private static bool? _contentOrderFix;
 
         public static bool? EnableContentOrderFix
         {
             get
             {
-                if (_contentOrderFix != null)
-                {
-                    return _contentOrderFix;
-                }
+                if (_contentOrderFix != null) return _contentOrderFix;
 
-                if (EnableAll != null)
-                {
-                    return _contentOrderFix = EnableAll;
-                }
+                if (EnableAll != null) return _contentOrderFix = EnableAll;
 
                 var section = ConfigurationManager.GetSection("dockPanelSuite") as PatchSection;
                 if (section != null)
                 {
-                    if (section.EnableAll != null)
-                    {
-                        return _contentOrderFix = section.EnableAll;
-                    }
+                    if (section.EnableAll != null) return _contentOrderFix = section.EnableAll;
 
                     return _contentOrderFix = section.EnableContentOrderFix;
                 }
@@ -443,10 +270,7 @@ namespace Atiran.Utility.Docking2
                 if (!string.IsNullOrEmpty(environment))
                 {
                     var enable = false;
-                    if (bool.TryParse(environment, out enable))
-                    {
-                        return _contentOrderFix = enable;
-                    }
+                    if (bool.TryParse(environment, out enable)) return _contentOrderFix = enable;
                 }
 
                 {
@@ -457,10 +281,7 @@ namespace Atiran.Utility.Docking2
                         if (pair != null)
                         {
                             var enable = false;
-                            if (bool.TryParse(pair.ToString(), out enable))
-                            {
-                                return _contentOrderFix = enable;
-                            }
+                            if (bool.TryParse(pair.ToString(), out enable)) return _contentOrderFix = enable;
                         }
                     }
                 }
@@ -473,10 +294,7 @@ namespace Atiran.Utility.Docking2
                         if (pair != null)
                         {
                             var enable = false;
-                            if (bool.TryParse(pair.ToString(), out enable))
-                            {
-                                return _contentOrderFix = enable;
-                            }
+                            if (bool.TryParse(pair.ToString(), out enable)) return _contentOrderFix = enable;
                         }
                     }
                 }
@@ -484,35 +302,21 @@ namespace Atiran.Utility.Docking2
                 return _contentOrderFix = true;
             }
 
-            set
-            {
-                _contentOrderFix = value;
-            }
+            set => _contentOrderFix = value;
         }
-
-        private static bool? _activeXFix;
 
         public static bool? EnableActiveXFix
         {
             get
             {
-                if (_activeXFix != null)
-                {
-                    return _activeXFix;
-                }
+                if (_activeXFix != null) return _activeXFix;
 
-                if (EnableAll != null)
-                {
-                    return _activeXFix = EnableAll;
-                }
+                if (EnableAll != null) return _activeXFix = EnableAll;
 
                 var section = ConfigurationManager.GetSection("dockPanelSuite") as PatchSection;
                 if (section != null)
                 {
-                    if (section.EnableAll != null)
-                    {
-                        return _activeXFix = section.EnableAll;
-                    }
+                    if (section.EnableAll != null) return _activeXFix = section.EnableAll;
 
                     return _activeXFix = section.EnableActiveXFix;
                 }
@@ -521,10 +325,7 @@ namespace Atiran.Utility.Docking2
                 if (!string.IsNullOrEmpty(environment))
                 {
                     var enable = false;
-                    if (bool.TryParse(environment, out enable))
-                    {
-                        return _activeXFix = enable;
-                    }
+                    if (bool.TryParse(environment, out enable)) return _activeXFix = enable;
                 }
 
                 {
@@ -535,10 +336,7 @@ namespace Atiran.Utility.Docking2
                         if (pair != null)
                         {
                             var enable = false;
-                            if (bool.TryParse(pair.ToString(), out enable))
-                            {
-                                return _activeXFix = enable;
-                            }
+                            if (bool.TryParse(pair.ToString(), out enable)) return _activeXFix = enable;
                         }
                     }
                 }
@@ -551,10 +349,7 @@ namespace Atiran.Utility.Docking2
                         if (pair != null)
                         {
                             var enable = false;
-                            if (bool.TryParse(pair.ToString(), out enable))
-                            {
-                                return _activeXFix = enable;
-                            }
+                            if (bool.TryParse(pair.ToString(), out enable)) return _activeXFix = enable;
                         }
                     }
                 }
@@ -562,35 +357,21 @@ namespace Atiran.Utility.Docking2
                 return _activeXFix = false; // not enabled by default as it has side effect.
             }
 
-            set
-            {
-                _activeXFix = value;
-            }
+            set => _activeXFix = value;
         }
-
-        private static bool? _displayingPaneFix;
 
         public static bool? EnableDisplayingPaneFix
         {
             get
             {
-                if (_displayingPaneFix != null)
-                {
-                    return _displayingPaneFix;
-                }
+                if (_displayingPaneFix != null) return _displayingPaneFix;
 
-                if (EnableAll != null)
-                {
-                    return _displayingPaneFix = EnableAll;
-                }
+                if (EnableAll != null) return _displayingPaneFix = EnableAll;
 
                 var section = ConfigurationManager.GetSection("dockPanelSuite") as PatchSection;
                 if (section != null)
                 {
-                    if (section.EnableAll != null)
-                    {
-                        return _displayingPaneFix = section.EnableAll;
-                    }
+                    if (section.EnableAll != null) return _displayingPaneFix = section.EnableAll;
 
                     return _displayingPaneFix = section.EnableDisplayingPaneFix;
                 }
@@ -599,10 +380,7 @@ namespace Atiran.Utility.Docking2
                 if (!string.IsNullOrEmpty(environment))
                 {
                     var enable = false;
-                    if (bool.TryParse(environment, out enable))
-                    {
-                        return _displayingPaneFix = enable;
-                    }
+                    if (bool.TryParse(environment, out enable)) return _displayingPaneFix = enable;
                 }
 
                 {
@@ -613,10 +391,7 @@ namespace Atiran.Utility.Docking2
                         if (pair != null)
                         {
                             var enable = false;
-                            if (bool.TryParse(pair.ToString(), out enable))
-                            {
-                                return _displayingPaneFix = enable;
-                            }
+                            if (bool.TryParse(pair.ToString(), out enable)) return _displayingPaneFix = enable;
                         }
                     }
                 }
@@ -629,10 +404,7 @@ namespace Atiran.Utility.Docking2
                         if (pair != null)
                         {
                             var enable = false;
-                            if (bool.TryParse(pair.ToString(), out enable))
-                            {
-                                return _displayingPaneFix = enable;
-                            }
+                            if (bool.TryParse(pair.ToString(), out enable)) return _displayingPaneFix = enable;
                         }
                     }
                 }
@@ -640,35 +412,21 @@ namespace Atiran.Utility.Docking2
                 return _displayingPaneFix = true;
             }
 
-            set
-            {
-                _displayingPaneFix = value;
-            }
+            set => _displayingPaneFix = value;
         }
-
-        private static bool? _activeControlFix;
 
         public static bool? EnableActiveControlFix
         {
             get
             {
-                if (_activeControlFix != null)
-                {
-                    return _activeControlFix;
-                }
+                if (_activeControlFix != null) return _activeControlFix;
 
-                if (EnableAll != null)
-                {
-                    return _activeControlFix = EnableAll;
-                }
+                if (EnableAll != null) return _activeControlFix = EnableAll;
 
                 var section = ConfigurationManager.GetSection("dockPanelSuite") as PatchSection;
                 if (section != null)
                 {
-                    if (section.EnableAll != null)
-                    {
-                        return _activeControlFix = section.EnableAll;
-                    }
+                    if (section.EnableAll != null) return _activeControlFix = section.EnableAll;
 
                     return _activeControlFix = section.EnableActiveControlFix;
                 }
@@ -677,10 +435,7 @@ namespace Atiran.Utility.Docking2
                 if (!string.IsNullOrEmpty(environment))
                 {
                     var enable = false;
-                    if (bool.TryParse(environment, out enable))
-                    {
-                        return _activeControlFix = enable;
-                    }
+                    if (bool.TryParse(environment, out enable)) return _activeControlFix = enable;
                 }
 
                 {
@@ -691,10 +446,7 @@ namespace Atiran.Utility.Docking2
                         if (pair != null)
                         {
                             var enable = false;
-                            if (bool.TryParse(pair.ToString(), out enable))
-                            {
-                                return _activeControlFix = enable;
-                            }
+                            if (bool.TryParse(pair.ToString(), out enable)) return _activeControlFix = enable;
                         }
                     }
                 }
@@ -707,10 +459,7 @@ namespace Atiran.Utility.Docking2
                         if (pair != null)
                         {
                             var enable = false;
-                            if (bool.TryParse(pair.ToString(), out enable))
-                            {
-                                return _activeControlFix = enable;
-                            }
+                            if (bool.TryParse(pair.ToString(), out enable)) return _activeControlFix = enable;
                         }
                     }
                 }
@@ -718,35 +467,21 @@ namespace Atiran.Utility.Docking2
                 return _activeControlFix = true;
             }
 
-            set
-            {
-                _activeControlFix = value;
-            }
+            set => _activeControlFix = value;
         }
-
-        private static bool? _floatSplitterFix;
 
         public static bool? EnableFloatSplitterFix
         {
             get
             {
-                if (_floatSplitterFix != null)
-                {
-                    return _floatSplitterFix;
-                }
+                if (_floatSplitterFix != null) return _floatSplitterFix;
 
-                if (EnableAll != null)
-                {
-                    return _floatSplitterFix = EnableAll;
-                }
+                if (EnableAll != null) return _floatSplitterFix = EnableAll;
 
                 var section = ConfigurationManager.GetSection("dockPanelSuite") as PatchSection;
                 if (section != null)
                 {
-                    if (section.EnableAll != null)
-                    {
-                        return _floatSplitterFix = section.EnableAll;
-                    }
+                    if (section.EnableAll != null) return _floatSplitterFix = section.EnableAll;
 
                     return _floatSplitterFix = section.EnableFloatSplitterFix;
                 }
@@ -755,10 +490,7 @@ namespace Atiran.Utility.Docking2
                 if (!string.IsNullOrEmpty(environment))
                 {
                     var enable = false;
-                    if (bool.TryParse(environment, out enable))
-                    {
-                        return _floatSplitterFix = enable;
-                    }
+                    if (bool.TryParse(environment, out enable)) return _floatSplitterFix = enable;
                 }
 
                 {
@@ -769,10 +501,7 @@ namespace Atiran.Utility.Docking2
                         if (pair != null)
                         {
                             var enable = false;
-                            if (bool.TryParse(pair.ToString(), out enable))
-                            {
-                                return _floatSplitterFix = enable;
-                            }
+                            if (bool.TryParse(pair.ToString(), out enable)) return _floatSplitterFix = enable;
                         }
                     }
                 }
@@ -785,10 +514,7 @@ namespace Atiran.Utility.Docking2
                         if (pair != null)
                         {
                             var enable = false;
-                            if (bool.TryParse(pair.ToString(), out enable))
-                            {
-                                return _floatSplitterFix = enable;
-                            }
+                            if (bool.TryParse(pair.ToString(), out enable)) return _floatSplitterFix = enable;
                         }
                     }
                 }
@@ -796,35 +522,21 @@ namespace Atiran.Utility.Docking2
                 return _floatSplitterFix = true;
             }
 
-            set
-            {
-                _floatSplitterFix = value;
-            }
+            set => _floatSplitterFix = value;
         }
-
-        private static bool? _activateOnDockFix;
 
         public static bool? EnableActivateOnDockFix
         {
             get
             {
-                if (_activateOnDockFix != null)
-                {
-                    return _activateOnDockFix;
-                }
+                if (_activateOnDockFix != null) return _activateOnDockFix;
 
-                if (EnableAll != null)
-                {
-                    return _activateOnDockFix = EnableAll;
-                }
+                if (EnableAll != null) return _activateOnDockFix = EnableAll;
 
                 var section = ConfigurationManager.GetSection("dockPanelSuite") as PatchSection;
                 if (section != null)
                 {
-                    if (section.EnableAll != null)
-                    {
-                        return _activateOnDockFix = section.EnableAll;
-                    }
+                    if (section.EnableAll != null) return _activateOnDockFix = section.EnableAll;
 
                     return _activateOnDockFix = section.EnableActivateOnDockFix;
                 }
@@ -833,10 +545,7 @@ namespace Atiran.Utility.Docking2
                 if (!string.IsNullOrEmpty(environment))
                 {
                     var enable = false;
-                    if (bool.TryParse(environment, out enable))
-                    {
-                        return _activateOnDockFix = enable;
-                    }
+                    if (bool.TryParse(environment, out enable)) return _activateOnDockFix = enable;
                 }
 
                 {
@@ -847,10 +556,7 @@ namespace Atiran.Utility.Docking2
                         if (pair != null)
                         {
                             var enable = false;
-                            if (bool.TryParse(pair.ToString(), out enable))
-                            {
-                                return _activateOnDockFix = enable;
-                            }
+                            if (bool.TryParse(pair.ToString(), out enable)) return _activateOnDockFix = enable;
                         }
                     }
                 }
@@ -863,10 +569,7 @@ namespace Atiran.Utility.Docking2
                         if (pair != null)
                         {
                             var enable = false;
-                            if (bool.TryParse(pair.ToString(), out enable))
-                            {
-                                return _activateOnDockFix = enable;
-                            }
+                            if (bool.TryParse(pair.ToString(), out enable)) return _activateOnDockFix = enable;
                         }
                     }
                 }
@@ -874,35 +577,21 @@ namespace Atiran.Utility.Docking2
                 return _activateOnDockFix = true;
             }
 
-            set
-            {
-                _activateOnDockFix = value;
-            }
+            set => _activateOnDockFix = value;
         }
-        
-        private static bool? _selectClosestOnClose;
 
         public static bool? EnableSelectClosestOnClose
         {
             get
             {
-                if (_selectClosestOnClose != null)
-                {
-                    return _selectClosestOnClose;
-                }
+                if (_selectClosestOnClose != null) return _selectClosestOnClose;
 
-                if (EnableAll != null)
-                {
-                    return _selectClosestOnClose = EnableAll;
-                }
+                if (EnableAll != null) return _selectClosestOnClose = EnableAll;
 
                 var section = ConfigurationManager.GetSection("dockPanelSuite") as PatchSection;
                 if (section != null)
                 {
-                    if (section.EnableAll != null)
-                    {
-                        return _selectClosestOnClose = section.EnableAll;
-                    }
+                    if (section.EnableAll != null) return _selectClosestOnClose = section.EnableAll;
 
                     return _selectClosestOnClose = section.EnableSelectClosestOnClose;
                 }
@@ -911,10 +600,7 @@ namespace Atiran.Utility.Docking2
                 if (!string.IsNullOrEmpty(environment))
                 {
                     var enable = false;
-                    if (bool.TryParse(environment, out enable))
-                    {
-                        return _selectClosestOnClose = enable;
-                    }
+                    if (bool.TryParse(environment, out enable)) return _selectClosestOnClose = enable;
                 }
 
                 {
@@ -925,10 +611,7 @@ namespace Atiran.Utility.Docking2
                         if (pair != null)
                         {
                             var enable = false;
-                            if (bool.TryParse(pair.ToString(), out enable))
-                            {
-                                return _selectClosestOnClose = enable;
-                            }
+                            if (bool.TryParse(pair.ToString(), out enable)) return _selectClosestOnClose = enable;
                         }
                     }
                 }
@@ -941,10 +624,7 @@ namespace Atiran.Utility.Docking2
                         if (pair != null)
                         {
                             var enable = false;
-                            if (bool.TryParse(pair.ToString(), out enable))
-                            {
-                                return _selectClosestOnClose = enable;
-                            }
+                            if (bool.TryParse(pair.ToString(), out enable)) return _selectClosestOnClose = enable;
                         }
                     }
                 }
@@ -952,10 +632,80 @@ namespace Atiran.Utility.Docking2
                 return _selectClosestOnClose = true;
             }
 
-            set
-            {
-                _selectClosestOnClose = value;
-            }
+            set => _selectClosestOnClose = value;
         }
+
+        public static void Reset()
+        {
+            EnableAll = _highDpi = _memoryLeakFix
+                = _nestedDisposalFix = _focusLostFix = _contentOrderFix
+                    = _fontInheritanceFix = _activeXFix = _displayingPaneFix
+                        = _activeControlFix = _floatSplitterFix = _activateOnDockFix
+                            = _selectClosestOnClose = null;
+        }
+
+        #region Copy this section to create new option, and then comment it to show what needs to be modified.
+
+        //*
+        private static bool? _highDpi;
+
+        public static bool? EnableHighDpi
+        {
+            get
+            {
+                if (_highDpi != null) return _highDpi;
+
+                if (EnableAll != null) return _highDpi = EnableAll;
+
+                var section = ConfigurationManager.GetSection("dockPanelSuite") as PatchSection;
+                if (section != null)
+                {
+                    if (section.EnableAll != null) return _highDpi = section.EnableAll;
+
+                    return _highDpi = section.EnableHighDpi;
+                }
+
+                var environment = Environment.GetEnvironmentVariable("DPS_EnableHighDpi");
+                if (!string.IsNullOrEmpty(environment))
+                {
+                    var enable = false;
+                    if (bool.TryParse(environment, out enable)) return _highDpi = enable;
+                }
+
+                {
+                    var key = Registry.CurrentUser.OpenSubKey(@"Software\DockPanelSuite");
+                    if (key != null)
+                    {
+                        var pair = key.GetValue("EnableHighDpi");
+                        if (pair != null)
+                        {
+                            var enable = false;
+                            if (bool.TryParse(pair.ToString(), out enable)) return _highDpi = enable;
+                        }
+                    }
+                }
+
+                {
+                    var key = Registry.LocalMachine.OpenSubKey(@"Software\DockPanelSuite");
+                    if (key != null)
+                    {
+                        var pair = key.GetValue("EnableHighDpi");
+                        if (pair != null)
+                        {
+                            var enable = false;
+                            if (bool.TryParse(pair.ToString(), out enable)) return _highDpi = enable;
+                        }
+                    }
+                }
+
+                return _highDpi = true;
+            }
+
+            set => _highDpi = value;
+        }
+
+        // */
+
+        #endregion
     }
 }

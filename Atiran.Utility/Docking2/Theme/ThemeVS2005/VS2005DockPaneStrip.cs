@@ -1,598 +1,38 @@
 using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
-using System.ComponentModel;
-using Atiran.Utility.Docking2.Theme.ThemeVS2005;
 
 namespace Atiran.Utility.Docking2.Theme.ThemeVS2005
 {
     [ToolboxItem(false)]
     internal class VS2005DockPaneStrip : DockPaneStripBase
     {
-        private class TabVS2005 : Tab
-        {
-            public TabVS2005(IDockContent content)
-                : base(content)
-            {
-            }
-
-            private int m_tabX;
-            public int TabX
-            {
-                get { return m_tabX; }
-                set { m_tabX = value; }
-            }
-
-            private int m_tabWidth;
-            public int TabWidth
-            {
-                get { return m_tabWidth; }
-                set { m_tabWidth = value; }
-            }
-
-            private int m_maxWidth;
-            public int MaxWidth
-            {
-                get { return m_maxWidth; }
-                set { m_maxWidth = value; }
-            }
-
-            private bool m_flag;
-            protected internal bool Flag
-            {
-                get { return m_flag; }
-                set { m_flag = value; }
-            }
-        }
-
-        protected internal override DockPaneStripBase.Tab CreateTab(IDockContent content)
-        {
-            return new TabVS2005(content);
-        }
-
-        [ToolboxItem(false)]
-        private sealed class InertButton : InertButtonBase
-        {
-            private Bitmap m_image0, m_image1;
-
-            public InertButton(Bitmap image0, Bitmap image1)
-                : base()
-            {
-                m_image0 = image0;
-                m_image1 = image1;
-            }
-
-            private int m_imageCategory = 0;
-            public int ImageCategory
-            {
-                get { return m_imageCategory; }
-                set
-                {
-                    if (m_imageCategory == value)
-                        return;
-
-                    m_imageCategory = value;
-                    Invalidate();
-                }
-            }
-
-            public override Bitmap Image
-            {
-                get { return ImageCategory == 0 ? m_image0 : m_image1; }
-            }
-
-            public override Bitmap HoverImage
-            {
-                get { return null; }
-            }
-
-            public override Bitmap PressImage
-            {
-                get { return null; }
-            }
-        }
-
-        #region Constants
-
-        private const int _ToolWindowStripGapTop = 0;
-        private const int _ToolWindowStripGapBottom = 1;
-        private const int _ToolWindowStripGapLeft = 0;
-        private const int _ToolWindowStripGapRight = 0;
-        private const int _ToolWindowImageHeight = 16;
-        private const int _ToolWindowImageWidth = 16;
-        private const int _ToolWindowImageGapTop = 3;
-        private const int _ToolWindowImageGapBottom = 1;
-        private const int _ToolWindowImageGapLeft = 2;
-        private const int _ToolWindowImageGapRight = 0;
-        private const int _ToolWindowTextGapRight = 3;
-        private const int _ToolWindowTabSeperatorGapTop = 3;
-        private const int _ToolWindowTabSeperatorGapBottom = 3;
-
-        private const int _DocumentStripGapTop = 0;
-        private const int _DocumentStripGapBottom = 1;
-        private const int _DocumentTabMaxWidth = 200;
-        private const int _DocumentButtonGapTop = 4;
-        private const int _DocumentButtonGapBottom = 4;
-        private const int _DocumentButtonGapBetween = 0;
-        private const int _DocumentButtonGapRight = 3;
-        private const int _DocumentTabGapTop = 3;
-        private const int _DocumentTabGapLeft = 3;
-        private const int _DocumentTabGapRight = 3;
-        private const int _DocumentIconGapBottom = 2;
-        private const int _DocumentIconGapLeft = 8;
-        private const int _DocumentIconGapRight = 0;
-        private const int _DocumentIconHeight = 16;
-        private const int _DocumentIconWidth = 16;
-        private const int _DocumentTextGapRight = 3;
-
-        #endregion
-
-        #region Members
-
-        private ContextMenuStrip m_selectMenu;
-        private static Bitmap m_imageButtonClose;
-        private InertButton m_buttonClose;
-        private static Bitmap m_imageButtonWindowList;
-        private static Bitmap m_imageButtonWindowListOverflow;
-        private InertButton m_buttonWindowList;
-        private IContainer m_components;
-        private ToolTip m_toolTip;
-        private Font m_font;
-        private Font m_boldFont;
-        private int m_startDisplayingTab = 0;
-        private int m_endDisplayingTab = 0;
-        private int m_firstDisplayingTab = 0;
-        private bool m_documentTabsOverflow = false;
-        private static string m_toolTipSelect;
-        private static string m_toolTipClose;
-        private bool m_closeButtonVisible = false;
-        private int _selectMenuMargin = 5;
-
-        #endregion
-
-        #region Properties
-
-        private Rectangle TabStripRectangle
-        {
-            get
-            {
-                if (Appearance == DockPane.AppearanceStyle.Document)
-                    return TabStripRectangle_Document;
-                else
-                    return TabStripRectangle_ToolWindow;
-            }
-        }
-
-        private Rectangle TabStripRectangle_ToolWindow
-        {
-            get
-            {
-                Rectangle rect = ClientRectangle;
-                return new Rectangle(rect.X, rect.Top + ToolWindowStripGapTop, rect.Width, rect.Height - ToolWindowStripGapTop - ToolWindowStripGapBottom);
-            }
-        }
-
-        private Rectangle TabStripRectangle_Document
-        {
-            get
-            {
-                Rectangle rect = ClientRectangle;
-                return new Rectangle(rect.X, rect.Top + DocumentStripGapTop, rect.Width, rect.Height - DocumentStripGapTop - ToolWindowStripGapBottom);
-            }
-        }
-
-        private Rectangle TabsRectangle
-        {
-            get
-            {
-                if (Appearance == DockPane.AppearanceStyle.ToolWindow)
-                    return TabStripRectangle;
-
-                Rectangle rectWindow = TabStripRectangle;
-                int x = rectWindow.X;
-                int y = rectWindow.Y;
-                int width = rectWindow.Width;
-                int height = rectWindow.Height;
-
-                x += DocumentTabGapLeft;
-                width -= DocumentTabGapLeft +
-                    DocumentTabGapRight +
-                    DocumentButtonGapRight +
-                    ButtonClose.Width +
-                    ButtonWindowList.Width +
-                    2 * DocumentButtonGapBetween;
-
-                return new Rectangle(x, y, width, height);
-            }
-        }
-
-        private ContextMenuStrip SelectMenu
-        {
-            get { return m_selectMenu; }
-        }
-
-        public int SelectMenuMargin
-        {
-            get { return _selectMenuMargin; }
-            set { _selectMenuMargin = value; }
-        }
-
-        private static Bitmap ImageButtonClose
-        {
-            get
-            {
-                if (m_imageButtonClose == null)
-                    m_imageButtonClose = Resources.DockPane_Close;
-
-                return m_imageButtonClose;
-            }
-        }
-
-        private InertButton ButtonClose
-        {
-            get
-            {
-                if (m_buttonClose == null)
-                {
-                    m_buttonClose = new InertButton(ImageButtonClose, ImageButtonClose);
-                    m_toolTip.SetToolTip(m_buttonClose, ToolTipClose);
-                    m_buttonClose.Click += new EventHandler(Close_Click);
-                    Controls.Add(m_buttonClose);
-                }
-
-                return m_buttonClose;
-            }
-        }
-
-        private static Bitmap ImageButtonWindowList
-        {
-            get
-            {
-                if (m_imageButtonWindowList == null)
-                    m_imageButtonWindowList = Resources.DockPane_Option;
-
-                return m_imageButtonWindowList;
-            }
-        }
-
-        private static Bitmap ImageButtonWindowListOverflow
-        {
-            get
-            {
-                if (m_imageButtonWindowListOverflow == null)
-                    m_imageButtonWindowListOverflow = Resources.DockPane_OptionOverflow;
-
-                return m_imageButtonWindowListOverflow;
-            }
-        }
-
-        private InertButton ButtonWindowList
-        {
-            get
-            {
-                if (m_buttonWindowList == null)
-                {
-                    m_buttonWindowList = new InertButton(ImageButtonWindowList, ImageButtonWindowListOverflow);
-                    m_toolTip.SetToolTip(m_buttonWindowList, ToolTipSelect);
-                    m_buttonWindowList.Click += new EventHandler(WindowList_Click);
-                    Controls.Add(m_buttonWindowList);
-                }
-
-                return m_buttonWindowList;
-            }
-        }
-
-        private static GraphicsPath GraphicsPath
-        {
-            get { return VS2005AutoHideStrip.GraphicsPath; }
-        }
-
-        private IContainer Components
-        {
-            get { return m_components; }
-        }
-
-        public Font TextFont
-        {
-            get { return DockPane.DockPanel.Theme.Skin.DockPaneStripSkin.TextFont; }
-        }
-
-        private Font BoldFont
-        {
-            get
-            {
-                if (IsDisposed)
-                    return null;
-
-                if (m_boldFont == null)
-                {
-                    m_font = TextFont;
-                    m_boldFont = new Font(TextFont, FontStyle.Bold);
-                }
-                else if (m_font != TextFont)
-                {
-                    m_boldFont.Dispose();
-                    m_font = TextFont;
-                    m_boldFont = new Font(TextFont, FontStyle.Bold);
-                }
-
-                return m_boldFont;
-            }
-        }
-
-        private int StartDisplayingTab
-        {
-            get { return m_startDisplayingTab; }
-            set
-            {
-                m_startDisplayingTab = value;
-                Invalidate();
-            }
-        }
-
-        private int EndDisplayingTab
-        {
-            get { return m_endDisplayingTab; }
-            set { m_endDisplayingTab = value; }
-        }
-
-        private int FirstDisplayingTab
-        {
-            get { return m_firstDisplayingTab; }
-            set { m_firstDisplayingTab = value; }
-        }
-
-        private bool DocumentTabsOverflow
-        {
-            set
-            {
-                if (m_documentTabsOverflow == value)
-                    return;
-
-                m_documentTabsOverflow = value;
-                if (value)
-                    ButtonWindowList.ImageCategory = 1;
-                else
-                    ButtonWindowList.ImageCategory = 0;
-            }
-        }
-
-        #region Customizable Properties
-
-        private static int ToolWindowStripGapTop
-        {
-            get { return _ToolWindowStripGapTop; }
-        }
-
-        private static int ToolWindowStripGapBottom
-        {
-            get { return _ToolWindowStripGapBottom; }
-        }
-
-        private static int ToolWindowStripGapLeft
-        {
-            get { return _ToolWindowStripGapLeft; }
-        }
-
-        private static int ToolWindowStripGapRight
-        {
-            get { return _ToolWindowStripGapRight; }
-        }
-
-        private static int ToolWindowImageHeight
-        {
-            get { return _ToolWindowImageHeight; }
-        }
-
-        private static int ToolWindowImageWidth
-        {
-            get { return _ToolWindowImageWidth; }
-        }
-
-        private static int ToolWindowImageGapTop
-        {
-            get { return _ToolWindowImageGapTop; }
-        }
-
-        private static int ToolWindowImageGapBottom
-        {
-            get { return _ToolWindowImageGapBottom; }
-        }
-
-        private static int ToolWindowImageGapLeft
-        {
-            get { return _ToolWindowImageGapLeft; }
-        }
-
-        private static int ToolWindowImageGapRight
-        {
-            get { return _ToolWindowImageGapRight; }
-        }
-
-        private static int ToolWindowTextGapRight
-        {
-            get { return _ToolWindowTextGapRight; }
-        }
-
-        private static int ToolWindowTabSeperatorGapTop
-        {
-            get { return _ToolWindowTabSeperatorGapTop; }
-        }
-
-        private static int ToolWindowTabSeperatorGapBottom
-        {
-            get { return _ToolWindowTabSeperatorGapBottom; }
-        }
-
-        private static string ToolTipClose
-        {
-            get
-            {
-                if (m_toolTipClose == null)
-                    m_toolTipClose = Strings.DockPaneStrip_ToolTipClose;
-                return m_toolTipClose;
-            }
-        }
-
-        private static string ToolTipSelect
-        {
-            get
-            {
-                if (m_toolTipSelect == null)
-                    m_toolTipSelect = Strings.DockPaneStrip_ToolTipWindowList;
-                return m_toolTipSelect;
-            }
-        }
-
-        private TextFormatFlags ToolWindowTextFormat
-        {
-            get
-            {
-                TextFormatFlags textFormat = TextFormatFlags.EndEllipsis |
-                    TextFormatFlags.HorizontalCenter |
-                    TextFormatFlags.SingleLine |
-                    TextFormatFlags.VerticalCenter;
-                if (RightToLeft == RightToLeft.Yes)
-                    return textFormat | TextFormatFlags.RightToLeft | TextFormatFlags.Right;
-                else
-                    return textFormat;
-            }
-        }
-
-        private static int DocumentStripGapTop
-        {
-            get { return _DocumentStripGapTop; }
-        }
-
-        private static int DocumentStripGapBottom
-        {
-            get { return _DocumentStripGapBottom; }
-        }
-
-        private TextFormatFlags DocumentTextFormat
-        {
-            get
-            {
-                TextFormatFlags textFormat = TextFormatFlags.EndEllipsis |
-                    TextFormatFlags.SingleLine |
-                    TextFormatFlags.VerticalCenter |
-                    TextFormatFlags.HorizontalCenter;
-                if (RightToLeft == RightToLeft.Yes)
-                    return textFormat | TextFormatFlags.RightToLeft;
-                else
-                    return textFormat;
-            }
-        }
-
-        private static int DocumentTabMaxWidth
-        {
-            get { return _DocumentTabMaxWidth; }
-        }
-
-        private static int DocumentButtonGapTop
-        {
-            get { return _DocumentButtonGapTop; }
-        }
-
-        private static int DocumentButtonGapBottom
-        {
-            get { return _DocumentButtonGapBottom; }
-        }
-
-        private static int DocumentButtonGapBetween
-        {
-            get { return _DocumentButtonGapBetween; }
-        }
-
-        private static int DocumentButtonGapRight
-        {
-            get { return _DocumentButtonGapRight; }
-        }
-
-        private static int DocumentTabGapTop
-        {
-            get { return _DocumentTabGapTop; }
-        }
-
-        private static int DocumentTabGapLeft
-        {
-            get { return _DocumentTabGapLeft; }
-        }
-
-        private static int DocumentTabGapRight
-        {
-            get { return _DocumentTabGapRight; }
-        }
-
-        private static int DocumentIconGapBottom
-        {
-            get { return _DocumentIconGapBottom; }
-        }
-
-        private static int DocumentIconGapLeft
-        {
-            get { return _DocumentIconGapLeft; }
-        }
-
-        private static int DocumentIconGapRight
-        {
-            get { return _DocumentIconGapRight; }
-        }
-
-        private static int DocumentIconWidth
-        {
-            get { return _DocumentIconWidth; }
-        }
-
-        private static int DocumentIconHeight
-        {
-            get { return _DocumentIconHeight; }
-        }
-
-        private static int DocumentTextGapRight
-        {
-            get { return _DocumentTextGapRight; }
-        }
-
-        private static Pen PenToolWindowTabBorder
-        {
-            get { return SystemPens.GrayText; }
-        }
-
-        private static Pen PenDocumentTabActiveBorder
-        {
-            get { return SystemPens.ControlDarkDark; }
-        }
-
-        private static Pen PenDocumentTabInactiveBorder
-        {
-            get { return SystemPens.GrayText; }
-        }
-
-        #endregion
-
-        #endregion
-
         public VS2005DockPaneStrip(DockPane pane)
             : base(pane)
         {
             SetStyle(ControlStyles.ResizeRedraw |
-                ControlStyles.UserPaint |
-                ControlStyles.AllPaintingInWmPaint |
-                ControlStyles.OptimizedDoubleBuffer, true);
+                     ControlStyles.UserPaint |
+                     ControlStyles.AllPaintingInWmPaint |
+                     ControlStyles.OptimizedDoubleBuffer, true);
 
             SuspendLayout();
 
-            m_components = new Container();
+            Components = new Container();
             m_toolTip = new ToolTip(Components);
-            m_selectMenu = new ContextMenuStrip(Components);
-            pane.DockPanel.Theme.ApplyTo(m_selectMenu);
+            SelectMenu = new ContextMenuStrip(Components);
+            pane.DockPanel.Theme.ApplyTo(SelectMenu);
 
             ResumeLayout();
         }
 
-        protected  override void Dispose(bool disposing)
+        protected internal override Tab CreateTab(IDockContent content)
+        {
+            return new TabVS2005(content);
+        }
+
+        protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
@@ -603,6 +43,7 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2005
                     m_boldFont = null;
                 }
             }
+
             base.Dispose(disposing);
         }
 
@@ -610,8 +51,7 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2005
         {
             if (Appearance == DockPane.AppearanceStyle.ToolWindow)
                 return MeasureHeight_ToolWindow();
-            else
-                return MeasureHeight_Document();
+            return MeasureHeight_Document();
         }
 
         private int MeasureHeight_ToolWindow()
@@ -619,26 +59,29 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2005
             if (DockPane.IsAutoHide || Tabs.Count <= 1)
                 return 0;
 
-            int height = Math.Max(TextFont.Height + (PatchController.EnableHighDpi == true ? DocumentIconGapBottom : 0),
-                ToolWindowImageHeight + ToolWindowImageGapTop + ToolWindowImageGapBottom)
-                + ToolWindowStripGapTop + ToolWindowStripGapBottom;
+            var height = Math.Max(TextFont.Height + (PatchController.EnableHighDpi == true ? DocumentIconGapBottom : 0),
+                             ToolWindowImageHeight + ToolWindowImageGapTop + ToolWindowImageGapBottom)
+                         + ToolWindowStripGapTop + ToolWindowStripGapBottom;
 
             return height;
         }
 
         private int MeasureHeight_Document()
         {
-            int height = Math.Max(TextFont.Height + DocumentTabGapTop + (PatchController.EnableHighDpi == true ? DocumentIconGapBottom : 0),
-                ButtonClose.Height + DocumentButtonGapTop + DocumentButtonGapBottom)
+            var height =
+                Math.Max(
+                    TextFont.Height + DocumentTabGapTop +
+                    (PatchController.EnableHighDpi == true ? DocumentIconGapBottom : 0),
+                    ButtonClose.Height + DocumentButtonGapTop + DocumentButtonGapBottom)
                 + DocumentStripGapBottom + DocumentStripGapTop;
 
             return height;
         }
 
-        protected  override void OnPaint(PaintEventArgs e)
+        protected override void OnPaint(PaintEventArgs e)
         {
-            Rectangle rect = TabsRectangle;
-            DockPanelGradient gradient = DockPane.DockPanel.Theme.Skin.DockPaneStripSkin.DocumentGradient.DockStripGradient;
+            var rect = TabsRectangle;
+            var gradient = DockPane.DockPanel.Theme.Skin.DockPaneStripSkin.DocumentGradient.DockStripGradient;
             if (Appearance == DockPane.AppearanceStyle.Document)
             {
                 rect.X -= DocumentTabGapLeft;
@@ -648,33 +91,31 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2005
                 // It is possible depending on the DockPanel DocumentStyle to have
                 // a Document without a DockStrip.
                 rect.Width += DocumentTabGapLeft +
-                    DocumentTabGapRight +
-                    DocumentButtonGapRight +
-                    ButtonClose.Width +
-                    ButtonWindowList.Width;
+                              DocumentTabGapRight +
+                              DocumentButtonGapRight +
+                              ButtonClose.Width +
+                              ButtonWindowList.Width;
             }
             else
             {
                 gradient = DockPane.DockPanel.Theme.Skin.DockPaneStripSkin.ToolWindowGradient.DockStripGradient;
             }
 
-            Color startColor = gradient.StartColor;
-            Color endColor = gradient.EndColor;
-            LinearGradientMode gradientMode = gradient.LinearGradientMode;
+            var startColor = gradient.StartColor;
+            var endColor = gradient.EndColor;
+            var gradientMode = gradient.LinearGradientMode;
 
-            DrawingRoutines.SafelyDrawLinearGradient(rect, startColor, endColor, gradientMode, e.Graphics);
+            rect.SafelyDrawLinearGradient(startColor, endColor, gradientMode, e.Graphics);
             base.OnPaint(e);
             CalculateTabs();
             if (Appearance == DockPane.AppearanceStyle.Document && DockPane.ActiveContent != null)
-            {
                 if (EnsureDocumentTabVisible(DockPane.ActiveContent, false))
                     CalculateTabs();
-            }
 
             DrawTabStrip(e.Graphics);
         }
 
-        protected  override void OnRefreshChanges()
+        protected override void OnRefreshChanges()
         {
             SetInertButtons();
             Invalidate();
@@ -682,24 +123,21 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2005
 
         public override GraphicsPath GetOutline(int index)
         {
-
             if (Appearance == DockPane.AppearanceStyle.Document)
                 return GetOutline_Document(index);
-            else
-                return GetOutline_ToolWindow(index);
-
+            return GetOutline_ToolWindow(index);
         }
 
         private GraphicsPath GetOutline_Document(int index)
         {
-            Rectangle rectTab = Tabs[index].Rectangle.Value;
+            var rectTab = Tabs[index].Rectangle.Value;
             rectTab.X -= rectTab.Height / 2;
             rectTab.Intersect(TabsRectangle);
             rectTab = RectangleToScreen(DrawHelper.RtlTransform(this, rectTab));
-            Rectangle rectPaneClient = DockPane.RectangleToScreen(DockPane.ClientRectangle);
+            var rectPaneClient = DockPane.RectangleToScreen(DockPane.ClientRectangle);
 
-            GraphicsPath path = new GraphicsPath();
-            GraphicsPath pathTab = GetTabOutline_Document(Tabs[index], true, true, true);
+            var path = new GraphicsPath();
+            var pathTab = GetTabOutline_Document(Tabs[index], true, true, true);
             path.AddPath(pathTab, true);
 
             if (DockPane.DockPanel.DocumentTabStripLocation == DocumentTabStripLocation.Bottom)
@@ -718,18 +156,19 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2005
                 path.AddLine(rectPaneClient.Left, rectPaneClient.Bottom, rectPaneClient.Left, rectTab.Bottom);
                 path.AddLine(rectPaneClient.Left, rectTab.Bottom, rectTab.Right, rectTab.Bottom);
             }
+
             return path;
         }
 
         private GraphicsPath GetOutline_ToolWindow(int index)
         {
-            Rectangle rectTab = Tabs[index].Rectangle.Value;
+            var rectTab = Tabs[index].Rectangle.Value;
             rectTab.Intersect(TabsRectangle);
             rectTab = RectangleToScreen(DrawHelper.RtlTransform(this, rectTab));
-            Rectangle rectPaneClient = DockPane.RectangleToScreen(DockPane.ClientRectangle);
+            var rectPaneClient = DockPane.RectangleToScreen(DockPane.ClientRectangle);
 
-            GraphicsPath path = new GraphicsPath();
-            GraphicsPath pathTab = GetTabOutline(Tabs[index], true, true);
+            var path = new GraphicsPath();
+            var pathTab = GetTabOutline(Tabs[index], true, true);
             path.AddPath(pathTab, true);
             path.AddLine(rectTab.Left, rectTab.Top, rectPaneClient.Left, rectTab.Top);
             path.AddLine(rectPaneClient.Left, rectTab.Top, rectPaneClient.Left, rectPaneClient.Top);
@@ -752,10 +191,10 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2005
             if (Tabs.Count <= 1 || DockPane.IsAutoHide)
                 return;
 
-            Rectangle rectTabStrip = TabStripRectangle;
+            var rectTabStrip = TabStripRectangle;
 
             // Calculate tab widths
-            int countTabs = Tabs.Count;
+            var countTabs = Tabs.Count;
             foreach (TabVS2005 tab in Tabs)
             {
                 tab.MaxWidth = GetMaxTabWidth(Tabs.IndexOf(tab));
@@ -763,12 +202,12 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2005
             }
 
             // Set tab whose max width less than average width
-            bool anyWidthWithinAverage = true;
-            int totalWidth = rectTabStrip.Width - ToolWindowStripGapLeft - ToolWindowStripGapRight;
-            int totalAllocatedWidth = 0;
-            int averageWidth = totalWidth / countTabs;
-            int remainedTabs = countTabs;
-            for (anyWidthWithinAverage = true; anyWidthWithinAverage && remainedTabs > 0; )
+            var anyWidthWithinAverage = true;
+            var totalWidth = rectTabStrip.Width - ToolWindowStripGapLeft - ToolWindowStripGapRight;
+            var totalAllocatedWidth = 0;
+            var averageWidth = totalWidth / countTabs;
+            var remainedTabs = countTabs;
+            for (anyWidthWithinAverage = true; anyWidthWithinAverage && remainedTabs > 0;)
             {
                 anyWidthWithinAverage = false;
                 foreach (TabVS2005 tab in Tabs)
@@ -785,6 +224,7 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2005
                         remainedTabs--;
                     }
                 }
+
                 if (remainedTabs != 0)
                     averageWidth = (totalWidth - totalAllocatedWidth) / remainedTabs;
             }
@@ -792,7 +232,7 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2005
             // If any tab width not set yet, set it to the average width
             if (remainedTabs > 0)
             {
-                int roundUpWidth = (totalWidth - totalAllocatedWidth) - (averageWidth * remainedTabs);
+                var roundUpWidth = totalWidth - totalAllocatedWidth - averageWidth * remainedTabs;
                 foreach (TabVS2005 tab in Tabs)
                 {
                     if (tab.Flag)
@@ -805,12 +245,14 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2005
                         roundUpWidth--;
                     }
                     else
+                    {
                         tab.TabWidth = averageWidth;
+                    }
                 }
             }
 
             // Set the X position of the tabs
-            int x = rectTabStrip.X + ToolWindowStripGapLeft;
+            var x = rectTabStrip.X + ToolWindowStripGapLeft;
             foreach (TabVS2005 tab in Tabs)
             {
                 tab.TabX = x;
@@ -820,11 +262,11 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2005
 
         private bool CalculateDocumentTab(Rectangle rectTabStrip, ref int x, int index)
         {
-            bool overflow = false;
+            var overflow = false;
 
-            TabVS2005 tab = Tabs[index] as TabVS2005;
+            var tab = Tabs[index] as TabVS2005;
             tab.MaxWidth = GetMaxTabWidth(index);
-            int width = Math.Min(tab.MaxWidth, DocumentTabMaxWidth);
+            var width = Math.Min(tab.MaxWidth, DocumentTabMaxWidth);
             if (x + width < rectTabStrip.Right || index == StartDisplayingTab)
             {
                 tab.TabX = x;
@@ -837,23 +279,24 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2005
                 tab.TabWidth = 0;
                 overflow = true;
             }
+
             x += width;
 
             return overflow;
         }
 
         /// <summary>
-        /// Calculate which tabs are displayed and in what order.
+        ///     Calculate which tabs are displayed and in what order.
         /// </summary>
         private void CalculateTabs_Document()
         {
             if (m_startDisplayingTab >= Tabs.Count)
                 m_startDisplayingTab = 0;
 
-            Rectangle rectTabStrip = TabsRectangle;
+            var rectTabStrip = TabsRectangle;
 
-            int x = rectTabStrip.X + rectTabStrip.Height / 2;
-            bool overflow = false;
+            var x = rectTabStrip.X + rectTabStrip.Height / 2;
+            var overflow = false;
 
             // Originally all new documents that were considered overflow
             // (not enough pane strip space to show all tabs) were added to
@@ -862,12 +305,12 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2005
             // then we are dealing with making sure a specific tab is kept in focus.
             if (m_startDisplayingTab > 0)
             {
-                int tempX = x;
-                TabVS2005 tab = Tabs[m_startDisplayingTab] as TabVS2005;
+                var tempX = x;
+                var tab = Tabs[m_startDisplayingTab] as TabVS2005;
                 tab.MaxWidth = GetMaxTabWidth(m_startDisplayingTab);
 
                 // Add the active tab and tabs to the left
-                for (int i = StartDisplayingTab; i >= 0; i--)
+                for (var i = StartDisplayingTab; i >= 0; i--)
                     CalculateDocumentTab(rectTabStrip, ref tempX, i);
 
                 // Store which tab is the first one displayed so that it
@@ -879,7 +322,7 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2005
                 // Start with the first tab displayed - name is a little misleading.
                 // Loop through each tab and set its location. If there is not enough
                 // room for all of them overflow will be returned.
-                for (int i = EndDisplayingTab; i < Tabs.Count; i++)
+                for (var i = EndDisplayingTab; i < Tabs.Count; i++)
                     overflow = CalculateDocumentTab(rectTabStrip, ref tempX, i);
 
                 // If not all tabs are shown then we have an overflow.
@@ -888,9 +331,9 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2005
             }
             else
             {
-                for (int i = StartDisplayingTab; i < Tabs.Count; i++)
+                for (var i = StartDisplayingTab; i < Tabs.Count; i++)
                     overflow = CalculateDocumentTab(rectTabStrip, ref x, i);
-                for (int i = 0; i < StartDisplayingTab; i++)
+                for (var i = 0; i < StartDisplayingTab; i++)
                     overflow = CalculateDocumentTab(rectTabStrip, ref x, i);
 
                 FirstDisplayingTab = StartDisplayingTab;
@@ -907,6 +350,7 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2005
                     x += tab.TabWidth;
                 }
             }
+
             DocumentTabsOverflow = overflow;
         }
 
@@ -921,13 +365,11 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2005
 
         private bool EnsureDocumentTabVisible(IDockContent content, bool repaint)
         {
-            int index = Tabs.IndexOf(content);
+            var index = Tabs.IndexOf(content);
             if (index == -1)
-            {
                 //somehow we've lost the content from the Tab collection
                 return false;
-            }
-            TabVS2005 tab = Tabs[index] as TabVS2005;
+            var tab = Tabs[index] as TabVS2005;
             if (tab.TabWidth != 0)
                 return false;
 
@@ -942,30 +384,30 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2005
         {
             if (Appearance == DockPane.AppearanceStyle.ToolWindow)
                 return GetMaxTabWidth_ToolWindow(index);
-            else
-                return GetMaxTabWidth_Document(index);
+            return GetMaxTabWidth_Document(index);
         }
 
         private int GetMaxTabWidth_ToolWindow(int index)
         {
-            IDockContent content = Tabs[index].Content;
-            Size sizeString = TextRenderer.MeasureText(content.DockHandler.TabText, TextFont);
+            var content = Tabs[index].Content;
+            var sizeString = TextRenderer.MeasureText(content.DockHandler.TabText, TextFont);
             return ToolWindowImageWidth + sizeString.Width + ToolWindowImageGapLeft
-                + ToolWindowImageGapRight + ToolWindowTextGapRight;
+                   + ToolWindowImageGapRight + ToolWindowTextGapRight;
         }
 
         private int GetMaxTabWidth_Document(int index)
         {
-            IDockContent content = Tabs[index].Content;
+            var content = Tabs[index].Content;
 
-            int height = GetTabRectangle_Document(index).Height;
+            var height = GetTabRectangle_Document(index).Height;
 
-            Size sizeText = TextRenderer.MeasureText(content.DockHandler.TabText, BoldFont, new Size(DocumentTabMaxWidth, height), DocumentTextFormat);
+            var sizeText = TextRenderer.MeasureText(content.DockHandler.TabText, BoldFont,
+                new Size(DocumentTabMaxWidth, height), DocumentTextFormat);
 
             if (DockPane.DockPanel.ShowDocumentIcon)
-                return sizeText.Width + DocumentIconWidth + DocumentIconGapLeft + DocumentIconGapRight + DocumentTextGapRight;
-            else
-                return sizeText.Width + DocumentIconGapLeft + DocumentTextGapRight;
+                return sizeText.Width + DocumentIconWidth + DocumentIconGapLeft + DocumentIconGapRight +
+                       DocumentTextGapRight;
+            return sizeText.Width + DocumentIconGapLeft + DocumentTextGapRight;
         }
 
         private void DrawTabStrip(Graphics g)
@@ -978,18 +420,18 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2005
 
         private void DrawTabStrip_Document(Graphics g)
         {
-            int count = Tabs.Count;
+            var count = Tabs.Count;
             if (count == 0)
                 return;
 
-            Rectangle rectTabStrip = TabStripRectangle;
+            var rectTabStrip = TabStripRectangle;
 
             // Draw the tabs
-            Rectangle rectTabOnly = TabsRectangle;
-            Rectangle rectTab = Rectangle.Empty;
+            var rectTabOnly = TabsRectangle;
+            var rectTab = Rectangle.Empty;
             TabVS2005 tabActive = null;
             g.SetClip(DrawHelper.RtlTransform(this, rectTabOnly));
-            for (int i = 0; i < count; i++)
+            for (var i = 0; i < count; i++)
             {
                 rectTab = GetTabRectangle(i);
                 if (Tabs[i].Content == DockPane.ActiveContent)
@@ -1031,12 +473,12 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2005
 
         private void DrawTabStrip_ToolWindow(Graphics g)
         {
-            Rectangle rectTabStrip = TabStripRectangle;
+            var rectTabStrip = TabStripRectangle;
 
             g.DrawLine(PenToolWindowTabBorder, rectTabStrip.Left, rectTabStrip.Top,
                 rectTabStrip.Right, rectTabStrip.Top);
 
-            for (int i = 0; i < Tabs.Count; i++)
+            for (var i = 0; i < Tabs.Count; i++)
             {
                 var tab = Tabs[i] as TabVS2005;
                 tab.Rectangle = GetTabRectangle(i);
@@ -1048,24 +490,23 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2005
         {
             if (Appearance == DockPane.AppearanceStyle.ToolWindow)
                 return GetTabRectangle_ToolWindow(index);
-            else
-                return GetTabRectangle_Document(index);
+            return GetTabRectangle_Document(index);
         }
 
         private Rectangle GetTabRectangle_ToolWindow(int index)
         {
-            Rectangle rectTabStrip = TabStripRectangle;
+            var rectTabStrip = TabStripRectangle;
 
-            TabVS2005 tab = (TabVS2005)(Tabs[index]);
+            var tab = (TabVS2005) Tabs[index];
             return new Rectangle(tab.TabX, rectTabStrip.Y, tab.TabWidth, rectTabStrip.Height);
         }
 
         private Rectangle GetTabRectangle_Document(int index)
         {
-            Rectangle rectTabStrip = TabStripRectangle;
-            TabVS2005 tab = (TabVS2005)Tabs[index];
+            var rectTabStrip = TabStripRectangle;
+            var tab = (TabVS2005) Tabs[index];
 
-            Rectangle rect = new Rectangle();
+            var rect = new Rectangle();
             rect.X = tab.TabX;
             rect.Width = tab.TabWidth;
             rect.Height = rectTabStrip.Height - DocumentTabGapTop;
@@ -1090,13 +531,12 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2005
         {
             if (Appearance == DockPane.AppearanceStyle.ToolWindow)
                 return GetTabOutline_ToolWindow(tab, rtlTransform, toScreen);
-            else
-                return GetTabOutline_Document(tab, rtlTransform, toScreen, false);
+            return GetTabOutline_Document(tab, rtlTransform, toScreen, false);
         }
 
         private GraphicsPath GetTabOutline_ToolWindow(Tab tab, bool rtlTransform, bool toScreen)
         {
-            Rectangle rect = GetTabRectangle(Tabs.IndexOf(tab));
+            var rect = GetTabRectangle(Tabs.IndexOf(tab));
             if (rtlTransform)
                 rect = DrawHelper.RtlTransform(this, rect);
             if (toScreen)
@@ -1108,11 +548,11 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2005
 
         private GraphicsPath GetTabOutline_Document(Tab tab, bool rtlTransform, bool toScreen, bool full)
         {
-            int curveSize = 6;
+            var curveSize = 6;
 
             GraphicsPath.Reset();
-            Rectangle rect = GetTabRectangle(Tabs.IndexOf(tab));
-            
+            var rect = GetTabRectangle(Tabs.IndexOf(tab));
+
             // Shorten TabOutline so it doesn't get overdrawn by icons next to it
             rect.Intersect(TabsRectangle);
             rect.Width--;
@@ -1132,12 +572,14 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2005
                         // For some reason the next line draws a line that is not hidden like it is when drawing the tab strip on top.
                         // It is not needed so it has been commented out.
                         //GraphicsPath.AddLine(rect.Right, rect.Bottom, rect.Right + rect.Height / 2, rect.Bottom);
-                        GraphicsPath.AddLine(rect.Right + rect.Height / 2, rect.Top, rect.Right - rect.Height / 2 + curveSize / 2, rect.Bottom - curveSize / 2);
+                        GraphicsPath.AddLine(rect.Right + rect.Height / 2, rect.Top,
+                            rect.Right - rect.Height / 2 + curveSize / 2, rect.Bottom - curveSize / 2);
                     }
                     else
                     {
                         GraphicsPath.AddLine(rect.Right, rect.Bottom, rect.Right + rect.Height / 2, rect.Bottom);
-                        GraphicsPath.AddLine(rect.Right + rect.Height / 2, rect.Bottom, rect.Right - rect.Height / 2 + curveSize / 2, rect.Top + curveSize / 2);
+                        GraphicsPath.AddLine(rect.Right + rect.Height / 2, rect.Bottom,
+                            rect.Right - rect.Height / 2 + curveSize / 2, rect.Top + curveSize / 2);
                     }
                 }
                 else
@@ -1147,12 +589,14 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2005
                         // For some reason the next line draws a line that is not hidden like it is when drawing the tab strip on top.
                         // It is not needed so it has been commented out.
                         //GraphicsPath.AddLine(rect.Left, rect.Top, rect.Left - rect.Height / 2, rect.Top);
-                        GraphicsPath.AddLine(rect.Left - rect.Height / 2, rect.Top, rect.Left + rect.Height / 2 - curveSize / 2, rect.Bottom - curveSize / 2);
+                        GraphicsPath.AddLine(rect.Left - rect.Height / 2, rect.Top,
+                            rect.Left + rect.Height / 2 - curveSize / 2, rect.Bottom - curveSize / 2);
                     }
                     else
                     {
                         GraphicsPath.AddLine(rect.Left, rect.Bottom, rect.Left - rect.Height / 2, rect.Bottom);
-                        GraphicsPath.AddLine(rect.Left - rect.Height / 2, rect.Bottom, rect.Left + rect.Height / 2 - curveSize / 2, rect.Top + curveSize / 2);
+                        GraphicsPath.AddLine(rect.Left - rect.Height / 2, rect.Bottom,
+                            rect.Left + rect.Height / 2 - curveSize / 2, rect.Top + curveSize / 2);
                     }
                 }
             }
@@ -1164,12 +608,14 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2005
                     if (DockPane.DockPanel.DocumentTabStripLocation == DocumentTabStripLocation.Bottom)
                     {
                         GraphicsPath.AddLine(rect.Right, rect.Top, rect.Right, rect.Top + rect.Height / 2);
-                        GraphicsPath.AddLine(rect.Right, rect.Top + rect.Height / 2, rect.Right - rect.Height / 2 + curveSize / 2, rect.Bottom - curveSize / 2);
+                        GraphicsPath.AddLine(rect.Right, rect.Top + rect.Height / 2,
+                            rect.Right - rect.Height / 2 + curveSize / 2, rect.Bottom - curveSize / 2);
                     }
                     else
                     {
                         GraphicsPath.AddLine(rect.Right, rect.Bottom, rect.Right, rect.Bottom - rect.Height / 2);
-                        GraphicsPath.AddLine(rect.Right, rect.Bottom - rect.Height / 2, rect.Right - rect.Height / 2 + curveSize / 2, rect.Top + curveSize / 2);
+                        GraphicsPath.AddLine(rect.Right, rect.Bottom - rect.Height / 2,
+                            rect.Right - rect.Height / 2 + curveSize / 2, rect.Top + curveSize / 2);
                     }
                 }
                 else
@@ -1177,12 +623,14 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2005
                     if (DockPane.DockPanel.DocumentTabStripLocation == DocumentTabStripLocation.Bottom)
                     {
                         GraphicsPath.AddLine(rect.Left, rect.Top, rect.Left, rect.Top + rect.Height / 2);
-                        GraphicsPath.AddLine(rect.Left, rect.Top + rect.Height / 2, rect.Left + rect.Height / 2 - curveSize / 2, rect.Bottom - curveSize / 2);
+                        GraphicsPath.AddLine(rect.Left, rect.Top + rect.Height / 2,
+                            rect.Left + rect.Height / 2 - curveSize / 2, rect.Bottom - curveSize / 2);
                     }
                     else
                     {
                         GraphicsPath.AddLine(rect.Left, rect.Bottom, rect.Left, rect.Bottom - rect.Height / 2);
-                        GraphicsPath.AddLine(rect.Left, rect.Bottom - rect.Height / 2, rect.Left + rect.Height / 2 - curveSize / 2, rect.Top + curveSize / 2);
+                        GraphicsPath.AddLine(rect.Left, rect.Bottom - rect.Height / 2,
+                            rect.Left + rect.Height / 2 - curveSize / 2, rect.Top + curveSize / 2);
                     }
                 }
             }
@@ -1192,7 +640,8 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2005
                 if (DockPane.DockPanel.DocumentTabStripLocation == DocumentTabStripLocation.Bottom)
                 {
                     // Draws the bottom horizontal line (short side)
-                    GraphicsPath.AddLine(rect.Right - rect.Height / 2 - curveSize / 2, rect.Bottom, rect.Left + curveSize / 2, rect.Bottom);
+                    GraphicsPath.AddLine(rect.Right - rect.Height / 2 - curveSize / 2, rect.Bottom,
+                        rect.Left + curveSize / 2, rect.Bottom);
 
                     // Drawing the rounded corner is not necessary. The path is automatically connected
                     //GraphicsPath.AddArc(new Rectangle(rect.Left, rect.Top, curveSize, curveSize), 180, 90);
@@ -1200,7 +649,8 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2005
                 else
                 {
                     // Draws the bottom horizontal line (short side)
-                    GraphicsPath.AddLine(rect.Right - rect.Height / 2 - curveSize / 2, rect.Top, rect.Left + curveSize / 2, rect.Top);
+                    GraphicsPath.AddLine(rect.Right - rect.Height / 2 - curveSize / 2, rect.Top,
+                        rect.Left + curveSize / 2, rect.Top);
                     GraphicsPath.AddArc(new Rectangle(rect.Left, rect.Top, curveSize, curveSize), 180, 90);
                 }
             }
@@ -1209,7 +659,8 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2005
                 if (DockPane.DockPanel.DocumentTabStripLocation == DocumentTabStripLocation.Bottom)
                 {
                     // Draws the bottom horizontal line (short side)
-                    GraphicsPath.AddLine(rect.Left + rect.Height / 2 + curveSize / 2, rect.Bottom, rect.Right - curveSize / 2, rect.Bottom);
+                    GraphicsPath.AddLine(rect.Left + rect.Height / 2 + curveSize / 2, rect.Bottom,
+                        rect.Right - curveSize / 2, rect.Bottom);
 
                     // Drawing the rounded corner is not necessary. The path is automatically connected
                     //GraphicsPath.AddArc(new Rectangle(rect.Right - curveSize, rect.Bottom, curveSize, curveSize), 90, -90);
@@ -1217,41 +668,49 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2005
                 else
                 {
                     // Draws the top horizontal line (short side)
-                    GraphicsPath.AddLine(rect.Left + rect.Height / 2 + curveSize / 2, rect.Top, rect.Right - curveSize / 2, rect.Top);
+                    GraphicsPath.AddLine(rect.Left + rect.Height / 2 + curveSize / 2, rect.Top,
+                        rect.Right - curveSize / 2, rect.Top);
 
                     // Draws the rounded corner oppposite the angled side
                     GraphicsPath.AddArc(new Rectangle(rect.Right - curveSize, rect.Top, curveSize, curveSize), -90, 90);
                 }
             }
 
-            if (Tabs.IndexOf(tab) != EndDisplayingTab &&
-                (Tabs.IndexOf(tab) != Tabs.Count - 1 && Tabs[Tabs.IndexOf(tab) + 1].Content == DockPane.ActiveContent)
-                && !full)
+            if (Tabs.IndexOf(tab) != EndDisplayingTab && Tabs.IndexOf(tab) != Tabs.Count - 1 &&
+                Tabs[Tabs.IndexOf(tab) + 1].Content == DockPane.ActiveContent && !full)
             {
                 if (RightToLeft == RightToLeft.Yes)
                 {
                     if (DockPane.DockPanel.DocumentTabStripLocation == DocumentTabStripLocation.Bottom)
                     {
-                        GraphicsPath.AddLine(rect.Left, rect.Bottom - curveSize / 2, rect.Left, rect.Bottom - rect.Height / 2);
-                        GraphicsPath.AddLine(rect.Left, rect.Bottom - rect.Height / 2, rect.Left + rect.Height / 2, rect.Top);
+                        GraphicsPath.AddLine(rect.Left, rect.Bottom - curveSize / 2, rect.Left,
+                            rect.Bottom - rect.Height / 2);
+                        GraphicsPath.AddLine(rect.Left, rect.Bottom - rect.Height / 2, rect.Left + rect.Height / 2,
+                            rect.Top);
                     }
                     else
                     {
-                        GraphicsPath.AddLine(rect.Left, rect.Top + curveSize / 2, rect.Left, rect.Top + rect.Height / 2);
-                        GraphicsPath.AddLine(rect.Left, rect.Top + rect.Height / 2, rect.Left + rect.Height / 2, rect.Bottom);
+                        GraphicsPath.AddLine(rect.Left, rect.Top + curveSize / 2, rect.Left,
+                            rect.Top + rect.Height / 2);
+                        GraphicsPath.AddLine(rect.Left, rect.Top + rect.Height / 2, rect.Left + rect.Height / 2,
+                            rect.Bottom);
                     }
                 }
                 else
                 {
                     if (DockPane.DockPanel.DocumentTabStripLocation == DocumentTabStripLocation.Bottom)
                     {
-                        GraphicsPath.AddLine(rect.Right, rect.Bottom - curveSize / 2, rect.Right, rect.Bottom - rect.Height / 2);
-                        GraphicsPath.AddLine(rect.Right, rect.Bottom - rect.Height / 2, rect.Right - rect.Height / 2, rect.Top);
+                        GraphicsPath.AddLine(rect.Right, rect.Bottom - curveSize / 2, rect.Right,
+                            rect.Bottom - rect.Height / 2);
+                        GraphicsPath.AddLine(rect.Right, rect.Bottom - rect.Height / 2, rect.Right - rect.Height / 2,
+                            rect.Top);
                     }
                     else
                     {
-                        GraphicsPath.AddLine(rect.Right, rect.Top + curveSize / 2, rect.Right, rect.Top + rect.Height / 2);
-                        GraphicsPath.AddLine(rect.Right, rect.Top + rect.Height / 2, rect.Right - rect.Height / 2, rect.Bottom);
+                        GraphicsPath.AddLine(rect.Right, rect.Top + curveSize / 2, rect.Right,
+                            rect.Top + rect.Height / 2);
+                        GraphicsPath.AddLine(rect.Right, rect.Top + rect.Height / 2, rect.Right - rect.Height / 2,
+                            rect.Bottom);
                     }
                 }
             }
@@ -1280,11 +739,11 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2005
         private void DrawTab_ToolWindow(Graphics g, TabVS2005 tab)
         {
             var rect = tab.Rectangle.Value;
-            Rectangle rectIcon = new Rectangle(
+            var rectIcon = new Rectangle(
                 rect.X + ToolWindowImageGapLeft,
                 rect.Y + rect.Height - 1 - ToolWindowImageGapBottom - ToolWindowImageHeight,
                 ToolWindowImageWidth, ToolWindowImageHeight);
-            Rectangle rectText = PatchController.EnableHighDpi == true
+            var rectText = PatchController.EnableHighDpi == true
                 ? new Rectangle(
                     rect.X + ToolWindowImageGapLeft,
                     rect.Y - 1 + rect.Height - ToolWindowImageGapBottom - TextFont.Height,
@@ -1292,46 +751,57 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2005
                 : rectIcon;
             rectText.X += rectIcon.Width + ToolWindowImageGapRight;
             rectText.Width = rect.Width - rectIcon.Width - ToolWindowImageGapLeft -
-                ToolWindowImageGapRight - ToolWindowTextGapRight;
+                             ToolWindowImageGapRight - ToolWindowTextGapRight;
 
-            Rectangle rectTab = DrawHelper.RtlTransform(this, rect);
+            var rectTab = DrawHelper.RtlTransform(this, rect);
             rectText = DrawHelper.RtlTransform(this, rectText);
             rectIcon = DrawHelper.RtlTransform(this, rectIcon);
-            GraphicsPath path = GetTabOutline(tab, true, false);
+            var path = GetTabOutline(tab, true, false);
             if (DockPane.ActiveContent == tab.Content)
             {
-                Color startColor = DockPane.DockPanel.Theme.Skin.DockPaneStripSkin.ToolWindowGradient.ActiveTabGradient.StartColor;
-                Color endColor = DockPane.DockPanel.Theme.Skin.DockPaneStripSkin.ToolWindowGradient.ActiveTabGradient.EndColor;
-                LinearGradientMode gradientMode = DockPane.DockPanel.Theme.Skin.DockPaneStripSkin.ToolWindowGradient.ActiveTabGradient.LinearGradientMode;
-                using (LinearGradientBrush brush = new LinearGradientBrush(rectTab, startColor, endColor, gradientMode))
+                var startColor = DockPane.DockPanel.Theme.Skin.DockPaneStripSkin.ToolWindowGradient.ActiveTabGradient
+                    .StartColor;
+                var endColor = DockPane.DockPanel.Theme.Skin.DockPaneStripSkin.ToolWindowGradient.ActiveTabGradient
+                    .EndColor;
+                var gradientMode = DockPane.DockPanel.Theme.Skin.DockPaneStripSkin.ToolWindowGradient.ActiveTabGradient
+                    .LinearGradientMode;
+                using (var brush = new LinearGradientBrush(rectTab, startColor, endColor, gradientMode))
                 {
                     g.FillPath(brush, path);
                 }
 
                 g.DrawPath(PenToolWindowTabBorder, path);
 
-                Color textColor = DockPane.DockPanel.Theme.Skin.DockPaneStripSkin.ToolWindowGradient.ActiveTabGradient.TextColor;
-                TextRenderer.DrawText(g, tab.Content.DockHandler.TabText, TextFont, rectText, textColor, ToolWindowTextFormat);
+                var textColor = DockPane.DockPanel.Theme.Skin.DockPaneStripSkin.ToolWindowGradient.ActiveTabGradient
+                    .TextColor;
+                TextRenderer.DrawText(g, tab.Content.DockHandler.TabText, TextFont, rectText, textColor,
+                    ToolWindowTextFormat);
             }
             else
             {
-                Color startColor = DockPane.DockPanel.Theme.Skin.DockPaneStripSkin.ToolWindowGradient.InactiveTabGradient.StartColor;
-                Color endColor = DockPane.DockPanel.Theme.Skin.DockPaneStripSkin.ToolWindowGradient.InactiveTabGradient.EndColor;
-                LinearGradientMode gradientMode = DockPane.DockPanel.Theme.Skin.DockPaneStripSkin.ToolWindowGradient.InactiveTabGradient.LinearGradientMode;
-                using (LinearGradientBrush brush1 = new LinearGradientBrush(rectTab, startColor, endColor, gradientMode))
+                var startColor = DockPane.DockPanel.Theme.Skin.DockPaneStripSkin.ToolWindowGradient.InactiveTabGradient
+                    .StartColor;
+                var endColor = DockPane.DockPanel.Theme.Skin.DockPaneStripSkin.ToolWindowGradient.InactiveTabGradient
+                    .EndColor;
+                var gradientMode = DockPane.DockPanel.Theme.Skin.DockPaneStripSkin.ToolWindowGradient
+                    .InactiveTabGradient.LinearGradientMode;
+                using (var brush1 = new LinearGradientBrush(rectTab, startColor, endColor, gradientMode))
                 {
                     g.FillPath(brush1, path);
                 }
 
                 if (Tabs.IndexOf(DockPane.ActiveContent) != Tabs.IndexOf(tab) + 1)
                 {
-                    Point pt1 = new Point(rect.Right, rect.Top + ToolWindowTabSeperatorGapTop);
-                    Point pt2 = new Point(rect.Right, rect.Bottom - ToolWindowTabSeperatorGapBottom);
-                    g.DrawLine(PenToolWindowTabBorder, DrawHelper.RtlTransform(this, pt1), DrawHelper.RtlTransform(this, pt2));
+                    var pt1 = new Point(rect.Right, rect.Top + ToolWindowTabSeperatorGapTop);
+                    var pt2 = new Point(rect.Right, rect.Bottom - ToolWindowTabSeperatorGapBottom);
+                    g.DrawLine(PenToolWindowTabBorder, DrawHelper.RtlTransform(this, pt1),
+                        DrawHelper.RtlTransform(this, pt2));
                 }
 
-                Color textColor = DockPane.DockPanel.Theme.Skin.DockPaneStripSkin.ToolWindowGradient.InactiveTabGradient.TextColor;
-                TextRenderer.DrawText(g, tab.Content.DockHandler.TabText, TextFont, rectText, textColor, ToolWindowTextFormat);
+                var textColor = DockPane.DockPanel.Theme.Skin.DockPaneStripSkin.ToolWindowGradient.InactiveTabGradient
+                    .TextColor;
+                TextRenderer.DrawText(g, tab.Content.DockHandler.TabText, TextFont, rectText, textColor,
+                    ToolWindowTextFormat);
             }
 
             if (rectTab.Contains(rectIcon))
@@ -1344,11 +814,11 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2005
             if (tab.TabWidth == 0)
                 return;
 
-            Rectangle rectIcon = new Rectangle(
+            var rectIcon = new Rectangle(
                 rect.X + DocumentIconGapLeft,
                 rect.Y + rect.Height - 1 - DocumentIconGapBottom - DocumentIconHeight,
                 DocumentIconWidth, DocumentIconHeight);
-            Rectangle rectText = PatchController.EnableHighDpi == true
+            var rectText = PatchController.EnableHighDpi == true
                 ? new Rectangle(
                     rect.X + DocumentIconGapLeft,
                     rect.Y + rect.Height - DocumentIconGapBottom - TextFont.Height,
@@ -1359,52 +829,65 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2005
                 rectText.X += rectIcon.Width + DocumentIconGapRight;
                 rectText.Y = rect.Y;
                 rectText.Width = rect.Width - rectIcon.Width - DocumentIconGapLeft -
-                    DocumentIconGapRight - DocumentTextGapRight;
+                                 DocumentIconGapRight - DocumentTextGapRight;
                 rectText.Height = rect.Height;
             }
             else
+            {
                 rectText.Width = rect.Width - DocumentIconGapLeft - DocumentTextGapRight;
+            }
 
-            Rectangle rectTab = DrawHelper.RtlTransform(this, rect);
-            Rectangle rectBack = DrawHelper.RtlTransform(this, rect);
+            var rectTab = DrawHelper.RtlTransform(this, rect);
+            var rectBack = DrawHelper.RtlTransform(this, rect);
             rectBack.Width += DocumentIconGapLeft;
             rectBack.X -= DocumentIconGapLeft;
 
             rectText = DrawHelper.RtlTransform(this, rectText);
             rectIcon = DrawHelper.RtlTransform(this, rectIcon);
-            GraphicsPath path = GetTabOutline(tab, true, false);
+            var path = GetTabOutline(tab, true, false);
             if (DockPane.ActiveContent == tab.Content)
             {
-                Color startColor = DockPane.DockPanel.Theme.Skin.DockPaneStripSkin.DocumentGradient.ActiveTabGradient.StartColor;
-                Color endColor = DockPane.DockPanel.Theme.Skin.DockPaneStripSkin.DocumentGradient.ActiveTabGradient.EndColor;
-                LinearGradientMode gradientMode = DockPane.DockPanel.Theme.Skin.DockPaneStripSkin.DocumentGradient.ActiveTabGradient.LinearGradientMode;
-                using (LinearGradientBrush brush = new LinearGradientBrush(rectBack, startColor, endColor, gradientMode))
+                var startColor = DockPane.DockPanel.Theme.Skin.DockPaneStripSkin.DocumentGradient.ActiveTabGradient
+                    .StartColor;
+                var endColor = DockPane.DockPanel.Theme.Skin.DockPaneStripSkin.DocumentGradient.ActiveTabGradient
+                    .EndColor;
+                var gradientMode = DockPane.DockPanel.Theme.Skin.DockPaneStripSkin.DocumentGradient.ActiveTabGradient
+                    .LinearGradientMode;
+                using (var brush = new LinearGradientBrush(rectBack, startColor, endColor, gradientMode))
                 {
                     g.FillPath(brush, path);
                 }
 
                 g.DrawPath(PenDocumentTabActiveBorder, path);
 
-                Color textColor = DockPane.DockPanel.Theme.Skin.DockPaneStripSkin.DocumentGradient.ActiveTabGradient.TextColor;
+                var textColor = DockPane.DockPanel.Theme.Skin.DockPaneStripSkin.DocumentGradient.ActiveTabGradient
+                    .TextColor;
                 if (DockPane.IsActiveDocumentPane)
-                    TextRenderer.DrawText(g, tab.Content.DockHandler.TabText, BoldFont, rectText, textColor, DocumentTextFormat);
+                    TextRenderer.DrawText(g, tab.Content.DockHandler.TabText, BoldFont, rectText, textColor,
+                        DocumentTextFormat);
                 else
-                    TextRenderer.DrawText(g, tab.Content.DockHandler.TabText, TextFont, rectText, textColor, DocumentTextFormat);
+                    TextRenderer.DrawText(g, tab.Content.DockHandler.TabText, TextFont, rectText, textColor,
+                        DocumentTextFormat);
             }
             else
             {
-                Color startColor = DockPane.DockPanel.Theme.Skin.DockPaneStripSkin.DocumentGradient.InactiveTabGradient.StartColor;
-                Color endColor = DockPane.DockPanel.Theme.Skin.DockPaneStripSkin.DocumentGradient.InactiveTabGradient.EndColor;
-                LinearGradientMode gradientMode = DockPane.DockPanel.Theme.Skin.DockPaneStripSkin.DocumentGradient.InactiveTabGradient.LinearGradientMode;
-                using (LinearGradientBrush brush1 = new LinearGradientBrush(rectBack, startColor, endColor, gradientMode))
+                var startColor = DockPane.DockPanel.Theme.Skin.DockPaneStripSkin.DocumentGradient.InactiveTabGradient
+                    .StartColor;
+                var endColor = DockPane.DockPanel.Theme.Skin.DockPaneStripSkin.DocumentGradient.InactiveTabGradient
+                    .EndColor;
+                var gradientMode = DockPane.DockPanel.Theme.Skin.DockPaneStripSkin.DocumentGradient.InactiveTabGradient
+                    .LinearGradientMode;
+                using (var brush1 = new LinearGradientBrush(rectBack, startColor, endColor, gradientMode))
                 {
                     g.FillPath(brush1, path);
                 }
 
                 g.DrawPath(PenDocumentTabInactiveBorder, path);
 
-                Color textColor = DockPane.DockPanel.Theme.Skin.DockPaneStripSkin.DocumentGradient.InactiveTabGradient.TextColor;
-                TextRenderer.DrawText(g, tab.Content.DockHandler.TabText, TextFont, rectText, textColor, DocumentTextFormat);
+                var textColor = DockPane.DockPanel.Theme.Skin.DockPaneStripSkin.DocumentGradient.InactiveTabGradient
+                    .TextColor;
+                TextRenderer.DrawText(g, tab.Content.DockHandler.TabText, TextFont, rectText, textColor,
+                    DocumentTextFormat);
             }
 
             if (rectTab.Contains(rectIcon) && DockPane.DockPanel.ShowDocumentIcon)
@@ -1416,15 +899,20 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2005
             SelectMenu.Items.Clear();
             foreach (TabVS2005 tab in Tabs)
             {
-                IDockContent content = tab.Content;
-                ToolStripItem item = SelectMenu.Items.Add(content.DockHandler.TabText, content.DockHandler.Icon.ToBitmap());
+                var content = tab.Content;
+                var item = SelectMenu.Items.Add(content.DockHandler.TabText, content.DockHandler.Icon.ToBitmap());
                 item.Tag = tab.Content;
-                item.Click += new EventHandler(ContextMenuItem_Click);
+                item.Click += ContextMenuItem_Click;
             }
 
-            var workingArea = Screen.GetWorkingArea(ButtonWindowList.PointToScreen(new Point(ButtonWindowList.Width / 2, ButtonWindowList.Height / 2)));
-            var menu = new Rectangle(ButtonWindowList.PointToScreen(new Point(0, ButtonWindowList.Location.Y + ButtonWindowList.Height)), SelectMenu.Size);
-            var menuMargined = new Rectangle(menu.X - SelectMenuMargin, menu.Y - SelectMenuMargin, menu.Width + SelectMenuMargin, menu.Height + SelectMenuMargin);
+            var workingArea =
+                Screen.GetWorkingArea(ButtonWindowList.PointToScreen(new Point(ButtonWindowList.Width / 2,
+                    ButtonWindowList.Height / 2)));
+            var menu = new Rectangle(
+                ButtonWindowList.PointToScreen(new Point(0, ButtonWindowList.Location.Y + ButtonWindowList.Height)),
+                SelectMenu.Size);
+            var menuMargined = new Rectangle(menu.X - SelectMenuMargin, menu.Y - SelectMenuMargin,
+                menu.Width + SelectMenuMargin, menu.Height + SelectMenuMargin);
             if (workingArea.Contains(menuMargined))
             {
                 SelectMenu.Show(menu.Location);
@@ -1432,8 +920,10 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2005
             else
             {
                 var newPoint = menu.Location;
-                newPoint.X = DrawHelper.Balance(SelectMenu.Width, SelectMenuMargin, newPoint.X, workingArea.Left, workingArea.Right);
-                newPoint.Y = DrawHelper.Balance(SelectMenu.Size.Height, SelectMenuMargin, newPoint.Y, workingArea.Top, workingArea.Bottom);
+                newPoint.X = DrawHelper.Balance(SelectMenu.Width, SelectMenuMargin, newPoint.X, workingArea.Left,
+                    workingArea.Right);
+                newPoint.Y = DrawHelper.Balance(SelectMenu.Size.Height, SelectMenuMargin, newPoint.Y, workingArea.Top,
+                    workingArea.Bottom);
                 var button = ButtonWindowList.PointToScreen(new Point(0, ButtonWindowList.Height));
                 if (newPoint.Y < button.Y)
                 {
@@ -1450,10 +940,10 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2005
 
         private void ContextMenuItem_Click(object sender, EventArgs e)
         {
-            ToolStripMenuItem item = sender as ToolStripMenuItem;
+            var item = sender as ToolStripMenuItem;
             if (item != null)
             {
-                IDockContent content = (IDockContent)item.Tag;
+                var content = (IDockContent) item.Tag;
                 DockPane.ActiveContent = content;
             }
         }
@@ -1470,15 +960,19 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2005
             }
             else
             {
-                ButtonClose.Enabled = DockPane.ActiveContent == null ? true : DockPane.ActiveContent.DockHandler.CloseButton;
-                m_closeButtonVisible = DockPane.ActiveContent == null ? true : DockPane.ActiveContent.DockHandler.CloseButtonVisible;
+                ButtonClose.Enabled = DockPane.ActiveContent == null
+                    ? true
+                    : DockPane.ActiveContent.DockHandler.CloseButton;
+                m_closeButtonVisible = DockPane.ActiveContent == null
+                    ? true
+                    : DockPane.ActiveContent.DockHandler.CloseButtonVisible;
                 ButtonClose.Visible = m_closeButtonVisible;
                 ButtonClose.RefreshChanges();
                 ButtonWindowList.RefreshChanges();
             }
         }
 
-        protected  override void OnLayout(LayoutEventArgs levent)
+        protected override void OnLayout(LayoutEventArgs levent)
         {
             if (Appearance == DockPane.AppearanceStyle.Document)
             {
@@ -1491,23 +985,24 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2005
 
         private void LayoutButtons()
         {
-            Rectangle rectTabStrip = TabStripRectangle;
+            var rectTabStrip = TabStripRectangle;
 
             // Set position and size of the buttons
-            int buttonWidth = ButtonClose.Image.Width;
-            int buttonHeight = ButtonClose.Image.Height;
-            int height = rectTabStrip.Height - DocumentButtonGapTop - DocumentButtonGapBottom;
+            var buttonWidth = ButtonClose.Image.Width;
+            var buttonHeight = ButtonClose.Image.Height;
+            var height = rectTabStrip.Height - DocumentButtonGapTop - DocumentButtonGapBottom;
             if (buttonHeight < height)
             {
                 buttonWidth = buttonWidth * height / buttonHeight;
                 buttonHeight = height;
             }
-            Size buttonSize = new Size(buttonWidth, buttonHeight);
 
-            int x = rectTabStrip.X + rectTabStrip.Width - DocumentTabGapLeft
-                - DocumentButtonGapRight - buttonWidth;
-            int y = rectTabStrip.Y + DocumentButtonGapTop;
-            Point point = new Point(x, y);
+            var buttonSize = new Size(buttonWidth, buttonHeight);
+
+            var x = rectTabStrip.X + rectTabStrip.Width - DocumentTabGapLeft
+                                                        - DocumentButtonGapRight - buttonWidth;
+            var y = rectTabStrip.Y + DocumentButtonGapTop;
+            var point = new Point(x, y);
             ButtonClose.Bounds = DrawHelper.RtlTransform(this, new Rectangle(point, buttonSize));
 
             // If the close button is not visible draw the window list button overtop.
@@ -1521,10 +1016,7 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2005
         private void Close_Click(object sender, EventArgs e)
         {
             DockPane.CloseActiveContent();
-            if (PatchController.EnableMemoryLeakFix == true)
-            {
-                ContentClosed();
-            }
+            if (PatchController.EnableMemoryLeakFix == true) ContentClosed();
         }
 
         protected internal override int HitTest(Point point)
@@ -1532,33 +1024,35 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2005
             if (!TabsRectangle.Contains(point))
                 return -1;
 
-            foreach (Tab tab in Tabs)
+            foreach (var tab in Tabs)
             {
-                GraphicsPath path = GetTabOutline(tab, true, false);
+                var path = GetTabOutline(tab, true, false);
                 if (path.IsVisible(point))
                     return Tabs.IndexOf(tab);
             }
+
             return -1;
         }
 
-        protected  override Rectangle GetTabBounds(Tab tab)
+        protected override Rectangle GetTabBounds(Tab tab)
         {
-            GraphicsPath path = GetTabOutline(tab, true, false);
-            RectangleF rectangle = path.GetBounds();
-            return new Rectangle((int)rectangle.Left, (int)rectangle.Top, (int)rectangle.Width, (int)rectangle.Height);
+            var path = GetTabOutline(tab, true, false);
+            var rectangle = path.GetBounds();
+            return new Rectangle((int) rectangle.Left, (int) rectangle.Top, (int) rectangle.Width,
+                (int) rectangle.Height);
         }
 
-        protected  override void OnMouseHover(EventArgs e)
+        protected override void OnMouseHover(EventArgs e)
         {
-            int index = HitTest(PointToClient(Control.MousePosition));
-            string toolTip = string.Empty;
+            var index = HitTest(PointToClient(MousePosition));
+            var toolTip = string.Empty;
 
             base.OnMouseHover(e);
 
             if (index != -1)
             {
-                TabVS2005 tab = Tabs[index] as TabVS2005;
-                if (!String.IsNullOrEmpty(tab.Content.DockHandler.ToolTipText))
+                var tab = Tabs[index] as TabVS2005;
+                if (!string.IsNullOrEmpty(tab.Content.DockHandler.ToolTipText))
                     toolTip = tab.Content.DockHandler.ToolTipText;
                 else if (tab.MaxWidth > tab.TabWidth)
                     toolTip = tab.Content.DockHandler.TabText;
@@ -1575,10 +1069,414 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2005
             ResetMouseEventArgs();
         }
 
-        protected  override void OnRightToLeftChanged(EventArgs e)
+        protected override void OnRightToLeftChanged(EventArgs e)
         {
             base.OnRightToLeftChanged(e);
             PerformLayout();
         }
+
+        private class TabVS2005 : Tab
+        {
+            public TabVS2005(IDockContent content)
+                : base(content)
+            {
+            }
+
+            public int TabX { get; set; }
+
+            public int TabWidth { get; set; }
+
+            public int MaxWidth { get; set; }
+
+            protected internal bool Flag { get; set; }
+        }
+
+        [ToolboxItem(false)]
+        private sealed class InertButton : InertButtonBase
+        {
+            private Bitmap m_image0, m_image1;
+
+            private int m_imageCategory;
+
+            public InertButton(Bitmap image0, Bitmap image1)
+            {
+                m_image0 = image0;
+                m_image1 = image1;
+            }
+
+            public int ImageCategory
+            {
+                get => m_imageCategory;
+                set
+                {
+                    if (m_imageCategory == value)
+                        return;
+
+                    m_imageCategory = value;
+                    Invalidate();
+                }
+            }
+
+            public override Bitmap Image => ImageCategory == 0 ? m_image0 : m_image1;
+
+            public override Bitmap HoverImage => null;
+
+            public override Bitmap PressImage => null;
+        }
+
+        #region Constants
+
+        private const int _ToolWindowStripGapTop = 0;
+        private const int _ToolWindowStripGapBottom = 1;
+        private const int _ToolWindowStripGapLeft = 0;
+        private const int _ToolWindowStripGapRight = 0;
+        private const int _ToolWindowImageHeight = 16;
+        private const int _ToolWindowImageWidth = 16;
+        private const int _ToolWindowImageGapTop = 3;
+        private const int _ToolWindowImageGapBottom = 1;
+        private const int _ToolWindowImageGapLeft = 2;
+        private const int _ToolWindowImageGapRight = 0;
+        private const int _ToolWindowTextGapRight = 3;
+        private const int _ToolWindowTabSeperatorGapTop = 3;
+        private const int _ToolWindowTabSeperatorGapBottom = 3;
+
+        private const int _DocumentStripGapTop = 0;
+        private const int _DocumentStripGapBottom = 1;
+        private const int _DocumentTabMaxWidth = 200;
+        private const int _DocumentButtonGapTop = 4;
+        private const int _DocumentButtonGapBottom = 4;
+        private const int _DocumentButtonGapBetween = 0;
+        private const int _DocumentButtonGapRight = 3;
+        private const int _DocumentTabGapTop = 3;
+        private const int _DocumentTabGapLeft = 3;
+        private const int _DocumentTabGapRight = 3;
+        private const int _DocumentIconGapBottom = 2;
+        private const int _DocumentIconGapLeft = 8;
+        private const int _DocumentIconGapRight = 0;
+        private const int _DocumentIconHeight = 16;
+        private const int _DocumentIconWidth = 16;
+        private const int _DocumentTextGapRight = 3;
+
+        #endregion
+
+        #region Members
+
+        private static Bitmap m_imageButtonClose;
+        private InertButton m_buttonClose;
+        private static Bitmap m_imageButtonWindowList;
+        private static Bitmap m_imageButtonWindowListOverflow;
+        private InertButton m_buttonWindowList;
+        private ToolTip m_toolTip;
+        private Font m_font;
+        private Font m_boldFont;
+        private int m_startDisplayingTab;
+        private bool m_documentTabsOverflow;
+        private static string m_toolTipSelect;
+        private static string m_toolTipClose;
+        private bool m_closeButtonVisible;
+
+        #endregion
+
+        #region Properties
+
+        private Rectangle TabStripRectangle
+        {
+            get
+            {
+                if (Appearance == DockPane.AppearanceStyle.Document)
+                    return TabStripRectangle_Document;
+                return TabStripRectangle_ToolWindow;
+            }
+        }
+
+        private Rectangle TabStripRectangle_ToolWindow
+        {
+            get
+            {
+                var rect = ClientRectangle;
+                return new Rectangle(rect.X, rect.Top + ToolWindowStripGapTop, rect.Width,
+                    rect.Height - ToolWindowStripGapTop - ToolWindowStripGapBottom);
+            }
+        }
+
+        private Rectangle TabStripRectangle_Document
+        {
+            get
+            {
+                var rect = ClientRectangle;
+                return new Rectangle(rect.X, rect.Top + DocumentStripGapTop, rect.Width,
+                    rect.Height - DocumentStripGapTop - ToolWindowStripGapBottom);
+            }
+        }
+
+        private Rectangle TabsRectangle
+        {
+            get
+            {
+                if (Appearance == DockPane.AppearanceStyle.ToolWindow)
+                    return TabStripRectangle;
+
+                var rectWindow = TabStripRectangle;
+                var x = rectWindow.X;
+                var y = rectWindow.Y;
+                var width = rectWindow.Width;
+                var height = rectWindow.Height;
+
+                x += DocumentTabGapLeft;
+                width -= DocumentTabGapLeft +
+                         DocumentTabGapRight +
+                         DocumentButtonGapRight +
+                         ButtonClose.Width +
+                         ButtonWindowList.Width +
+                         2 * DocumentButtonGapBetween;
+
+                return new Rectangle(x, y, width, height);
+            }
+        }
+
+        private ContextMenuStrip SelectMenu { get; }
+
+        public int SelectMenuMargin { get; set; } = 5;
+
+        private static Bitmap ImageButtonClose
+        {
+            get
+            {
+                if (m_imageButtonClose == null)
+                    m_imageButtonClose = Resources.DockPane_Close;
+
+                return m_imageButtonClose;
+            }
+        }
+
+        private InertButton ButtonClose
+        {
+            get
+            {
+                if (m_buttonClose == null)
+                {
+                    m_buttonClose = new InertButton(ImageButtonClose, ImageButtonClose);
+                    m_toolTip.SetToolTip(m_buttonClose, ToolTipClose);
+                    m_buttonClose.Click += Close_Click;
+                    Controls.Add(m_buttonClose);
+                }
+
+                return m_buttonClose;
+            }
+        }
+
+        private static Bitmap ImageButtonWindowList
+        {
+            get
+            {
+                if (m_imageButtonWindowList == null)
+                    m_imageButtonWindowList = Resources.DockPane_Option;
+
+                return m_imageButtonWindowList;
+            }
+        }
+
+        private static Bitmap ImageButtonWindowListOverflow
+        {
+            get
+            {
+                if (m_imageButtonWindowListOverflow == null)
+                    m_imageButtonWindowListOverflow = Resources.DockPane_OptionOverflow;
+
+                return m_imageButtonWindowListOverflow;
+            }
+        }
+
+        private InertButton ButtonWindowList
+        {
+            get
+            {
+                if (m_buttonWindowList == null)
+                {
+                    m_buttonWindowList = new InertButton(ImageButtonWindowList, ImageButtonWindowListOverflow);
+                    m_toolTip.SetToolTip(m_buttonWindowList, ToolTipSelect);
+                    m_buttonWindowList.Click += WindowList_Click;
+                    Controls.Add(m_buttonWindowList);
+                }
+
+                return m_buttonWindowList;
+            }
+        }
+
+        private static GraphicsPath GraphicsPath => VS2005AutoHideStrip.GraphicsPath;
+
+        private IContainer Components { get; }
+
+        public Font TextFont => DockPane.DockPanel.Theme.Skin.DockPaneStripSkin.TextFont;
+
+        private Font BoldFont
+        {
+            get
+            {
+                if (IsDisposed)
+                    return null;
+
+                if (m_boldFont == null)
+                {
+                    m_font = TextFont;
+                    m_boldFont = new Font(TextFont, FontStyle.Bold);
+                }
+                else if (m_font != TextFont)
+                {
+                    m_boldFont.Dispose();
+                    m_font = TextFont;
+                    m_boldFont = new Font(TextFont, FontStyle.Bold);
+                }
+
+                return m_boldFont;
+            }
+        }
+
+        private int StartDisplayingTab
+        {
+            get => m_startDisplayingTab;
+            set
+            {
+                m_startDisplayingTab = value;
+                Invalidate();
+            }
+        }
+
+        private int EndDisplayingTab { get; set; }
+
+        private int FirstDisplayingTab { get; set; }
+
+        private bool DocumentTabsOverflow
+        {
+            set
+            {
+                if (m_documentTabsOverflow == value)
+                    return;
+
+                m_documentTabsOverflow = value;
+                if (value)
+                    ButtonWindowList.ImageCategory = 1;
+                else
+                    ButtonWindowList.ImageCategory = 0;
+            }
+        }
+
+        #region Customizable Properties
+
+        private static int ToolWindowStripGapTop => _ToolWindowStripGapTop;
+
+        private static int ToolWindowStripGapBottom => _ToolWindowStripGapBottom;
+
+        private static int ToolWindowStripGapLeft => _ToolWindowStripGapLeft;
+
+        private static int ToolWindowStripGapRight => _ToolWindowStripGapRight;
+
+        private static int ToolWindowImageHeight => _ToolWindowImageHeight;
+
+        private static int ToolWindowImageWidth => _ToolWindowImageWidth;
+
+        private static int ToolWindowImageGapTop => _ToolWindowImageGapTop;
+
+        private static int ToolWindowImageGapBottom => _ToolWindowImageGapBottom;
+
+        private static int ToolWindowImageGapLeft => _ToolWindowImageGapLeft;
+
+        private static int ToolWindowImageGapRight => _ToolWindowImageGapRight;
+
+        private static int ToolWindowTextGapRight => _ToolWindowTextGapRight;
+
+        private static int ToolWindowTabSeperatorGapTop => _ToolWindowTabSeperatorGapTop;
+
+        private static int ToolWindowTabSeperatorGapBottom => _ToolWindowTabSeperatorGapBottom;
+
+        private static string ToolTipClose
+        {
+            get
+            {
+                if (m_toolTipClose == null)
+                    m_toolTipClose = Strings.DockPaneStrip_ToolTipClose;
+                return m_toolTipClose;
+            }
+        }
+
+        private static string ToolTipSelect
+        {
+            get
+            {
+                if (m_toolTipSelect == null)
+                    m_toolTipSelect = Strings.DockPaneStrip_ToolTipWindowList;
+                return m_toolTipSelect;
+            }
+        }
+
+        private TextFormatFlags ToolWindowTextFormat
+        {
+            get
+            {
+                var textFormat = TextFormatFlags.EndEllipsis |
+                                 TextFormatFlags.HorizontalCenter |
+                                 TextFormatFlags.SingleLine |
+                                 TextFormatFlags.VerticalCenter;
+                if (RightToLeft == RightToLeft.Yes)
+                    return textFormat | TextFormatFlags.RightToLeft | TextFormatFlags.Right;
+                return textFormat;
+            }
+        }
+
+        private static int DocumentStripGapTop => _DocumentStripGapTop;
+
+        private static int DocumentStripGapBottom => _DocumentStripGapBottom;
+
+        private TextFormatFlags DocumentTextFormat
+        {
+            get
+            {
+                var textFormat = TextFormatFlags.EndEllipsis |
+                                 TextFormatFlags.SingleLine |
+                                 TextFormatFlags.VerticalCenter |
+                                 TextFormatFlags.HorizontalCenter;
+                if (RightToLeft == RightToLeft.Yes)
+                    return textFormat | TextFormatFlags.RightToLeft;
+                return textFormat;
+            }
+        }
+
+        private static int DocumentTabMaxWidth => _DocumentTabMaxWidth;
+
+        private static int DocumentButtonGapTop => _DocumentButtonGapTop;
+
+        private static int DocumentButtonGapBottom => _DocumentButtonGapBottom;
+
+        private static int DocumentButtonGapBetween => _DocumentButtonGapBetween;
+
+        private static int DocumentButtonGapRight => _DocumentButtonGapRight;
+
+        private static int DocumentTabGapTop => _DocumentTabGapTop;
+
+        private static int DocumentTabGapLeft => _DocumentTabGapLeft;
+
+        private static int DocumentTabGapRight => _DocumentTabGapRight;
+
+        private static int DocumentIconGapBottom => _DocumentIconGapBottom;
+
+        private static int DocumentIconGapLeft => _DocumentIconGapLeft;
+
+        private static int DocumentIconGapRight => _DocumentIconGapRight;
+
+        private static int DocumentIconWidth => _DocumentIconWidth;
+
+        private static int DocumentIconHeight => _DocumentIconHeight;
+
+        private static int DocumentTextGapRight => _DocumentTextGapRight;
+
+        private static Pen PenToolWindowTabBorder => SystemPens.GrayText;
+
+        private static Pen PenDocumentTabActiveBorder => SystemPens.ControlDarkDark;
+
+        private static Pen PenDocumentTabInactiveBorder => SystemPens.GrayText;
+
+        #endregion
+
+        #endregion
     }
 }

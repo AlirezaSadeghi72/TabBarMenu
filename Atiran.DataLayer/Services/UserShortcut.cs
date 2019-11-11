@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing;
 
 namespace Atiran.DataLayer.Services
 {
@@ -28,15 +23,15 @@ namespace Atiran.DataLayer.Services
         public string NameSpace { get; set; }
         public string Class { get; set; }
         public string Description { get; set; }
-        public Nullable<bool> v1 { get; set; }
-        public Nullable<bool> v2 { get; set; }
-        public Nullable<bool> v3 { get; set; }
-        public Nullable<bool> v4 { get; set; }
-        public Nullable<bool> v5 { get; set; }
-        public Nullable<bool> v6 { get; set; }
-        public Nullable<bool> v7 { get; set; }
-        public Nullable<bool> v8 { get; set; }
-        public Nullable<bool> v9 { get; set; }
-        public Nullable<bool> v10 { get; set; }
+        public bool? v1 { get; set; }
+        public bool? v2 { get; set; }
+        public bool? v3 { get; set; }
+        public bool? v4 { get; set; }
+        public bool? v5 { get; set; }
+        public bool? v6 { get; set; }
+        public bool? v7 { get; set; }
+        public bool? v8 { get; set; }
+        public bool? v9 { get; set; }
+        public bool? v10 { get; set; }
     }
 }

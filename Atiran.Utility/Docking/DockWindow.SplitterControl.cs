@@ -1,23 +1,14 @@
-using System;
-using System.Collections;
-using System.ComponentModel;
-using System.Drawing;
-using System.Windows.Forms;
-
 namespace Atiran.Utility.Docking
 {
     public partial class DockWindow
     {
         private class SplitterControl : SplitterBase
         {
-            protected  override int SplitterSize
-            {
-                get { return Measures.SplitterSize; }
-            }
+            protected override int SplitterSize => Measures.SplitterSize;
 
-            protected  override void StartDrag()
+            protected override void StartDrag()
             {
-                DockWindow window = Parent as DockWindow;
+                var window = Parent as DockWindow;
                 if (window == null)
                     return;
 

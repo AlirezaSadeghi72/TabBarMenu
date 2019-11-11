@@ -15,25 +15,25 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2012
         [ToolboxItem(false)]
         private class VS2012PaneIndicator : PictureBox, DockPanel.IPaneIndicator
         {
+            private static DockPanel.HotSpotIndex[] _hotSpots =
+            {
+                new DockPanel.HotSpotIndex(1, 0, DockStyle.Top),
+                new DockPanel.HotSpotIndex(0, 1, DockStyle.Left),
+                new DockPanel.HotSpotIndex(1, 1, DockStyle.Fill),
+                new DockPanel.HotSpotIndex(2, 1, DockStyle.Right),
+                new DockPanel.HotSpotIndex(1, 2, DockStyle.Bottom)
+            };
+
             private Bitmap _bitmapPaneDiamond;
-            private Bitmap _bitmapPaneDiamondLeft;
-            private Bitmap _bitmapPaneDiamondRight;
-            private Bitmap _bitmapPaneDiamondTop;
             private Bitmap _bitmapPaneDiamondBottom;
             private Bitmap _bitmapPaneDiamondFill;
             private Bitmap _bitmapPaneDiamondHotSpot;
             private Bitmap _bitmapPaneDiamondHotSpotIndex;
+            private Bitmap _bitmapPaneDiamondLeft;
+            private Bitmap _bitmapPaneDiamondRight;
+            private Bitmap _bitmapPaneDiamondTop;
 
-            private static DockPanel.HotSpotIndex[] _hotSpots = new[]
-                {
-                        new DockPanel.HotSpotIndex(1, 0, DockStyle.Top),
-                        new DockPanel.HotSpotIndex(0, 1, DockStyle.Left),
-                        new DockPanel.HotSpotIndex(1, 1, DockStyle.Fill),
-                        new DockPanel.HotSpotIndex(2, 1, DockStyle.Right),
-                        new DockPanel.HotSpotIndex(1, 2, DockStyle.Bottom)
-                    };
-
-            private GraphicsPath _displayingGraphicsPath;
+            private DockStyle m_status = DockStyle.None;
 
             public VS2012PaneIndicator(ThemeBase theme)
             {
@@ -45,17 +45,14 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2012
                 _bitmapPaneDiamondFill = theme.ImageService.Dockindicator_PaneDiamond_Fill;
                 _bitmapPaneDiamondHotSpot = theme.ImageService.Dockindicator_PaneDiamond_Hotspot;
                 _bitmapPaneDiamondHotSpotIndex = theme.ImageService.DockIndicator_PaneDiamond_HotspotIndex;
-                _displayingGraphicsPath = DrawHelper.CalculateGraphicsPathFromBitmap(_bitmapPaneDiamond);
+                DisplayingGraphicsPath = DrawHelper.CalculateGraphicsPathFromBitmap(_bitmapPaneDiamond);
 
                 SizeMode = PictureBoxSizeMode.AutoSize;
                 Image = _bitmapPaneDiamond;
                 Region = new Region(DisplayingGraphicsPath);
             }
 
-            public GraphicsPath DisplayingGraphicsPath
-            {
-                get { return _displayingGraphicsPath; }
-            }
+            public GraphicsPath DisplayingGraphicsPath { get; }
 
             public DockStyle HitTest(Point pt)
             {
@@ -66,20 +63,17 @@ namespace Atiran.Utility.Docking2.Theme.ThemeVS2012
                 if (!ClientRectangle.Contains(pt))
                     return DockStyle.None;
 
-                for (int i = _hotSpots.GetLowerBound(0); i <= _hotSpots.GetUpperBound(0); i++)
-                {
-                    if (_bitmapPaneDiamondHotSpot.GetPixel(pt.X, pt.Y) == _bitmapPaneDiamondHotSpotIndex.GetPixel(_hotSpots[i].X, _hotSpots[i].Y))
+                for (var i = _hotSpots.GetLowerBound(0); i <= _hotSpots.GetUpperBound(0); i++)
+                    if (_bitmapPaneDiamondHotSpot.GetPixel(pt.X, pt.Y) ==
+                        _bitmapPaneDiamondHotSpotIndex.GetPixel(_hotSpots[i].X, _hotSpots[i].Y))
                         return _hotSpots[i].DockStyle;
-                }
 
                 return DockStyle.None;
             }
 
-            private DockStyle m_status = DockStyle.None;
-
             public DockStyle Status
             {
-                get { return m_status; }
+                get => m_status;
                 set
                 {
                     m_status = value;
