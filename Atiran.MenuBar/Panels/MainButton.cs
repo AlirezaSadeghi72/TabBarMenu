@@ -12,6 +12,7 @@ using Atiran.MenuBar.Forms;
 using Atiran.MenuBar.Properties;
 using Atiran.Utility.Docking2;
 using Atiran.Utility.Docking2.Desk;
+using Atiran.Utility.MassageBox;
 
 namespace Atiran.MenuBar.Panels
 {
@@ -39,6 +40,9 @@ namespace Atiran.MenuBar.Panels
         public int UserID, SalMaliID;
         private PictureBox lblClose;
         private ToolStripMenuItem miRestartApplication;
+        private bool isCLoseAll = false;
+        private bool isCanselCLoseAll = false;
+        private List<Form> deskTabs;
 
         public MainButton()
         {
@@ -346,7 +350,7 @@ namespace Atiran.MenuBar.Panels
             this.ResumeLayout(false);
 
         }
-        
+
         private void lblClose_MouseDown(object sender, MouseEventArgs e)
         {
             ((Control)sender).BackColor = Color.DarkRed;
@@ -378,7 +382,7 @@ namespace Atiran.MenuBar.Panels
 
         private void lblShortcutDesk_Click(object sender, EventArgs e)
         {
-           
+
             sh1.Text = "ميزكار";
             sh1.Show(mainPane);
         }
@@ -392,7 +396,7 @@ namespace Atiran.MenuBar.Panels
             //msUserActivs.BackColor = Color.FromArgb(21, 100, 123);
             ((Control)sender).BackColor = Color.FromArgb(128, Color.FromArgb(20, 130, 150)); //Color.Wheat;
             //((Control)sender).ForeColor = Color.Black;
-            ((Control) sender).Focus();
+            ((Control)sender).Focus();
         }
 
         private void label_MouseLeave(object sender, EventArgs e)
@@ -413,7 +417,61 @@ namespace Atiran.MenuBar.Panels
 
         private void miRestartApplication_Click(object sender, EventArgs e)
         {
-            Application.Restart();
+            deskTabs = ((Form)TopLevelControl).MdiChildren.ToList();
+
+            foreach (DeskTab form in ((Form)TopLevelControl).MdiChildren)
+            {
+                if (!isCanselCLoseAll)
+                    TryClose(form, deskTabs.Where(f => f != form).ToArray());
+            }
+
+            isCLoseAll = false;
+            isCanselCLoseAll = false;
+
+            if (((Form)TopLevelControl).MdiChildren.Length < 1)
+            {
+                Application.Restart();
+            }
+        }
+
+        private void TryClose(Atiran.Utility.Docking2.Desk.DeskTab form, Form[] forms)
+        {
+            if (form.ShowQuestionClose)
+            {
+                if (!isCLoseAll)
+                {
+                    string TextTabs = form.Text;
+                    foreach (Form tab in forms)
+                    {
+                        TextTabs += "\n" + tab.Text;
+                    }
+                    var result = ShowPersianMessageBox.ShowMessge("آيا تب ها بسته شوند؟", TextTabs,
+                        MessageBoxButtons.YesNo, false);
+                    if (result == DialogResult.Yes)
+                    {
+                        form.Close();
+                    }
+                    else if (result == DialogResult.OK)
+                    {
+                        isCLoseAll = true;
+                        form.Close();
+                    }
+                    else if (result == DialogResult.Cancel)
+                    {
+                        isCanselCLoseAll = true;
+                    }
+                }
+                else
+                {
+                    form.Close();
+                }
+            }
+            else
+            {
+                form.Close();
+            }
+
+            deskTabs.Remove(form);
         }
 
         private void timer1_Tick(object sender, EventArgs e)
@@ -430,7 +488,7 @@ namespace Atiran.MenuBar.Panels
         [DllImportAttribute("user32.dll")]
         public static extern bool ReleaseCapture();
 
-        
+
 
         private void MainButton_MouseDown(object sender, MouseEventArgs e)
         {

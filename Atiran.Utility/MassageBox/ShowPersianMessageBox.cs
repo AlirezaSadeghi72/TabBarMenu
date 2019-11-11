@@ -8,7 +8,7 @@ namespace Atiran.Utility.MassageBox
 {
     public static class ShowPersianMessageBox
     {
-        public static System.Windows.Forms.DialogResult ShowMessge(string Caption, string Message, System.Windows.Forms.MessageBoxButtons buttons, bool FocuseOnYes = true)
+        public static System.Windows.Forms.DialogResult ShowMessge(string Caption, string Message, System.Windows.Forms.MessageBoxButtons buttons, bool FocuseOnYes = true,bool ShowAllButton = true)
         {
             System.Windows.Forms.DialogResult Result = System.Windows.Forms.DialogResult.None;
             switch (buttons)
@@ -52,7 +52,7 @@ namespace Atiran.Utility.MassageBox
                     {
                         Temp.Dock = System.Windows.Forms.DockStyle.Fill;
                         Temp.WindowState = System.Windows.Forms.FormWindowState.Maximized;
-                        Temp.BackColor = System.Drawing.Color.FromArgb(78, 31, 145);
+                        Temp.BackColor = System.Drawing.Color.FromArgb(0, 192, 192);
                         Temp.Opacity = 0.7D;
                         Temp.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
                         Temp.KeyDown += (sender, e) =>
@@ -69,6 +69,7 @@ namespace Atiran.Utility.MassageBox
                                 Confirm.Caption = Caption;
                                 Confirm.SetMessage = Message;
                                 Confirm.LoadOnYesButton = FocuseOnYes;
+                                Confirm.ShowAllButton = ShowAllButton;
                                 Result = Confirm.ShowDialog();
                                 Temp.Close();
                             }

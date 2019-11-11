@@ -102,7 +102,7 @@ namespace Atiran.Reporting.BankAndChek.ChekPardakhti
             if (((DeskTab)((Form)this.TopLevelControl).ActiveMdiChild).ShowQuestionClose)
             {
                 if (ShowPersianMessageBox.ShowMessge("پيغام", "آيا تب " + ((Form)this.TopLevelControl).ActiveMdiChild.Text + " بسته شود",
-                        MessageBoxButtons.YesNo) == DialogResult.Yes)
+                        MessageBoxButtons.YesNo,false,false) == DialogResult.Yes)
                 {
                     ((Form)this.TopLevelControl).ActiveMdiChild.Close();
                 }

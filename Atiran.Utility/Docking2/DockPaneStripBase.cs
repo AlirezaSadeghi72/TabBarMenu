@@ -268,7 +268,7 @@ namespace Atiran.Utility.Docking2
                 if ((Tabs[index].Content.DockHandler.Form as DeskTab).ShowQuestionClose)
                 {
                     if (ShowPersianMessageBox.ShowMessge("پيغام", "آيا تب " + Tabs[index].Content.DockHandler.TabText + " بسته شود",
-                              MessageBoxButtons.YesNo) == DialogResult.Yes)
+                              MessageBoxButtons.YesNo,false,false) == DialogResult.Yes)
                     {
 
                         // Close the specified content.

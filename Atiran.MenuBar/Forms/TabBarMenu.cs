@@ -32,6 +32,10 @@ namespace Atiran.MenuBar.Forms
         private int _userID = 1005;
         private Utility.Docking2.Theme.ThemeVS2012.VS2012LightTheme vS2012LightTheme1;
         private int _salMaliID = 1;
+        private bool isCLoseAll = false;
+        private bool isCanselCLoseAll = false;
+        private List<System.Windows.Forms.Form> deskTabs;
+
         //private CustomTabControl MainTab;
         //private Image CloseImage = Resources.close_button;
 
@@ -74,7 +78,7 @@ namespace Atiran.MenuBar.Forms
 
 
         }
-     
+
         private void InitializeComponent()
         {
             this.pnlMainButtons = new System.Windows.Forms.Panel();
@@ -175,7 +179,7 @@ namespace Atiran.MenuBar.Forms
             this.ResumeLayout(false);
 
         }
-        
+
         #region Event
         private void Form_Click(object sender, EventArgs e)
         {
@@ -189,7 +193,7 @@ namespace Atiran.MenuBar.Forms
             string Class = "ReportChekhayePardakhti";
             string typeName = Namespace + "." + Class;
             var ali = ((ToolStripMenuItem)MyMnSt.Items[7]).DropDown.Items.Cast<ToolStripMenuItem>().ToList();
-            if (ali.Any(a=>a.Text == ((ToolStripItem)sender).Text))
+            if (ali.Any(a => a.Text == ((ToolStripItem)sender).Text))
                 AddTab(((ToolStripItem)sender).Text, typeName, false);
             else
                 AddTab(((ToolStripItem)sender).Text, typeName, true);
@@ -288,47 +292,47 @@ namespace Atiran.MenuBar.Forms
             {
                 case Keys.Escape:
                 case (Keys.Alt | Keys.F4):
-                {
-                    try
                     {
-                        //MainTab.TabPages.Remove(MainTab.TabPages[MainTab.SelectedIndex]);
-                        if (((DeskTab)ActiveMdiChild).ShowQuestionClose)
+                        try
                         {
-                            if (ShowPersianMessageBox.ShowMessge("پيغام", "آيا تب " + Text + " بسته شود",
-                                    MessageBoxButtons.YesNo) == DialogResult.Yes)
+                            //MainTab.TabPages.Remove(MainTab.TabPages[MainTab.SelectedIndex]);
+                            if (((DeskTab)ActiveMdiChild).ShowQuestionClose)
+                            {
+                                if (ShowPersianMessageBox.ShowMessge("پيغام", "آيا تب " + ((DeskTab)ActiveMdiChild).Text + " بسته شود",
+                                        MessageBoxButtons.YesNo, false, false) == DialogResult.Yes)
+                                {
+                                    ActiveMdiChild.Close();
+                                }
+                            }
+                            else
                             {
                                 ActiveMdiChild.Close();
                             }
                         }
-                        else
+                        catch (Exception)
                         {
-                            ActiveMdiChild.Close();
+                            //CloseProgramm();
+                            this.Close();
                         }
+                        return true;
                     }
-                    catch (Exception)
-                    {
-                        //CloseProgramm();
-                        this.Close();
-                    }
-                    return true;
-                }
                 case Keys.Home:
-                {
-                    MyMnSt.Focus();
-                    return true;
-                }
+                    {
+                        ((ToolStripMenuItem)MyMnSt.Items[0]).ShowDropDown();
+                        return true;
+                    }
                 case Keys.Scroll:
-                {
-                    try
                     {
-                        MainTab.NextTabFocus();
+                        try
+                        {
+                            MainTab.NextTabFocus();
+                        }
+                        catch (Exception)
+                        {
+                            break;
+                        }
+                        return true;
                     }
-                    catch (Exception)
-                    {
-                        break;
-                    }
-                    return true;
-                }
             }
 
             return base.ProcessCmdKey(ref msg, keyData);
@@ -342,10 +346,15 @@ namespace Atiran.MenuBar.Forms
 
         private void TabBarMenu_FormClosing(object sender, FormClosingEventArgs e)
         {
+            deskTabs = MdiChildren.ToList();
             foreach (Atiran.Utility.Docking2.Desk.DeskTab form in MdiChildren)
             {
-                TryClose(form);
+                if (!isCanselCLoseAll)
+                    TryClose(form, deskTabs.Where(f=>f!=form).ToArray());
             }
+
+            isCLoseAll = false;
+            isCanselCLoseAll = false;
 
             if (MdiChildren.Length > 0)
             {
@@ -556,11 +565,34 @@ namespace Atiran.MenuBar.Forms
             return new Control();
         }
 
-        private void TryClose(Atiran.Utility.Docking2.Desk.DeskTab form)
+        private void TryClose(Atiran.Utility.Docking2.Desk.DeskTab form, System.Windows.Forms.Form[] forms)
         {
             if (form.ShowQuestionClose)
             {
-                if (ShowPersianMessageBox.ShowMessge("پيغام", "آيا تب " + form.Text + " بسته شود", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                if (!isCLoseAll)
+                {
+                    string TextTabs = form.Text;
+                    foreach (System.Windows.Forms.Form tab in forms)
+                    {
+                        TextTabs += "\n" + tab.Text;
+                    }
+                    var result = ShowPersianMessageBox.ShowMessge("آيا تب ها بسته شوند؟", TextTabs,
+                        MessageBoxButtons.YesNo, false);
+                    if (result == DialogResult.Yes)
+                    {
+                        form.Close();
+                    }
+                    else if (result == DialogResult.OK)
+                    {
+                        isCLoseAll = true;
+                        form.Close();
+                    }
+                    else if (result == DialogResult.Cancel)
+                    {
+                        isCanselCLoseAll = true;
+                    }
+                }
+                else
                 {
                     form.Close();
                 }
@@ -569,6 +601,8 @@ namespace Atiran.MenuBar.Forms
             {
                 form.Close();
             }
+
+            deskTabs.Remove(form);
         }
 
         #endregion

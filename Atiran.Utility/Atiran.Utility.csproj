@@ -522,6 +522,9 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="MassageBox\YesNoMessageBox.resx">
+      <DependentUpon>YesNoMessageBox.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -621,6 +624,7 @@
     <Content Include="Resources\DockPane_Dock.bmp" />
     <Content Include="Resources\DockPane_Option.bmp" />
     <Content Include="Resources\DockPane_OptionOverflow.bmp" />
+    <None Include="Resources\Exit_1.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

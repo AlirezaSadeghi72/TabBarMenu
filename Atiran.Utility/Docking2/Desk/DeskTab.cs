@@ -18,6 +18,7 @@ namespace Atiran.Utility.Docking2.Desk
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             DockAreas = DockAreas.Document;
         }
+
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
@@ -30,10 +31,12 @@ namespace Atiran.Utility.Docking2.Desk
             // 
             // contextMenuStrip1
             // 
-            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.miClose,
-            this.miCloseAllButThis,
-            this.miCloseAll});
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[]
+            {
+                this.miClose,
+                this.miCloseAllButThis,
+                this.miCloseAll
+            });
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new System.Drawing.Size(161, 70);
             // 
@@ -63,7 +66,8 @@ namespace Atiran.Utility.Docking2.Desk
             this.AutoScroll = true;
             this.ClientSize = new System.Drawing.Size(519, 280);
             this.DockAreas = Atiran.Utility.Docking2.DockAreas.Document;
-            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular,
+                System.Drawing.GraphicsUnit.Point, ((byte) (0)));
             this.Name = "DeskTab";
             this.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.RightToLeftLayout = true;
@@ -81,6 +85,9 @@ namespace Atiran.Utility.Docking2.Desk
         private ToolStripMenuItem miClose;
         private ToolStripMenuItem miCloseAllButThis;
         private ToolStripMenuItem miCloseAll;
+        private bool isCLoseAll = false;
+        private bool isCanselCLoseAll = false;
+        private List<Form> deskTabs;
 
         public string FileName
         {
@@ -104,6 +111,7 @@ namespace Atiran.Utility.Docking2.Desk
         }
 
         private bool m_resetText = true;
+
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
@@ -124,33 +132,73 @@ namespace Atiran.Utility.Docking2.Desk
 
         private void miClose_Click(object sender, EventArgs e)
         {
-            TryClose(this);
+            if (ShowQuestionClose)
+            {
+                if (ShowPersianMessageBox.ShowMessge("پيغام", "آيا تب " + Text + " بسته شود",
+                        MessageBoxButtons.YesNo, false, false) == DialogResult.Yes)
+                {
+                    Close();
+                }
+            }
+            else
+            {
+                Close();
+            }
         }
 
         private void miCloseAllButThis_Click(object sender, EventArgs e)
         {
-            foreach (DeskTab form in ((Form)TopLevelControl).MdiChildren)
+            deskTabs = ((Form)TopLevelControl).MdiChildren.ToList();
+            foreach (DeskTab form in ((Form) TopLevelControl).MdiChildren)
             {
-                if (form != this)
-                    TryClose(form);
+                if (form != this && !isCanselCLoseAll)
+                    TryClose(form, deskTabs.Where(f => f != form && f!=this).ToArray());
             }
+
+            isCLoseAll = false;
+            isCanselCLoseAll = false;
         }
 
         private void miCloseAll_Click(object sender, EventArgs e)
         {
-            foreach (DeskTab form in ((Form)TopLevelControl).MdiChildren)
+            deskTabs = ((Form) TopLevelControl).MdiChildren.ToList();
+            foreach (DeskTab form in ((Form) TopLevelControl).MdiChildren)
             {
-                TryClose(form);
+                if (!isCanselCLoseAll)
+                    TryClose(form, deskTabs.Where(f => f != form).ToArray());
             }
+            isCLoseAll = false;
+            isCanselCLoseAll = false;
         }
 
-        private void TryClose(DeskTab form)
+        private void TryClose(Atiran.Utility.Docking2.Desk.DeskTab form, Form[] forms)
         {
             if (form.ShowQuestionClose)
             {
-                if (ShowPersianMessageBox.ShowMessge("پيغام", "آيا تب " + form.Text + " بسته شود",
-                        
-                        MessageBoxButtons.YesNo) == DialogResult.Yes)
+                if (!isCLoseAll)
+                {
+                    string TextTabs = form.Text;
+                    foreach (Form tab in forms)
+                    {
+                        TextTabs += "\n" + tab.Text;
+                    }
+                    var result = ShowPersianMessageBox.ShowMessge("آيا تب ها بسته شوند؟", TextTabs,
+                        MessageBoxButtons.YesNo, false);
+                    if (result == DialogResult.Yes)
+                    {
+                        form.Close();
+                    }
+                    else if (result == DialogResult.OK)
+                    {
+                        isCLoseAll = true;
+                        form.Close();
+                    }
+                    else if (result == DialogResult.Cancel)
+                    {
+                        isCanselCLoseAll = true;
+                    }
+                }
+                else
                 {
                     form.Close();
                 }
@@ -159,7 +207,8 @@ namespace Atiran.Utility.Docking2.Desk
             {
                 form.Close();
             }
-        }
 
+            deskTabs.Remove(form);
+        }
     }
 }
