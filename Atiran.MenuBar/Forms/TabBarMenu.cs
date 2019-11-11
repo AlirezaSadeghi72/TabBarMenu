@@ -338,7 +338,6 @@ namespace Atiran.MenuBar.Forms
             return base.ProcessCmdKey(ref msg, keyData);
         }
 
-
         private void TabBarMenu_FormClosed(object sender, FormClosedEventArgs e)
         {
             Application.Exit();
@@ -350,7 +349,7 @@ namespace Atiran.MenuBar.Forms
             foreach (Atiran.Utility.Docking2.Desk.DeskTab form in MdiChildren)
             {
                 if (!isCanselCLoseAll)
-                    TryClose(form, deskTabs.Where(f=>f!=form).ToArray());
+                    TryClose(form, deskTabs.Where(f => f != form).ToArray());
             }
 
             isCLoseAll = false;
@@ -360,8 +359,15 @@ namespace Atiran.MenuBar.Forms
             {
                 e.Cancel = true;
             }
+            else
+            {
+                if (ShowPersianMessageBox.ShowMessge("پيام سيستم",
+                        "آيا مي خواهيد از سيستم خارج شويد؟", MessageBoxButtons.YesNo, false, false) == DialogResult.No)
+                {
+                    e.Cancel = true;
+                }
+            }
         }
-
 
         //private void CloseProgramm()
         //{
@@ -446,6 +452,8 @@ namespace Atiran.MenuBar.Forms
                         tmp.TextImageRelation = TextImageRelation.ImageBeforeText;
                         //tmp.RightToLeftAutoMirrorImage = true;
                         tmp.Height = MyMnSt.Height;
+                        tmp.CheckedChanged+=
+                            ItemMenuStrip_MouseHover;
                     }
 
                     MyMnSt.Items.Add(tmp);
@@ -484,8 +492,8 @@ namespace Atiran.MenuBar.Forms
                 if (((ToolStripMenuItem)TStrip).DropDownItems.Count > 0)
                 {
 
-                    ((ToolStripMenuItem)TStrip).MouseHover +=
-                        ItemMenuStrip_MouseHover;
+                    //((ToolStripMenuItem)TStrip).MouseHover +=
+                    //    ItemMenuStrip_MouseHover;
                     if (tag.ParentId == -1)
                     {
                         //((ToolStripMenuItem)TStrip).TextImageRelation = TextImageRelation.TextBeforeImage;
@@ -606,6 +614,6 @@ namespace Atiran.MenuBar.Forms
         }
 
         #endregion
-
+        
     }
 }
