@@ -131,7 +131,7 @@ namespace Atiran.Utility.MassageBox
             this.btnNoAll.Name = "btnNoAll";
             this.btnNoAll.Size = new System.Drawing.Size(75, 30);
             this.btnNoAll.TabIndex = 3;
-            this.btnNoAll.Text = "خير(همه)";
+            this.btnNoAll.Text = "انصراف";
             this.btnNoAll.UseVisualStyleBackColor = false;
             this.btnNoAll.Enter += new System.EventHandler(this.Button_Enter);
             this.btnNoAll.Leave += new System.EventHandler(this.Button_Leave);

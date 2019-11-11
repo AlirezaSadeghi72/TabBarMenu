@@ -18,7 +18,7 @@ namespace Atiran.Utility.MassageBox
                     {
                         Temp.Dock = System.Windows.Forms.DockStyle.Fill;
                         Temp.WindowState = System.Windows.Forms.FormWindowState.Maximized;
-                        Temp.BackColor = System.Drawing.Color.FromArgb(78, 31, 145);
+                        Temp.BackColor = System.Drawing.Color.Silver;
                         Temp.Opacity = 0.7D;
                         Temp.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
                         Temp.KeyDown += (sender, e) =>
@@ -52,7 +52,7 @@ namespace Atiran.Utility.MassageBox
                     {
                         Temp.Dock = System.Windows.Forms.DockStyle.Fill;
                         Temp.WindowState = System.Windows.Forms.FormWindowState.Maximized;
-                        Temp.BackColor = System.Drawing.Color.FromArgb(0, 192, 192);
+                        Temp.BackColor = System.Drawing.Color.Silver;
                         Temp.Opacity = 0.7D;
                         Temp.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
                         Temp.KeyDown += (sender, e) =>

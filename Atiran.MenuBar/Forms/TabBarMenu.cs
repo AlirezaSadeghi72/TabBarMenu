@@ -19,7 +19,6 @@ namespace Atiran.MenuBar.Forms
 {
     public class TabBarMenu : System.Windows.Forms.Form
     {
-        //private DeskTab sh = new DeskTab();
         private Panel pnlMainButtons;
         List<Menu> menus = new List<Menu>();
         private Panel pnlFooter;
@@ -36,8 +35,6 @@ namespace Atiran.MenuBar.Forms
         private bool isCanselCLoseAll = false;
         private List<System.Windows.Forms.Form> deskTabs;
 
-        //private CustomTabControl MainTab;
-        //private Image CloseImage = Resources.close_button;
 
         public TabBarMenu()
         {
@@ -255,16 +252,6 @@ namespace Atiran.MenuBar.Forms
             ((ToolStripMenuItem)sender).Image = Properties.Resources.expandleft;
         }
 
-        //private void MyMenuItem_MouseLeave(object sender, EventArgs e)
-        //{
-        //    ((ToolStripMenuItem)sender).Image = Properties.Resources.expandleft;
-        //}
-
-        //private void MyMenuItem_MouseEnter(object sender, EventArgs e)
-        //{
-        //    ((ToolStripMenuItem)sender).Image = Properties.Resources.expandDown;
-        //}
-
         private void MyMenuItem_Load(object sender, EventArgs e)
         {
             MyMnSt.Renderer = new ToolStripProfessionalRendererAtiran();
@@ -275,16 +262,6 @@ namespace Atiran.MenuBar.Forms
         {
             WindowState = WindowState == FormWindowState.Normal ? FormWindowState.Maximized : FormWindowState.Normal;
         }
-
-
-        //private void Shortcut_Click(object sender, EventArgs e)
-        //{
-        //    sh1.Text = "ميزكار";
-        //    sh1.Show(MainTab);
-        //    //DeskTab sh = new DeskTab();
-        //    //sh.Text = "ميزكار";
-        //    //sh.Show(dockPanel2,DockState.DockRight);
-        //}
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
@@ -361,64 +338,18 @@ namespace Atiran.MenuBar.Forms
             }
             else
             {
-                if (ShowPersianMessageBox.ShowMessge("پيام سيستم",
-                        "آيا مي خواهيد از سيستم خارج شويد؟", MessageBoxButtons.YesNo, false, false) == DialogResult.No)
+                if (!CloseProgramm())
                 {
                     e.Cancel = true;
                 }
             }
         }
 
-        //private void CloseProgramm()
-        //{
-        //    UI.WindowsForms.MessageBoxes.MessageBoxWarning.state = 0;
-        //    DialogResult close =
-        //        Atiran.UI.WindowsForms.MessageBoxes.CustomMessageForm.CustomMessageBox.Show("پيام سيستم",
-        //            "آيا مي خواهيد از سيستم خارج شويد؟", "w");
-        //    UI.WindowsForms.MessageBoxes.MessageBoxWarning.state = 1;
-        //    if (close == DialogResult.Yes)
-        //    {
-        //        if (CheckBackupPermission.HavePermission())
-        //        {
-        //            DialogResult res =
-        //                Atiran.UI.WindowsForms.MessageBoxes.CustomMessageForm.CustomMessageBox.Show("پيام سيستم",
-        //                    "آيا مي خواهيد از اطلاعات پشتيبان بگيريد؟", "w");
-        //            if (res == DialogResult.Yes)
-        //            {
-        //                // backup
-        //                Atiran.BackupAndRestore.AtiranBackup c = new Atiran.BackupAndRestore.AtiranBackup(true);
-        //                new Atiran.UI.WindowsForms.Shortcuts.UserControlLoader(c, true, false, true);
-        //            }
-        //        }
-
-        //        // user Logouted
-        //        Connections.UserService.UserLogouted(Connections.GetCurrentSysUser.Instance.user_id);
-        //        Application.Exit();
-        //    }
-        //}
-
+        
         #endregion
 
         #region Method
 
-        //private void Next_Click(object sender, EventArgs e)
-        //{
-        //    ToolStripItem[] tsc = new ToolStripItem[MyMnSt.Items.Count];
-        //    MyMnSt.Items.CopyTo(tsc, 0);
-        //    MyMnSt.Items.Clear();
-        //    for (int i = 0; i < tsc.Length; i++)
-        //    {
-        //        if (i == 0)
-        //            MyMnSt.Items.Add(tsc[0]);
-        //        else
-        //        {
-        //            if (i == 1)
-        //                MyMnSt.Items.Add(tsc[tsc.Length - 1]);
-        //            else
-        //                MyMnSt.Items.Add(tsc[i - 1]);
-        //        }
-        //    }
-        //}
 
         private void FirstTurn()
         {
@@ -613,7 +544,35 @@ namespace Atiran.MenuBar.Forms
             deskTabs.Remove(form);
         }
 
+        private bool CloseProgramm()
+        {
+            DialogResult close =
+                ShowPersianMessageBox.ShowMessge("پيام سيستم",
+                    "آيا مي خواهيد از سيستم خارج شويد؟", MessageBoxButtons.YesNo, false, false);
+            if (close == DialogResult.Yes)
+            {
+                //if (CheckBackupPermission.HavePermission())
+                //{
+                DialogResult res =
+                    ShowPersianMessageBox.ShowMessge("پيام سيستم",
+                        "آيا مي خواهيد از اطلاعات پشتيبان بگيريد؟", MessageBoxButtons.YesNo, false, false);
+                if (res == DialogResult.Yes)
+                {
+                    // backup
+                    //Atiran.BackupAndRestore.AtiranBackup c = new Atiran.BackupAndRestore.AtiranBackup(true);
+                    //new Atiran.UI.WindowsForms.Shortcuts.UserControlLoader(c, true, false, true);
+                }
+                //}
+
+                // user Logouted
+                //Connections.UserService.UserLogouted(Connections.GetCurrentSysUser.Instance.user_id);
+                return true;
+            }
+
+            return false;
+        }
+
         #endregion
-        
+
     }
 }
